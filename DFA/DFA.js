@@ -1,10 +1,14 @@
+let State = require('./State');
+
 class DFA{
   constructor(states = [], alphabet, transitionFunctions = [], startState, acceptanceStates = []){
     this.states = states;
     this.alphabet = alphabet;
     this.transitionFunction = transitionFunction;
     this.startState = startState;
-    this.finalStates = finalStates;
+    this.acceptanceStates = acceptanceStates;
+    this.currentState = startState;
+    console.log("DFA constructor");
   }
 
   addState(state){
@@ -25,7 +29,8 @@ class DFA{
 
   deleteState(state){
     let indexOfStateToDelete = this.states.indexOf(state);
-    if(indexOfStateToDelete > -1){      
+    if(indexOfStateToDelete > -1){
+
       this.states[indexOfStateToDelete].transitions = [];
       deleteTransitionsToState(state.stateName);
     }
@@ -53,6 +58,24 @@ class DFA{
     if(indexOfTransitionToModify > -1){
       this.originState.transitions[indexOfTransitionToModify] = symbol;
     }
+  }
+
+  evaluate(evaluationString){
+    let charArray = Array.from(evaluationString);
+
+    if(this.currentState !== 'undefined'){
+      this.currentState = this.startState;
+      for(const currentChar of charArray){
+        if(this.alphabet.includes(currentChar)){
+          this.currentState = this.currentState.getNextState(currentChar);
+          if(this.currentState === 'undefined'){
+            return false;
+          }
+        }
+      }
+    }
+
+    return this.acceptanceStates.includes(this.currentState);
   }
 }
 
