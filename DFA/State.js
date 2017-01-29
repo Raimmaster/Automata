@@ -7,8 +7,8 @@ class State{
 
   addTransition(symbol, destinyState){
     let newTransitionId = this.stateName + this.amountOfTransitions;
-    ++this.amountOfTransitions;
-    let newTransition = Transition(newTransitionId, symbol, destinyState);
+    this.amountOfTransitions++;
+    let newTransition = new Transition(newTransitionId, symbol, destinyState);
     this.transitions.push(newTransition);
   }
 }

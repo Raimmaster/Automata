@@ -16,22 +16,40 @@ class DFA{
     this.states[indexOfTransition].addTransition(symbol, toState);
   }
 
-  deleteState(state){
-    let indexOfStateToDelete = this.states.indexOf(state);
-    if(indexOfStateToDelete > -1){
-      this.states.splice(indexOfStateToDelete, 1);
+  modifyState(state, newStateName){
+    let indexOfState = this.states.indexOf(state);
+    if(indexOfState > -1){
+      this.states[indexOfState] = newStateName;
     }
   }
 
-  deleteTransition(originState, destinyState){
-    let indexOfTransitionToDelete = this.originState.transitions.indexOf(destinyState);
+  deleteState(state){
+    let indexOfStateToDelete = this.states.indexOf(state);
+    if(indexOfStateToDelete > -1){      
+      this.states[indexOfStateToDelete].transitions = [];
+      deleteTransitionsToState(state.stateName);
+    }
+  }
+
+  deleteTransitionsToState(stateName){
+    for(const[stateIndex, state] of this.states.entries()){
+      for(const[transitionIndex, transition] of state.transitions.entries()){
+        if(transition.destinyState === stateName){
+          state.transitions.splice(transitionIndex, 1);
+        }
+      }
+    }
+  }
+
+  deleteTransition(transitionID){
+    let indexOfTransitionToDelete = this.originState.transitions.indexOf(transitionID);
     if(indexOfTransitionToDelete > -1){
       this.originState.transitions.splice(indexOfTransitionToDelete, 1);
     }
   }
 
-  modifyTransition(originState, destinyState, symbol){
-    let indexOfTransitionToModify = this.originState.transitions.indexOf(destinyState);
+  modifyTransition(transitionID, symbol){
+    let indexOfTransitionToModify = this.originState.transitions.indexOf(transitionID);
     if(indexOfTransitionToModify > -1){
       this.originState.transitions[indexOfTransitionToModify] = symbol;
     }
