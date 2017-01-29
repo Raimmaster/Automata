@@ -37,3 +37,5 @@ class DFA{
     }
   }
 }
+
+module.exports = DFA;
