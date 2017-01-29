@@ -1,4 +1,4 @@
-let Transition = require('./Transition');
+// let Transition = require('./Transition');
 
 class State{
   constructor(stateName, transitions = []){
@@ -27,4 +27,4 @@ class State{
   }
 }
 
-module.exports = State;
+// module.exports = State;

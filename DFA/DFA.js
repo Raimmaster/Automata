@@ -1,23 +1,33 @@
-let State = require('./State');
+// let State = require('./State');
 
 class DFA{
-  constructor(states = [], alphabet, transitionFunctions = [], startState, acceptanceStates = []){
+  constructor(states = [], alphabet, transitionFunction = [], startState, acceptanceStates = []){
     this.states = states;
     this.alphabet = alphabet;
     this.transitionFunction = transitionFunction;
     this.startState = startState;
     this.acceptanceStates = acceptanceStates;
     this.currentState = startState;
-    console.log("DFA constructor");
   }
 
   addState(state){
-    this.states.push(state);
+    let newState = new State(state);
+    this.states.push(newState);
+  }
+
+  findStateByName(stateName){
+    for(const [index, state] of this.states){
+      if(state.stateName === stateName){
+        return index;
+      }
+    }
+
+    return -1;
   }
 
   addTransition(fromState, toState, symbol){
-    let indexOfTransition = this.states.indexOf(fromState);
-    this.states[indexOfTransition].addTransition(symbol, toState);
+    let indexOfOriginState = this.findStateByName(fromState);
+    this.states[indexOfOriginState].addTransition(symbol, toState);
   }
 
   modifyState(state, newStateName){
@@ -79,4 +89,4 @@ class DFA{
   }
 }
 
-module.exports = DFA;
+// module.exports = DFA;
