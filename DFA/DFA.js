@@ -1,5 +1,3 @@
-// let State = require('./State');
-
 class DFA{
   constructor(states = [], alphabet, transitionFunction = [], startState, acceptanceStates = []){
     this.states = states;
@@ -80,7 +78,7 @@ class DFA{
   evaluate(evaluationString){
     let charArray = Array.from(evaluationString);
     this.currentState = this.originState;
-    
+
     for(const currentChar of charArray){
       if(this.alphabet.includes(currentChar)){
         this.currentState = this.currentState.getNextState(currentChar);
@@ -89,7 +87,7 @@ class DFA{
         }
       }
     }
-    
+
     return this.acceptanceStates.includes(this.currentState.stateName);
   }
 }

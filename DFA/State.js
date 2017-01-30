@@ -1,5 +1,3 @@
-// let Transition = require('./Transition');
-
 class State{
   constructor(stateName, transitions = []){
     this.stateName = stateName;

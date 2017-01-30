@@ -7,7 +7,6 @@ let automata = new DFA([], automatonAlphabet, [], 'q0', acceptanceState);
 automata.addState('q0');
 automata.addState('q1');
 automata.addState('q2');
-console.log(automata.states);
 automata.addTransition('q0', 'q1', '0');
 automata.addTransition('q0', 'q0', '1');
 automata.addTransition('q1', 'q2', '1');
@@ -103,11 +102,9 @@ function draw() {
 
     //Constants for testing
     states.add([
-        {id: '1', label: 'Node 1'},
-        {id: '2', label: 'Node 2'},
-        {id: '3', label: 'Node 3'},
-        {id: '4', label: 'Node 4'},
-        {id: '5', label: 'Node 5'}
+        {id: 'q0', label: 'q0'},
+        {id: 'q1', label: 'q1'},
+        {id: 'q2', label: 'q2'}
     ]);
 
     // create an array with transitions
@@ -118,10 +115,10 @@ function draw() {
 
     //Constants for testing
     transitions.add([
-        {id: '1', from: '1', to: '2'},
-        {id: '2', from: '1', to: '3'},
-        {id: '3', from: '2', to: '4'},
-        {id: '4', from: '2', to: '5'}
+        {id: 'q00', from: 'q0', to: 'q1', label: 'q00', font: {align: 'top'}},
+        {id: 'q01', from: 'q0', to: 'q0', label: 'q01', font: {align: 'top'}},
+        {id: 'q11', from: 'q1', to: 'q2', label: 'q11', font: {align: 'top'}},
+        {id: 'q20', from: 'q2', to: 'q2', label: 'q20', font: {align: 'top'}}
     ]);
 
     alphabet = new vis.DataSet();
@@ -143,7 +140,13 @@ function draw() {
         alphabet: alphabet
     };
 
-    var options = {};
+    var options = {
+      edges: {
+        arrows: {
+          to: {enabled : true}
+        }
+      }
+    };
     network = new vis.Network(container, data, options);
 
 }
