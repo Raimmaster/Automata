@@ -7,17 +7,20 @@ class DFA{
     this.transitionFunction = transitionFunction;
     this.startState = startState;
     this.acceptanceStates = acceptanceStates;
-    this.currentState = startState;
+    this.currentState = 'undefined';
   }
 
   addState(state){
     let newState = new State(state);
+    if(this.currentState === 'undefined'){
+      this.currentState = newState;
+    }
     this.states.push(newState);
   }
 
   findStateByName(stateName){
-    for(const [index, state] of this.states){
-      if(state.stateName === stateName){
+    for(let index = 0; index < this.states.length; ++index){
+      if(this.states[index].stateName === stateName){
         return index;
       }
     }
@@ -27,7 +30,8 @@ class DFA{
 
   addTransition(fromState, toState, symbol){
     let indexOfOriginState = this.findStateByName(fromState);
-    this.states[indexOfOriginState].addTransition(symbol, toState);
+    let destinyStateIndex = this.findStateByName(toState);
+    this.states[indexOfOriginState].addTransition(symbol, this.states[destinyStateIndex]);
   }
 
   modifyState(state, newStateName){
@@ -72,9 +76,8 @@ class DFA{
 
   evaluate(evaluationString){
     let charArray = Array.from(evaluationString);
-
     if(this.currentState !== 'undefined'){
-      this.currentState = this.startState;
+      this.currentState = this.states[0];
       for(const currentChar of charArray){
         if(this.alphabet.includes(currentChar)){
           this.currentState = this.currentState.getNextState(currentChar);
@@ -84,8 +87,7 @@ class DFA{
         }
       }
     }
-
-    return this.acceptanceStates.includes(this.currentState);
+    return this.acceptanceStates.includes(this.currentState.stateName);
   }
 }
 
