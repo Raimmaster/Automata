@@ -52,9 +52,9 @@ class DFA{
   }
 
   deleteTransitionsToState(stateName){
-    for(let stateIndex = 0; stateIndex < this.states.length; ++stateIndex;){
-      for(let transitionIndex = 0; 
-          transitionIndex < this.states[stateIndex].transitions.length; 
+    for(let stateIndex = 0; stateIndex < this.states.length; ++stateIndex){
+      for(let transitionIndex = 0;
+          transitionIndex < this.states[stateIndex].transitions.length;
           ++transitionIndex){
         if(this.states[stateIndex].transitions[transitionIndex].destinyState === stateName){
           this.states[stateIndex].transitions.splice(transitionIndex, 1);
@@ -79,17 +79,17 @@ class DFA{
 
   evaluate(evaluationString){
     let charArray = Array.from(evaluationString);
-    if(this.currentState !== 'undefined'){
-      this.currentState = this.states[0];
-      for(const currentChar of charArray){
-        if(this.alphabet.includes(currentChar)){
-          this.currentState = this.currentState.getNextState(currentChar);
-          if(this.currentState === 'undefined'){
-            return false;
-          }
+    this.currentState = this.originState;
+    
+    for(const currentChar of charArray){
+      if(this.alphabet.includes(currentChar)){
+        this.currentState = this.currentState.getNextState(currentChar);
+        if(this.currentState === 'undefined'){
+          return false;
         }
       }
     }
+    
     return this.acceptanceStates.includes(this.currentState.stateName);
   }
 }
