@@ -80,17 +80,27 @@ class DFA{
   }
 
   deleteTransition(transitionID){
-    let indexOfTransitionToDelete = this.originState.findTransitionByName(transitionID);
-    if(indexOfTransitionToDelete > -1){
-      this.originState.transitions.splice(indexOfTransitionToDelete, 1);
+    for(let i = 0; i < this.states.length; i++) {
+      let state = this.states[i];
+      for (let k = 0; k < state.transitions; k++) {
+        let t = state.transitions[k];
+        if (t.id === transitionId)
+          state.transitions.splice(k, 1);
+        }
     }
   }
 
   modifyTransition(transitionID, symbol){
-    let indexOfTransitionToModify = this.originState.findTransitionByName(transitionID);
-    if(indexOfTransitionToModify > -1){
-      this.originState.transitions[indexOfTransitionToModify].symbol = symbol;
-    }
+    for(let i = 0; i < this.states.length; i++) {
+      let state = this.states[i];
+      for (let k = 0; k < state.transitions; k++) {
+        let t = state.transitions[k];
+        if (t.id === transitionId){
+          t.symbol = symbol;
+          t.transitionID = state.stateName + symbol;
+        }
+      }
+    } 
   }
 
   evaluate(evaluationString){
