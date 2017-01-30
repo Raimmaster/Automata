@@ -52,9 +52,12 @@ function addSymbol() {
 
 function updateNode() {
     try {
+      let oldStateName = document.getElementById('node-id').value;
+      let newStateName = document.getElementById('new-state-name').value;
+      automata.modifyState(newStateName);
         states.update({
-            id: document.getElementById('node-id').value,
-            label: document.getElementById('node-id').value
+            id: oldStateName,
+            label: newStateName
         });
     }
     catch (err) {
@@ -114,10 +117,10 @@ function updateEdge() {
 
 function removeEdge() {
     try {
-        transitions.remove({id: document.getElementById('edge-id').value});
+      transitions.remove({id: document.getElementById('edge-id').value});
     }
     catch (err) {
-        alert(err);
+      alert(err);
     }
 }
 

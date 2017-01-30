@@ -1,10 +1,13 @@
 function draw() {
     states = new vis.DataSet();
+    states.on('*', function() {
+      document.getElementById('states').innerHTML = JSON.stringify(states.get(), null, 4);
+    });
     transitions = new vis.DataSet();
     alphabet = new vis.DataSet();
     alphabet.on('*', function() {
-      document.getElementById('alphabet').innerHTML = JSON.stringify(alphabet.get(), null, 4);
-    })
+      document.getElementById('transitions').innerHTML = JSON.stringify(transitions.get(), null, 4);
+    });
 
     // create a network
     var container = document.getElementById('network');

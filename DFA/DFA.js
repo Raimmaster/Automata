@@ -47,7 +47,7 @@ class DFA{
   modifyState(state, newStateName){
     let indexOfState = this.findStateByName(state);
     if(indexOfState > -1){
-      this.states[indexOfState] = newStateName;
+      this.states[indexOfState].stateName = newStateName;
     }
   }
 
@@ -100,7 +100,7 @@ class DFA{
           t.transitionID = state.stateName + symbol;
         }
       }
-    } 
+    }
   }
 
   evaluate(evaluationString){
