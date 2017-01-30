@@ -4,21 +4,23 @@ let dfa = new DFA();
 let automatonAlphabet = ['0', '1'];
 let acceptanceState = ['q2'];
 let automata = new DFA([], automatonAlphabet, [], 'q0', acceptanceState);
-automata.addState('q0');
-automata.addState('q1');
-automata.addState('q2');
-automata.addTransition('q0', 'q1', '0');
-automata.addTransition('q0', 'q0', '1');
-automata.addTransition('q1', 'q2', '1');
-automata.addTransition('q2', 'q2', '0');
+// automata.addState('q0');
+// automata.addState('q1');
+// automata.addState('q2');
+// automata.addTransition('q0', 'q1', '0');
+// automata.addTransition('q0', 'q0', '1');
+// automata.addTransition('q1', 'q2', '1');
+// automata.addTransition('q2', 'q2', '0');
 
 /**Functions for UI**/
 function addNode() {
     try {
+      let stateName = document.getElementById('node-id').value;
         states.add({
-            id: document.getElementById('node-id').value,
-            label: document.getElementById('node-id').value
+            id: stateName,
+            label: stateName
         });
+        automata.addState(stateName);
     }
     catch (err) {
         alert(err);
@@ -60,11 +62,18 @@ function removeNode() {
 
 function addEdge() {
     try {
+      let originState = document.getElementById('edge-from').value;
+      let destinyState = document.getElementById('edge-to').value;
+      let symbolToEval = document.getElementById('edge-id').value;
+      let transitionID = originState + symbolToEval;
         transitions.add({
-            id: document.getElementById('edge-id').value,
-            from: document.getElementById('edge-from').value,
-            to: document.getElementById('edge-to').value
+            id: transitionID,
+            from: originState,
+            to: destinyState,
+            label: symbolToEval,
+            font: {align: 'top'}
         });
+        automata.addTransition(originState, destinyState, symbolToEval);
     }
     catch (err) {
         alert(err);
@@ -91,62 +100,4 @@ function removeEdge() {
     catch (err) {
         alert(err);
     }
-}
-
-function draw() {
-    // create an array with states
-    states = new vis.DataSet();
-    states.on('*', function () {
-        document.getElementById('nodes').innerHTML = JSON.stringify(states.get(), null, 4);
-    });
-
-    //Constants for testing
-    states.add([
-        {id: 'q0', label: 'q0'},
-        {id: 'q1', label: 'q1'},
-        {id: 'q2', label: 'q2'}
-    ]);
-
-    // create an array with transitions
-    transitions = new vis.DataSet();
-    transitions.on('*', function () {
-        document.getElementById('edges').innerHTML = JSON.stringify(transitions.get(), null, 4);
-    });
-
-    //Constants for testing
-    transitions.add([
-        {id: 'q00', from: 'q0', to: 'q1', label: 'q00', font: {align: 'top'}},
-        {id: 'q01', from: 'q0', to: 'q0', label: 'q01', font: {align: 'top'}},
-        {id: 'q11', from: 'q1', to: 'q2', label: 'q11', font: {align: 'top'}},
-        {id: 'q20', from: 'q2', to: 'q2', label: 'q20', font: {align: 'top'}}
-    ]);
-
-    alphabet = new vis.DataSet();
-    alphabet.on('*', function() {
-      document.getElementById('alphabet').innerHTML = JSON.stringify(alphabet.get(), null, 4);
-    })
-
-    //Constants for testing
-    alphabet.add([
-      {id: '0', symbol: '0'},
-      {id: '1', symbol: '1'}
-    ]);
-
-    // create a network
-    var container = document.getElementById('network');
-    var data = {
-        nodes: states,
-        edges: transitions,
-        alphabet: alphabet
-    };
-
-    var options = {
-      edges: {
-        arrows: {
-          to: {enabled : true}
-        }
-      }
-    };
-    network = new vis.Network(container, data, options);
-
 }

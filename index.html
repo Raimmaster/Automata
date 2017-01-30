@@ -4,8 +4,9 @@
 		<script type="text/javascript" src="./DFA/Transition.js"></script>
 		<script type="text/javascript" src="./DFA/State.js"></script>
 		<script type="text/javascript" src="./DFA/DFA.js"></script>
-    <link href="./DFA/vis-network.min.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="./DFA/automata-vis.js"></script>
+		<script type="text/javascript" src="./DFA/render-automata.js"></script>
+    <link href="./DFA/vis-network.min.css" rel="stylesheet" type="text/css"/>
 
 		<title>Automata</title>
 
@@ -74,7 +75,7 @@
 							<tr>
 									<td></td>
 									<td><label for="symbol-id">Symbol</label></td>
-									<td><input id="symbol-id" type="text" value="6"></td>
+									<td><input id="symbol-id" type="text" value="0 "></td>
 							</tr>
 							<tr>
 									<td></td>
@@ -93,7 +94,7 @@
                 <tr>
                     <td></td>
                     <td><label for="node-id">State</label></td>
-                    <td><input id="node-id" type="text" value="6"></td>
+                    <td><input id="node-id" type="text" value="q0"></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -112,17 +113,17 @@
                 <tr>
                     <td></td>
                     <td><label for="edge-id">Symbol</label></td>
-                    <td><input id="edge-id" type="text" value="5"></td>
+                    <td><input id="edge-id" type="text" value="0"></td>
                 </tr>
                 <tr>
                     <td></td>
                     <td><label for="edge-from">From State</label></td>
-                    <td><input id="edge-from" type="text" value="3"></td>
+                    <td><input id="edge-from" type="text" value="q0"></td>
                 </tr>
                 <tr>
                     <td></td>
                     <td><label for="edge-to">To State</label></td>
-                    <td><input id="edge-to" type="text" value="4"></td>
+                    <td><input id="edge-to" type="text" value="q1"></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -164,28 +165,19 @@
         <col width="50%">
     </colgroup>
     <tr>
-        <td>
-            <h2>States</h2>
-            <pre id="nodes"></pre>
-        </td>
-
-				<td>
-            <h2>Transitions</h2>
-            <pre id="edges"></pre>
-        </td>
-
 				<td>
             <h2>Alphabet</h2>
             <pre id="alphabet"></pre>
         </td>
+				<td>
+						<h2>Automata</h2>
+
+						<div id="network"></div>
+				</td>
     </tr>
 
 		<tr>
-			<td>
-					<h2>Automata</h2>
 
-					<div id="network"></div>
-			</td>
 		</tr>
 </table>
 
