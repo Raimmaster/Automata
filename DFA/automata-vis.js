@@ -2,8 +2,8 @@ let alphabet, states, transitions, network;
 /**Automaton logic**/
 let dfa = new DFA();
 let automatonAlphabet = ['0', '1'];
-let acceptanceState = ['q2'];
-let automata = new DFA([], automatonAlphabet, [], 'q0', acceptanceState);
+// let acceptanceState = ['q2'];
+let automata = new DFA([], automatonAlphabet, [], 'undefined', []);
 // automata.addState('q0');
 // automata.addState('q1');
 // automata.addState('q2');
@@ -16,11 +16,29 @@ let automata = new DFA([], automatonAlphabet, [], 'q0', acceptanceState);
 function addNode() {
     try {
       let stateName = document.getElementById('node-id').value;
+      let isInitialState = document.getElementById('initial-state').checked;
+      let isAcceptanceState = document.getElementById('acceptance-state').checked;
+      let stateColor = '#2E9AFE';
+      let borderColor = '#2E9AFE';
+
+      if(isInitialState){
+        stateColor = '#58FA82';
+        borderColor = '#FE2E2E';
+      }
+
+      if(isAcceptanceState){
+        stateColor = '#FFBF00';
+      }
+
         states.add({
             id: stateName,
-            label: stateName
+            label: stateName,
+            color: {
+              border: borderColor,
+              background: stateColor
+            }
         });
-        automata.addState(stateName);
+        automata.addState(stateName, isAcceptanceState, isInitialState);
     }
     catch (err) {
         alert(err);

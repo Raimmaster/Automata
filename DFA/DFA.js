@@ -8,13 +8,20 @@ class DFA{
     this.currentState = 'undefined';
   }
 
-  addState(state){
+  addState(state, isAcceptance, isInitial){
     let newState = new State(state);
     if(this.currentState === 'undefined'){
       this.currentState = newState;
+    }
+
+    if(isInitial){
       this.originState = newState;
     }
+
     this.states.push(newState);
+    if(isAcceptance){
+      this.acceptanceStates.push(newState.stateName);
+    }
   }
 
   findStateByName(stateName){
