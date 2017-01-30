@@ -1,10 +1,24 @@
-var nodes, edges, network;
+let alphabet, states, transitions, network;
+/**Automaton logic**/
+let dfa = new DFA();
+let automatonAlphabet = ['0', '1'];
+let acceptanceState = ['q2'];
+let automata = new DFA([], automatonAlphabet, [], 'q0', acceptanceState);
+automata.addState('q0');
+automata.addState('q1');
+automata.addState('q2');
+console.log(automata.states);
+automata.addTransition('q0', 'q1', '0');
+automata.addTransition('q0', 'q0', '1');
+automata.addTransition('q1', 'q2', '1');
+automata.addTransition('q2', 'q2', '0');
 
+/**Functions for UI**/
 function addNode() {
     try {
-        nodes.add({
+        states.add({
             id: document.getElementById('node-id').value,
-            label: document.getElementById('node-label').value
+            label: document.getElementById('node-id').value
         });
     }
     catch (err) {
@@ -12,11 +26,23 @@ function addNode() {
     }
 }
 
+function addSymbol() {
+  try {
+    alphabet.add({
+      id: document.getElementById('symbol-id'),
+      symbol: document.getElementById('symbol-id')
+    });
+  }
+  catch (err){
+    alert(err);
+  }
+}
+
 function updateNode() {
     try {
-        nodes.update({
+        states.update({
             id: document.getElementById('node-id').value,
-            label: document.getElementById('node-label').value
+            label: document.getElementById('node-id').value
         });
     }
     catch (err) {
@@ -26,7 +52,7 @@ function updateNode() {
 
 function removeNode() {
     try {
-        nodes.remove({id: document.getElementById('node-id').value});
+        states.remove({id: document.getElementById('node-id').value});
     }
     catch (err) {
         alert(err);
@@ -35,7 +61,7 @@ function removeNode() {
 
 function addEdge() {
     try {
-        edges.add({
+        transitions.add({
             id: document.getElementById('edge-id').value,
             from: document.getElementById('edge-from').value,
             to: document.getElementById('edge-to').value
@@ -48,7 +74,7 @@ function addEdge() {
 
 function updateEdge() {
     try {
-        edges.update({
+        transitions.update({
             id: document.getElementById('edge-id').value,
             from: document.getElementById('edge-from').value,
             to: document.getElementById('edge-to').value
@@ -61,7 +87,7 @@ function updateEdge() {
 
 function removeEdge() {
     try {
-        edges.remove({id: document.getElementById('edge-id').value});
+        transitions.remove({id: document.getElementById('edge-id').value});
     }
     catch (err) {
         alert(err);
@@ -69,13 +95,14 @@ function removeEdge() {
 }
 
 function draw() {
-    // create an array with nodes
-    nodes = new vis.DataSet();
-    nodes.on('*', function () {
-        document.getElementById('nodes').innerHTML = JSON.stringify(nodes.get(), null, 4);
+    // create an array with states
+    states = new vis.DataSet();
+    states.on('*', function () {
+        document.getElementById('nodes').innerHTML = JSON.stringify(states.get(), null, 4);
     });
 
-    nodes.add([
+    //Constants for testing
+    states.add([
         {id: '1', label: 'Node 1'},
         {id: '2', label: 'Node 2'},
         {id: '3', label: 'Node 3'},
@@ -83,24 +110,37 @@ function draw() {
         {id: '5', label: 'Node 5'}
     ]);
 
-    // create an array with edges
-    edges = new vis.DataSet();
-    edges.on('*', function () {
-        document.getElementById('edges').innerHTML = JSON.stringify(edges.get(), null, 4);
+    // create an array with transitions
+    transitions = new vis.DataSet();
+    transitions.on('*', function () {
+        document.getElementById('edges').innerHTML = JSON.stringify(transitions.get(), null, 4);
     });
 
-    edges.add([
+    //Constants for testing
+    transitions.add([
         {id: '1', from: '1', to: '2'},
         {id: '2', from: '1', to: '3'},
         {id: '3', from: '2', to: '4'},
         {id: '4', from: '2', to: '5'}
     ]);
 
+    alphabet = new vis.DataSet();
+    alphabet.on('*', function() {
+      document.getElementById('alphabet').innerHTML = JSON.stringify(alphabet.get(), null, 4);
+    })
+
+    //Constants for testing
+    alphabet.add([
+      {id: '0', symbol: '0'},
+      {id: '1', symbol: '1'}
+    ]);
+
     // create a network
     var container = document.getElementById('network');
     var data = {
-        nodes: nodes,
-        edges: edges
+        nodes: states,
+        edges: transitions,
+        alphabet: alphabet
     };
 
     var options = {};

@@ -1,12 +1,12 @@
 // let DFA = require("./DFA");
 
-let alphabet = ['0', '1'];
-console.log(alphabet);
+let automatonAlphabet = ['0', '1'];
+
 // let states = ['q0', 'q1', 'q2'];
 // console.log(states);
 let acceptanceState = ['q2'];
 
-let automata = new DFA([], alphabet, [], 'q0', acceptanceState);
+let automata = new DFA([], automatonAlphabet, [], 'q0', acceptanceState);
 automata.addState('q0');
 automata.addState('q1');
 automata.addState('q2');
