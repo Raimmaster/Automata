@@ -1,7 +1,6 @@
 let alphabet, states, transitions, network;
 /**Automaton logic**/
 let dfa = new DFA();
-// let automatonAlphabet = ['0', '1'];
 let automata = new DFA([], [], [], 'undefined', []);
 
 function addNode() {
@@ -66,8 +65,14 @@ function updateNode() {
 function removeNode() {
     try {
       let stateToRemove = document.getElementById('node-id').value;
+      let connectedEdges = network.getConnectedEdges(stateToRemove);
       states.remove({id: stateToRemove});
       automata.deleteState(stateToRemove);
+
+      for(let edgeIndex = 0; edgeIndex < connectedEdges.length; ++edgeIndex){
+        transitions.remove(connectedEdges[edgeIndex]);
+        console.log(connectedEdges);
+      }
     }
     catch (err) {
         alert(err);

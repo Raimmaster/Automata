@@ -67,15 +67,15 @@ class DFA{
   deleteState(state){
     let indexOfStateToDelete = this.findStateByName(state);
     if(indexOfStateToDelete > -1){
-      console.log("Deleting state");      
+      console.log("Deleting state");
       this.deleteTransitionsToState(state.stateName);
       let indexOfAcceptanceState = this.acceptanceStates.indexOf(this.states[indexOfStateToDelete].stateName);
       if(indexOfAcceptanceState > -1){
         console.log("Deleting acceptance");
         this.acceptanceStates.splice(indexOfAcceptanceState, 1);
       }
-
       this.states[indexOfStateToDelete].transitions = [];
+      this.states.splice(indexOfStateToDelete, 1);
     }
   }
 
