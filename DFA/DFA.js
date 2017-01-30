@@ -14,6 +14,7 @@ class DFA{
     let newState = new State(state);
     if(this.currentState === 'undefined'){
       this.currentState = newState;
+      this.originState = newState;
     }
     this.states.push(newState);
   }
@@ -35,14 +36,14 @@ class DFA{
   }
 
   modifyState(state, newStateName){
-    let indexOfState = this.states.indexOf(state);
+    let indexOfState = this.findStateByName(state);
     if(indexOfState > -1){
       this.states[indexOfState] = newStateName;
     }
   }
 
   deleteState(state){
-    let indexOfStateToDelete = this.states.indexOf(state);
+    let indexOfStateToDelete = this.findStateByName(state);
     if(indexOfStateToDelete > -1){
 
       this.states[indexOfStateToDelete].transitions = [];
@@ -51,26 +52,28 @@ class DFA{
   }
 
   deleteTransitionsToState(stateName){
-    for(const[stateIndex, state] of this.states.entries()){
-      for(const[transitionIndex, transition] of state.transitions.entries()){
-        if(transition.destinyState === stateName){
-          state.transitions.splice(transitionIndex, 1);
+    for(let stateIndex = 0; stateIndex < this.states.length; ++stateIndex;){
+      for(let transitionIndex = 0; 
+          transitionIndex < this.states[stateIndex].transitions.length; 
+          ++transitionIndex){
+        if(this.states[stateIndex].transitions[transitionIndex].destinyState === stateName){
+          this.states[stateIndex].transitions.splice(transitionIndex, 1);
         }
       }
     }
   }
 
   deleteTransition(transitionID){
-    let indexOfTransitionToDelete = this.originState.transitions.indexOf(transitionID);
+    let indexOfTransitionToDelete = this.originState.findTransitionByName(transitionID);
     if(indexOfTransitionToDelete > -1){
       this.originState.transitions.splice(indexOfTransitionToDelete, 1);
     }
   }
 
   modifyTransition(transitionID, symbol){
-    let indexOfTransitionToModify = this.originState.transitions.indexOf(transitionID);
+    let indexOfTransitionToModify = this.originState.findTransitionByName(transitionID);
     if(indexOfTransitionToModify > -1){
-      this.originState.transitions[indexOfTransitionToModify] = symbol;
+      this.originState.transitions[indexOfTransitionToModify].symbol = symbol;
     }
   }
 
