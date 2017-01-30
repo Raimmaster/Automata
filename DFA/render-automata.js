@@ -1,4 +1,6 @@
 function draw() {
+    states = new vis.DataSet();
+    transitions = new vis.DataSet();
     alphabet = new vis.DataSet();
     alphabet.on('*', function() {
       document.getElementById('alphabet').innerHTML = JSON.stringify(alphabet.get(), null, 4);
