@@ -54,8 +54,8 @@ class DFA{
   deleteTransitionsToState(stateName){
     for(let stateIndex = 0; stateIndex < this.states.length; ++stateIndex){
       for(let transitionIndex = 0;
-          transitionIndex < this.states[stateIndex].transitions.length;
-          ++transitionIndex){
+        transitionIndex < this.states[stateIndex].transitions.length;
+        ++transitionIndex){
         if(this.states[stateIndex].transitions[transitionIndex].destinyState.stateName === stateName){
           this.states[stateIndex].transitions.splice(transitionIndex, 1);
           console.log("Deleted transitions");
@@ -82,20 +82,22 @@ class DFA{
   deleteTransition(transitionID){
     for(let i = 0; i < this.states.length; i++) {
       let state = this.states[i];
-      for (let k = 0; k < state.transitions; k++) {
+      for (let k = 0; k < state.transitions.length; k++) {
         let t = state.transitions[k];
-        if (t.id === transitionId)
-          state.transitions.splice(k, 1);
+        if (t.transitionID === transitionID){
+          alert("Eliminando");
+          this.states[i].transitions.splice(k, 1);
         }
+      }
     }
   }
 
   modifyTransition(transitionID, symbol){
     for(let i = 0; i < this.states.length; i++) {
       let state = this.states[i];
-      for (let k = 0; k < state.transitions; k++) {
+      for (let k = 0; k < state.transitions.length; k++) {
         let t = state.transitions[k];
-        if (t.id === transitionId){
+        if (t.transitionID === transitionID){
           t.symbol = symbol;
           t.transitionID = state.stateName + symbol;
         }

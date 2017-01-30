@@ -69,8 +69,10 @@ function removeNode() {
     try {
       let stateToRemove = document.getElementById('node-id').value;
       let connectedEdges = network.getConnectedEdges(stateToRemove);
-      states.remove({id: stateToRemove});
-      automata.deleteState(stateToRemove);
+
+      let visNode = states.get().filter(x => x.label == stateToRemove)[0];
+      states.remove({id: visNode.id});
+      automata.deleteState(visNode.id);
 
       for(let edgeIndex = 0; edgeIndex < connectedEdges.length; ++edgeIndex){
         transitions.remove(connectedEdges[edgeIndex]);
@@ -104,11 +106,21 @@ function addEdge() {
 
 function updateEdge() {
     try {
-        transitions.update({
+        /*transitions.update({
             id: document.getElementById('edge-id').value,
             from: document.getElementById('edge-from').value,
             to: document.getElementById('edge-to').value
+        });*/
+        let newSymbol = document.getElementById('edge-id').value;
+        let transitionID = document.getElementById('edge-from').value;
+        
+        transitions.update({
+            id: document.getElementById('edge-id').value,
+            label: newSymbol
         });
+
+        
+        
     }
     catch (err) {
         alert(err);
@@ -117,7 +129,9 @@ function updateEdge() {
 
 function removeEdge() {
     try {
-      transitions.remove({id: document.getElementById('edge-id').value});
+      let edge = document.getElementById('edge-id').value;
+      transitions.remove({id: edge});
+      automata.deleteTransition(edge)
     }
     catch (err) {
       alert(err);
