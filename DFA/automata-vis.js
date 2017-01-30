@@ -1,18 +1,9 @@
 let alphabet, states, transitions, network;
 /**Automaton logic**/
 let dfa = new DFA();
-let automatonAlphabet = ['0', '1'];
-// let acceptanceState = ['q2'];
-let automata = new DFA([], automatonAlphabet, [], 'undefined', []);
-// automata.addState('q0');
-// automata.addState('q1');
-// automata.addState('q2');
-// automata.addTransition('q0', 'q1', '0');
-// automata.addTransition('q0', 'q0', '1');
-// automata.addTransition('q1', 'q2', '1');
-// automata.addTransition('q2', 'q2', '0');
+// let automatonAlphabet = ['0', '1'];
+let automata = new DFA([], [], [], 'undefined', []);
 
-/**Functions for UI**/
 function addNode() {
     try {
       let stateName = document.getElementById('node-id').value;
@@ -47,10 +38,13 @@ function addNode() {
 
 function addSymbol() {
   try {
+    let symbolToAdd = document.getElementById('symbol-id').value;
     alphabet.add({
-      id: document.getElementById('symbol-id'),
-      symbol: document.getElementById('symbol-id')
+      id: symbolToAdd,
+      symbol: symbolToAdd
     });
+
+    automata.addSymbolToAlphabet(symbolToAdd);
   }
   catch (err){
     alert(err);
