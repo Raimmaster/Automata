@@ -6,10 +6,6 @@ function draw() {
       document.getElementById('alphabet').innerHTML = JSON.stringify(alphabet.get(), null, 4);
     })
 
-    alphabet.add([
-
-    ]);
-
     // create a network
     var container = document.getElementById('network');
     var data = {

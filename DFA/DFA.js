@@ -51,19 +51,6 @@ class DFA{
     }
   }
 
-  deleteState(state){
-    let indexOfStateToDelete = this.findStateByName(state);
-    if(indexOfStateToDelete > -1){
-      let indexOfAcceptanceState = this.acceptanceStates.indexOf(this.states[indexOfStateToDelete].stateName);
-      if(indexOfAcceptanceState > -1){
-        this.acceptanceStates.splice(indexOfAcceptanceState, 1);
-      }
-
-      this.states[indexOfStateToDelete].transitions = [];
-      deleteTransitionsToState(state.stateName);
-    }
-  }
-
   deleteTransitionsToState(stateName){
     for(let stateIndex = 0; stateIndex < this.states.length; ++stateIndex){
       for(let transitionIndex = 0;
@@ -71,8 +58,24 @@ class DFA{
           ++transitionIndex){
         if(this.states[stateIndex].transitions[transitionIndex].destinyState === stateName){
           this.states[stateIndex].transitions.splice(transitionIndex, 1);
+          console.log("Deleted transitions");
         }
       }
+    }
+  }
+
+  deleteState(state){
+    let indexOfStateToDelete = this.findStateByName(state);
+    if(indexOfStateToDelete > -1){
+      console.log("Deleting state");      
+      this.deleteTransitionsToState(state.stateName);
+      let indexOfAcceptanceState = this.acceptanceStates.indexOf(this.states[indexOfStateToDelete].stateName);
+      if(indexOfAcceptanceState > -1){
+        console.log("Deleting acceptance");
+        this.acceptanceStates.splice(indexOfAcceptanceState, 1);
+      }
+
+      this.states[indexOfStateToDelete].transitions = [];
     }
   }
 

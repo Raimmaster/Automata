@@ -65,7 +65,9 @@ function updateNode() {
 
 function removeNode() {
     try {
-        states.remove({id: document.getElementById('node-id').value});
+      let stateToRemove = document.getElementById('node-id').value;
+      states.remove({id: stateToRemove});
+      automata.deleteState(stateToRemove);
     }
     catch (err) {
         alert(err);
