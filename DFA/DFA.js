@@ -56,7 +56,7 @@ class DFA{
       for(let transitionIndex = 0;
           transitionIndex < this.states[stateIndex].transitions.length;
           ++transitionIndex){
-        if(this.states[stateIndex].transitions[transitionIndex].destinyState === stateName){
+        if(this.states[stateIndex].transitions[transitionIndex].destinyState.stateName === stateName){
           this.states[stateIndex].transitions.splice(transitionIndex, 1);
           console.log("Deleted transitions");
         }
@@ -68,7 +68,7 @@ class DFA{
     let indexOfStateToDelete = this.findStateByName(state);
     if(indexOfStateToDelete > -1){
       console.log("Deleting state");
-      this.deleteTransitionsToState(state.stateName);
+      this.deleteTransitionsToState(state);
       let indexOfAcceptanceState = this.acceptanceStates.indexOf(this.states[indexOfStateToDelete].stateName);
       if(indexOfAcceptanceState > -1){
         console.log("Deleting acceptance");
