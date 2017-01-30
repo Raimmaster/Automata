@@ -78,8 +78,10 @@ class DFA{
   evaluate(evaluationString){
     let charArray = Array.from(evaluationString);
     this.currentState = this.originState;
+    console.log("To evaluate: " + evaluationString);
 
     for(const currentChar of charArray){
+      console.log("Current state: " + this.currentState);
       if(this.alphabet.includes(currentChar)){
         this.currentState = this.currentState.getNextState(currentChar);
         if(this.currentState === 'undefined'){

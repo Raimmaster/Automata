@@ -101,3 +101,13 @@ function removeEdge() {
         alert(err);
     }
 }
+
+function evaluateString(){
+  try {
+    let evaluationString = document.getElementById('eval-string').value;
+    console.log("Evaluating: " + evaluationString);
+    alert("String is accepted: " + automata.evaluate(evaluationString));
+  } catch (e) {
+    alert(e);
+  }
+}
