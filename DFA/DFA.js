@@ -29,6 +29,7 @@ class DFA{
   }
 
   findStateByName(stateName){
+    console.log("S name: " + stateName);
     for(let index = 0; index < this.states.length; ++index){
       if(this.states[index].stateName === stateName){
         return index;
@@ -46,8 +47,10 @@ class DFA{
 
   modifyState(state, newStateName){
     let indexOfState = this.findStateByName(state);
+    console.log(indexOfState);
     if(indexOfState > -1){
       this.states[indexOfState].stateName = newStateName;
+      console.log("State modified");
     }
   }
 
@@ -93,13 +96,17 @@ class DFA{
   }
 
   modifyTransition(transitionID, symbol){
-    for(let i = 0; i < this.states.length; i++) {
+      for(let i = 0; i < this.states.length; i++) {
+      console.log("for1: " + transitionID);
       let state = this.states[i];
       for (let k = 0; k < state.transitions.length; k++) {
+        console.log("for2: " + transitionID);
         let t = state.transitions[k];
         if (t.transitionID === transitionID){
+          console.log("if: " + transitionID);
           t.symbol = symbol;
           t.transitionID = state.stateName + symbol;
+          return;
         }
       }
     }

@@ -54,7 +54,7 @@ function updateNode() {
     try {
       let oldStateName = document.getElementById('node-id').value;
       let newStateName = document.getElementById('new-state-name').value;
-      automata.modifyState(newStateName);
+      automata.modifyState(oldStateName, newStateName);
         states.update({
             id: oldStateName,
             label: newStateName
@@ -112,15 +112,21 @@ function updateEdge() {
             to: document.getElementById('edge-to').value
         });*/
         let newSymbol = document.getElementById('edge-id').value;
-        let transitionID = document.getElementById('edge-from').value;
-        
-        transitions.update({
-            id: document.getElementById('edge-id').value,
-            label: newSymbol
-        });
+        console.log("Symb: " + newSymbol);
+        let visTransId = document.getElementById('edge-from').value;
+        console.log("Ori: " + visTransId);
+        let visTransition = transitions.get().filter(x => x.id == visTransId)[0];
+        console.log(visTransition);
+        let currentId = visTransition.from + visTransition.label;
 
-        
-        
+        transitions.update({
+            id: visTransition.id,
+            label: newSymbol,
+            from: visTransition.from,
+            to: visTransition.to,
+            font: visTransition.font
+        });
+        automata.modifyTransition(currentId, newSymbol);
     }
     catch (err) {
         alert(err);
