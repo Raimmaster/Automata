@@ -52,9 +52,12 @@ function addSymbol() {
 
 function updateNode() {
     try {
+      let oldStateName = document.getElementById('node-id').value;
+      let newStateName = document.getElementById('new-state-name').value;
+      automata.modifyState(oldStateName, newStateName);
         states.update({
-            id: document.getElementById('node-id').value,
-            label: document.getElementById('node-id').value
+            id: oldStateName,
+            label: newStateName
         });
     }
     catch (err) {
@@ -66,8 +69,10 @@ function removeNode() {
     try {
       let stateToRemove = document.getElementById('node-id').value;
       let connectedEdges = network.getConnectedEdges(stateToRemove);
-      states.remove({id: stateToRemove});
-      automata.deleteState(stateToRemove);
+
+      let visNode = states.get().filter(x => x.label == stateToRemove)[0];
+      states.remove({id: visNode.id});
+      automata.deleteState(visNode.id);
 
       for(let edgeIndex = 0; edgeIndex < connectedEdges.length; ++edgeIndex){
         transitions.remove(connectedEdges[edgeIndex]);
@@ -101,11 +106,27 @@ function addEdge() {
 
 function updateEdge() {
     try {
-        transitions.update({
+        /*transitions.update({
             id: document.getElementById('edge-id').value,
             from: document.getElementById('edge-from').value,
             to: document.getElementById('edge-to').value
+        });*/
+        let newSymbol = document.getElementById('edge-id').value;
+        console.log("Symb: " + newSymbol);
+        let visTransId = document.getElementById('edge-from').value;
+        console.log("Ori: " + visTransId);
+        let visTransition = transitions.get().filter(x => x.id == visTransId)[0];
+        console.log(visTransition);
+        let currentId = visTransition.from + visTransition.label;
+
+        transitions.update({
+            id: visTransition.id,
+            label: newSymbol,
+            from: visTransition.from,
+            to: visTransition.to,
+            font: visTransition.font
         });
+        automata.modifyTransition(currentId, newSymbol);
     }
     catch (err) {
         alert(err);
@@ -114,10 +135,12 @@ function updateEdge() {
 
 function removeEdge() {
     try {
-        transitions.remove({id: document.getElementById('edge-id').value});
+      let edge = document.getElementById('edge-id').value;
+      transitions.remove({id: edge});
+      automata.deleteTransition(edge)
     }
     catch (err) {
-        alert(err);
+      alert(err);
     }
 }
 

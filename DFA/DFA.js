@@ -29,6 +29,7 @@ class DFA{
   }
 
   findStateByName(stateName){
+    console.log("S name: " + stateName);
     for(let index = 0; index < this.states.length; ++index){
       if(this.states[index].stateName === stateName){
         return index;
@@ -46,16 +47,18 @@ class DFA{
 
   modifyState(state, newStateName){
     let indexOfState = this.findStateByName(state);
+    console.log(indexOfState);
     if(indexOfState > -1){
-      this.states[indexOfState] = newStateName;
+      this.states[indexOfState].stateName = newStateName;
+      console.log("State modified");
     }
   }
 
   deleteTransitionsToState(stateName){
     for(let stateIndex = 0; stateIndex < this.states.length; ++stateIndex){
       for(let transitionIndex = 0;
-          transitionIndex < this.states[stateIndex].transitions.length;
-          ++transitionIndex){
+        transitionIndex < this.states[stateIndex].transitions.length;
+        ++transitionIndex){
         if(this.states[stateIndex].transitions[transitionIndex].destinyState.stateName === stateName){
           this.states[stateIndex].transitions.splice(transitionIndex, 1);
           console.log("Deleted transitions");
@@ -80,16 +83,32 @@ class DFA{
   }
 
   deleteTransition(transitionID){
-    let indexOfTransitionToDelete = this.originState.findTransitionByName(transitionID);
-    if(indexOfTransitionToDelete > -1){
-      this.originState.transitions.splice(indexOfTransitionToDelete, 1);
+    for(let i = 0; i < this.states.length; i++) {
+      let state = this.states[i];
+      for (let k = 0; k < state.transitions.length; k++) {
+        let t = state.transitions[k];
+        if (t.transitionID === transitionID){
+          alert("Eliminando");
+          this.states[i].transitions.splice(k, 1);
+        }
+      }
     }
   }
 
   modifyTransition(transitionID, symbol){
-    let indexOfTransitionToModify = this.originState.findTransitionByName(transitionID);
-    if(indexOfTransitionToModify > -1){
-      this.originState.transitions[indexOfTransitionToModify].symbol = symbol;
+      for(let i = 0; i < this.states.length; i++) {
+      console.log("for1: " + transitionID);
+      let state = this.states[i];
+      for (let k = 0; k < state.transitions.length; k++) {
+        console.log("for2: " + transitionID);
+        let t = state.transitions[k];
+        if (t.transitionID === transitionID){
+          console.log("if: " + transitionID);
+          t.symbol = symbol;
+          t.transitionID = state.stateName + symbol;
+          return;
+        }
+      }
     }
   }
 
