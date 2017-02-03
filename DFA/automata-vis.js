@@ -87,12 +87,21 @@ function addEdge() {
     try {
       let originState = document.getElementById('edge-from').value;
       let destinyState = document.getElementById('edge-to').value;
+
+      //Finding originStateId
+      let indexOfOriginState = automata.findStateByName(originState);
+      let originStateId = automata.states[indexOfOriginState].stateId;
+
+      //Finding destinyStateId
+      let destinyStateIndex = automata.findStateByName(destinyState);
+      let destinyStateId = automata.states[destinyStateIndex].stateId;
+
       let symbolToEval = document.getElementById('edge-id').value;
-      let transitionID = originState + symbolToEval;
+      let transitionID = automata.currentTransitionId;
         transitions.add({
             id: automata.currentTransitionId,
-            from: originState,
-            to: destinyState,
+            from: originStateId,
+            to: destinyStateId,
             label: symbolToEval,
             font: {align: 'top'}
         });
