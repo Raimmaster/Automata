@@ -1,4 +1,4 @@
-class DFA{
+class DFA {
   constructor(states = [], alphabet = [], transitionFunction = [], startState, acceptanceStates = []){
     this.states = states;
     this.alphabet = alphabet;
@@ -6,6 +6,7 @@ class DFA{
     this.startState = startState;
     this.acceptanceStates = acceptanceStates;
     this.currentState = 'undefined';
+    this.currentTransitionId = 0;
   }
 
   addSymbolToAlphabet(symbol){
@@ -39,10 +40,12 @@ class DFA{
     return -1;
   }
 
+  //Has to be fixed/updated
   addTransition(fromState, toState, symbol){
     let indexOfOriginState = this.findStateByName(fromState);
     let destinyStateIndex = this.findStateByName(toState);
-    this.states[indexOfOriginState].addTransition(symbol, this.states[destinyStateIndex]);
+    let originState = this.states[indexOfOriginState];
+    originState.addTransition(this.currentTransitionId++, symbol, originState, this.states[destinyStateIndex]);
   }
 
   modifyState(state, newStateName){
@@ -97,15 +100,11 @@ class DFA{
 
   modifyTransition(transitionID, symbol){
       for(let i = 0; i < this.states.length; i++) {
-      console.log("for1: " + transitionID);
       let state = this.states[i];
       for (let k = 0; k < state.transitions.length; k++) {
-        console.log("for2: " + transitionID);
         let t = state.transitions[k];
         if (t.transitionID === transitionID){
-          console.log("if: " + transitionID);
           t.symbol = symbol;
-          t.transitionID = state.stateName + symbol;
           return;
         }
       }

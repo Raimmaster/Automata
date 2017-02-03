@@ -1,7 +1,8 @@
 class Transition{
-  constructor(transitionID, symbol, destinyState){
+  constructor(transitionID, symbol, originState, destinyState){
     this.transitionID = transitionID;
     this.symbol = symbol;
+    this.originState = originState;
     this.destinyState = destinyState;
   }
 }

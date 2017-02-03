@@ -1,6 +1,6 @@
 let alphabet, states, transitions, network;
 /**Automaton logic**/
-let dfa = new DFA();
+//let dfa = new DFA();
 let automata = new DFA([], [], [], 'undefined', []);
 
 function addNode() {
@@ -91,7 +91,7 @@ function addEdge() {
       let symbolToEval = document.getElementById('edge-id').value;
       let transitionID = originState + symbolToEval;
         transitions.add({
-            id: transitionID,
+            id: automata.currentTransitionId,
             from: originState,
             to: destinyState,
             label: symbolToEval,
@@ -106,11 +106,6 @@ function addEdge() {
 
 function updateEdge() {
     try {
-        /*transitions.update({
-            id: document.getElementById('edge-id').value,
-            from: document.getElementById('edge-from').value,
-            to: document.getElementById('edge-to').value
-        });*/
         let newSymbol = document.getElementById('edge-id').value;
         console.log("Symb: " + newSymbol);
         let visTransId = document.getElementById('edge-from').value;

@@ -4,9 +4,9 @@ class State{
     this.transitions = transitions;
   }
 
-  addTransition(symbol, destinyState){
-    let newTransitionId = this.stateName + symbol;
-    let newTransition = new Transition(newTransitionId, symbol, destinyState);
+  //needs to be tested
+  addTransition(newTransitionId, symbol,originState, destinyState){
+    let newTransition = new Transition(newTransitionId, symbol, this, destinyState);
     this.transitions.push(newTransition);
   }
 
@@ -20,13 +20,24 @@ class State{
     return -1;
   }
 
-  getNextState(symbol){
-    let transitionToFind = this.stateName + symbol;
-    let indexOfTransition = this.findTransitionByName(transitionToFind);
-    if(indexOfTransition > -1){
-      let nextState = this.transitions[indexOfTransition].destinyState;
+  findTransitionWithSymbol(symbol){
+    for(let index = 0; index < this.transitions.length; ++index){
+      let transi = this.transitions[index]
+      if(transi.symbol === symbol){
+        return transi
+      }
+    }
 
-      return nextState;
+    return 'undefined';
+  }
+
+    //Has to be fixed/updated
+  getNextState(symbol){
+    let transitionToFind = this.findTransitionWithSymbol(symbol);
+    //let indexOfTransition = this.findTransitionByName(transitionToFind);
+    if(transitionToFind != 'undefined'){
+
+      return transitionToFind.destinyState;
     }
 
     return 'undefined';
