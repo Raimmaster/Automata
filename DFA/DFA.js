@@ -111,9 +111,9 @@ class DFA {
   }
 
   evaluate(evaluationString){
-    let charArray = Array.from(evaluationString);
+    let charArray = evaluationString;
     this.currentState = this.startState;
-    console.log("To evaluate: " + evaluationString);
+    console.log("To evaluate: " + evaluationString + " " + charArray);
 
     for(const currentChar of charArray){
       console.log("Current state: " + this.currentState.stateName);
@@ -128,5 +128,3 @@ class DFA {
     return this.acceptanceStates.includes(this.currentState.stateName);
   }
 }
-
-// module.exports = DFA;

@@ -40,5 +40,3 @@ class State{
     return 'undefined';
   }
 }
-
-// module.exports = State;
