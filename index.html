@@ -1,5 +1,10 @@
 <html>
 <head>
+  <link rel="stylesheet" type="text/css" href="./styles/bootstrap.css">
+
+  <script type="text/javascript" src="./styles/jquery.min.js"></script>
+  <script type="text/javascript" src="./styles/bootstrap.js"></script>
+
   <script type="text/javascript" src="./DFA/vis.js"></script>
   <script type="text/javascript" src="./DFA/Transition.js"></script>
   <script type="text/javascript" src="./DFA/State.js"></script>
@@ -11,187 +16,171 @@
   <title>Automata</title>
 
   <style type="text/css">
-    html, body {
-        font: 11pt arial;
-    }
-
-    h1 {
-        font-size: 150%;
-        margin: 5px 0;
-    }
-
-    h2 {
-        font-size: 100%;
-        margin: 5px 0;
-    }
 
     table.view {
-        width: 100%;
+      width: 100%;
     }
 
     table td {
-        vertical-align: top;
+      vertical-align: middle;
+      font-size: 16px;
+      padding: 10px;
     }
 
     table table {
-        background-color: #f5f5f5;
-        border: 1px solid #e5e5e5;
+      background-color: #f5f5f5;
+      border: 1px solid #e5e5e5;
     }
 
     table table td {
-        vertical-align: middle;
-    }
-
-    input[type=text], pre {
-        border: 1px solid lightgray;
+      vertical-align: middle;
     }
 
     pre {
-        margin: 0;
-        padding: 5px;
-        font-size: 10pt;
+      margin: 0;
+      padding: 5px;
+      font-size: 10pt;
+      max-height: 300px;
     }
 
     #network {
-        width: 100%;
-        height: 400px;
-        border: 1px solid lightgray;
+      width: 100%;
+      height: 400px;
+      border: 1px solid lightgray;
     }
-</style>
+  </style>
 </head>
 
 <body onload="draw();">
+  <div class="container">
+    <div class="row">
 
-    <p>
+      <h1 class="text-center">
         Creation of DFA.
-    </p>
+      </h1>
 
-    <h1>Options</h1>
-    <table>
-        <tr>
-         <td>
-           <h2>Alphabet</h2>
-           <table>
-             <tr>
-               <td></td>
-               <td><label for="symbol-id">Symbol</label></td>
-               <td><input id="symbol-id" type="text" value="0"></td>
-           </tr>
-           <tr>
-               <td></td>
-               <td>Action</td>
-               <td>
-                 <button id="symbol-add" onclick="addSymbol();">Add</button>
-                 <button id="symbol-update" onclick="updateSymbol();">Update</button>
-                 <button id="symbol-remove" onclick="removeSymbol();">Remove</button>
-             </td>
-         </tr>
-     </table>
- </td>
- <td>
-    <h2>State</h2>
-    <table>
-        <tr>
-          <td><label for="node-id">State</label></td>
-          <td><input id="node-id" type="text" value="q0"></td>
-          <td><input type="checkbox" name="initial-state" value="initial-state" id="initial-state"><label for="initial-state">Initial state</label><td>
-              <td><input type="checkbox" name="acceptance-state" value="acceptance-state" id="acceptance-state"><label for="acceptance-state">Acceptance state</label><td>
+      <h2>DFA Options</h2>
+      <hr>
+      <div class="col-md-12" style="height: 300px; max-height: 300px">
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#alphabet-tab" aria-controls="home" role="tab" data-toggle="tab">Alphabet</a></li>
+          <li role="presentation"><a href="#state-tab" aria-controls="profile" role="tab" data-toggle="tab">State</a></li>
+          <li role="presentation"><a href="#transition-tab" aria-controls="messages" role="tab" data-toggle="tab">Transition</a></li>
+          <li role="presentation"><a href="#evaluation-tab" aria-controls="settings" role="tab" data-toggle="tab">Evaluation</a></li>
+        </ul>
+
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane fade in active" id="alphabet-tab">
+            <div class="col-md-6">
+              <table>
+               <tr>
+                 <td><label for="symbol-id">Symbol</label></td>
+                 <td><input id="symbol-id" type="text" value="0"></td>
+               </tr>
+               <tr>
+                 <td>Action</td>
+                 <td>
+                   <button class="btn btn-success" id="symbol-add" onclick="addSymbol();">Add</button>
+                   <button class="btn btn-primary" id="symbol-update" onclick="updateSymbol();">Update</button>
+                   <button class="btn btn-danger" id="symbol-remove" onclick="removeSymbol();">Remove</button>
+                 </td>
+               </tr>
+             </table>
+           </div>
+           <div class="col-md-6">
+             <pre id="alphabet"></pre>
+           </div>
+         </div>
+         <div role="tabpanel" class="tab-pane fade" id="state-tab">
+           <div class="col-md-6">
+            <table>
+              <tr>
+                <td><label for="node-id">State</label></td>
+                <td><input id="node-id" type="text" value="q0"></td>
+              </tr>
+              <tr>
+                <td>
+                  <input type="checkbox" name="initial-state" value="initial-state" id="initial-state">
+                  <label for="initial-state">Initial state</label>
+                </td>
+                <td>
+                  <input type="checkbox" name="acceptance-state" value="acceptance-state" id="acceptance-state">
+                  <label for="acceptance-state">Acceptance state</label>
+                </td>
               </tr>
               <tr>
                <td><label for="new-state-name">New name</label></td>
                <td><input id="new-state-name" type="text" value="q1"></td>
-           </tr>
-           <tr>
-            <td></td>
-            <td>Action</td>
-            <td>
-                <button id="node-add" onclick="addNode();">Add</button>
-                <button id="node-update" onclick="updateNode();">Update</button>
-                <button id="node-remove" onclick="removeNode();">Remove</button>
-            </td>
-        </tr>
-    </table>
-</td>
-<td>
-    <h2>Transition</h2>
-    <table>
-        <tr>
-            <td></td>
-            <td><label for="edge-id">Symbol</label></td>
-            <td><input id="edge-id" type="text" value="0"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><label for="edge-from">From State</label></td>
-            <td><input id="edge-from" type="text" value="q0"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><label for="edge-to">To State</label></td>
-            <td><input id="edge-to" type="text" value="q1"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>Action</td>
-            <td>
-                <button id="edge-add" onclick="addEdge();">Add</button>
-                <button id="edge-update" onclick="updateEdge();">Update</button>
-                <button id="edge-remove" onclick="removeEdge();">Remove</button>
-            </td>
-        </tr>
-    </table>
-</td>
-<td>
-    <h2>Evaluation string</h2>
-    <table>
-        <tr>
-            <td></td>
-            <td><label for="eval-string">String</label></td>
-            <td><input id="eval-string" type="text" value="001"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>Action</td>
-            <td>
-                <button id="evaluate" onclick="evaluateString();">Evaluate</button>
-            </td>
-        </tr>
-    </table>
-</td>
-</tr>
+             </tr>
+             <tr>
+              <td>Action</td>
+              <td>
+                <button class="btn btn-success" id="node-add" onclick="addNode();">Add</button>
+                <button class="btn btn-primary" id="node-update" onclick="updateNode();">Update</button>
+                <button class="btn btn-danger" id="node-remove" onclick="removeNode();">Remove</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <pre id="states"></pre>
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="transition-tab">
+        <div class="col-md-6">
+          <table>
+            <tr>
+              <td><label for="edge-id">Symbol</label></td>
+              <td><input id="edge-id" type="text" value="0"></td>
+            </tr>
+            <tr>
+              <td><label for="edge-from">From State</label></td>
+              <td><input id="edge-from" type="text" value="q0"></td>
+            </tr>
+            <tr>
+              <td><label for="edge-to">To State</label></td>
+              <td><input id="edge-to" type="text" value="q1"></td>
+            </tr>
+            <tr>
+              <td>Action</td>
+              <td>
+                <button class="btn btn-success" id="edge-add" onclick="addEdge();">Add</button>
+                <button class="btn btn-primary" id="edge-update" onclick="updateEdge();">Update</button>
+                <button class="btn btn-danger" id="edge-remove" onclick="removeEdge();">Remove</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <pre id="transitions"></pre>
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="evaluation-tab">
+        <div class="col-md-6">
+          <table>
+            <tr>
+              <td><label for="eval-string">String</label></td>
+              <td><input id="eval-string" type="text" value="001"></td>
+            </tr>
+            <tr>
+              <td>Action</td>
+              <td>
+                <button class="btn btn-primary" id="evaluate" onclick="evaluateString();">Evaluate</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" style="float: left; margin-top: 40px">
+    <h2>View Automata</h2>
+    <hr>
 
-</table>
-
-<h1>View</h1>
-<table class="view">
-    <colgroup>
-    <col width="25%">
-    <col width="25%">
-    <col width="50%">
-</colgroup>
-<tr>
-    <td>
-        <h2>Alphabet</h2>
-        <pre id="alphabet"></pre>
-    </td>
-    <td>
-      <h2>Automata</h2>
-
-      <div id="network"></div>
-  </td>
-</tr>
-
-<tr>
- <td>
-   <h2>States</h2>
-   <pre id="states"></pre>
-</td>
-<td>
-   <h2>Transitions</h2>
-   <pre id="transitions"></pre>
-</td>
-</tr>
-</table>
-
+    <div id="network"></div>
+  </div>
+</div>
 </body>
 </html>
