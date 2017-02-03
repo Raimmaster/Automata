@@ -7,6 +7,7 @@ class DFA {
     this.acceptanceStates = acceptanceStates;
     this.currentState = 'undefined';
     this.currentTransitionId = 0;
+    this.currentStateId = 0;
   }
 
   addSymbolToAlphabet(symbol){
@@ -14,7 +15,7 @@ class DFA {
   }
 
   addState(state, isAcceptance, isInitial){
-    let newState = new State(state);
+    let newState = new State(this.currentStateId++, state, []);
     if(this.currentState === 'undefined'){
       this.currentState = newState;
     }
@@ -30,7 +31,6 @@ class DFA {
   }
 
   findStateByName(stateName){
-    console.log("S name: " + stateName);
     for(let index = 0; index < this.states.length; ++index){
       if(this.states[index].stateName === stateName){
         return index;
@@ -50,7 +50,6 @@ class DFA {
 
   modifyState(state, newStateName){
     let indexOfState = this.findStateByName(state);
-    console.log(indexOfState);
     if(indexOfState > -1){
       this.states[indexOfState].stateName = newStateName;
       console.log("State modified");

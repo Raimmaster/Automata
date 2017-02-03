@@ -1,6 +1,5 @@
 let alphabet, states, transitions, network;
 /**Automaton logic**/
-//let dfa = new DFA();
 let automata = new DFA([], [], [], 'undefined', []);
 
 function addNode() {
@@ -20,15 +19,15 @@ function addNode() {
         stateColor = '#FFBF00';
       }
 
-        states.add({
-            id: stateName,
+      states.add({
+            id: automata.currentStateId,
             label: stateName,
             color: {
-              border: borderColor,
-              background: stateColor
-            }
-        });
-        automata.addState(stateName, isAcceptanceState, isInitialState);
+            border: borderColor,
+            background: stateColor
+          }
+      });
+      automata.addState(stateName, isAcceptanceState, isInitialState);
     }
     catch (err) {
         alert(err);

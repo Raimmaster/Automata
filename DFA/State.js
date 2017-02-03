@@ -1,10 +1,10 @@
 class State{
-  constructor(stateName, transitions = []){
+  constructor(stateId, stateName, transitions = []){
+    this.stateId = stateId;
     this.stateName = stateName;
     this.transitions = transitions;
   }
 
-  //needs to be tested
   addTransition(newTransitionId, symbol,originState, destinyState){
     let newTransition = new Transition(newTransitionId, symbol, this, destinyState);
     this.transitions.push(newTransition);
@@ -31,12 +31,9 @@ class State{
     return 'undefined';
   }
 
-    //Has to be fixed/updated
   getNextState(symbol){
     let transitionToFind = this.findTransitionWithSymbol(symbol);
-    //let indexOfTransition = this.findTransitionByName(transitionToFind);
     if(transitionToFind != 'undefined'){
-
       return transitionToFind.destinyState;
     }
 
