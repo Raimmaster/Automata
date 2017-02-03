@@ -40,7 +40,6 @@ class DFA {
     return -1;
   }
 
-  //Has to be fixed/updated
   addTransition(fromState, toState, symbol){
     let indexOfOriginState = this.findStateByName(fromState);
     let destinyStateIndex = this.findStateByName(toState);
@@ -89,9 +88,10 @@ class DFA {
       let state = this.states[i];
       for (let k = 0; k < state.transitions.length; k++) {
         let t = state.transitions[k];
-        if (t.transitionID === transitionID){
+        if (t.transitionID == transitionID){
           alert("Eliminando");
           this.states[i].transitions.splice(k, 1);
+          return;
         }
       }
     }
@@ -102,7 +102,7 @@ class DFA {
       let state = this.states[i];
       for (let k = 0; k < state.transitions.length; k++) {
         let t = state.transitions[k];
-        if (t.transitionID === transitionID){
+        if (t.transitionID == transitionID){
           t.symbol = symbol;
           return;
         }
@@ -116,7 +116,7 @@ class DFA {
     console.log("To evaluate: " + evaluationString);
 
     for(const currentChar of charArray){
-      console.log("Current state: " + this.currentState);
+      console.log("Current state: " + this.currentState.stateName);
       if(this.alphabet.includes(currentChar)){
         this.currentState = this.currentState.getNextState(currentChar);
         if(this.currentState === 'undefined'){

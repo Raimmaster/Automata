@@ -120,7 +120,6 @@ function updateEdge() {
         console.log("Ori: " + visTransId);
         let visTransition = transitions.get().filter(x => x.id == visTransId)[0];
         console.log(visTransition);
-        let currentId = visTransition.from + visTransition.label;
 
         transitions.update({
             id: visTransition.id,
@@ -129,7 +128,7 @@ function updateEdge() {
             to: visTransition.to,
             font: visTransition.font
         });
-        automata.modifyTransition(currentId, newSymbol);
+        automata.modifyTransition(visTransition.id, newSymbol);
     }
     catch (err) {
         alert(err);

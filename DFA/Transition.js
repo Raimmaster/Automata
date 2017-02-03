@@ -6,5 +6,3 @@ class Transition{
     this.destinyState = destinyState;
   }
 }
-
-// module.exports = Transition;
