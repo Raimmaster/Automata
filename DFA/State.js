@@ -20,6 +20,7 @@ class State{
     return -1;
   }
 
+  //DEPRECATED: DFA ONLY
   findTransitionWithSymbol(symbol){
     for(let index = 0; index < this.transitions.length; ++index){
       let transi = this.transitions[index]
@@ -31,6 +32,7 @@ class State{
     return 'undefined';
   }
 
+  //DEPRECATED: DFA ONLY
   getNextState(symbol){
     let transitionToFind = this.findTransitionWithSymbol(symbol);
     if(transitionToFind != 'undefined'){
