@@ -110,21 +110,47 @@ class DFA {
     }
   }
 
-  evaluate(evaluationString){
-    let charArray = evaluationString;
-    this.currentState = this.startState;
-    console.log("To evaluate: " + evaluationString + " " + charArray);
+  evalAutomata(evalString, initialState){
+    let states = [];
+    let arrayOfPasses = [];
+    const ORIGIN_OF_SPLICE = 0;
+    const AMOUNT_TO_SPLICE = 1;
 
-    for(const currentChar of charArray){
-      console.log("Current state: " + this.currentState.stateName);
-      if(this.alphabet.includes(currentChar)){
-        this.currentState = this.currentState.getNextState(currentChar);
-        if(this.currentState === 'undefined'){
-          return false;
+    for(const currChar of evalString){
+      if(!this.alphabet.includes(currChar)){
+        return false;
+      }
+
+      states = initialState.getNextStates(currChar);
+
+
+      if(states.length < 1){
+        return false;
+      }
+
+      if(evalString.length === 1){
+        for(let index = 0; index < states.length; ++index){
+          let aState = states[index];
+          return this.acceptanceStates.includes(aState.stateName);
         }
+      }
+
+      evalString.splice(ORIGIN_OF_SPLICE, AMOUNT_TO_SPLICE);
+      let newEvalString = evalString; 
+      console.log("Initial state " + initialState.stateName + " with " +  newEvalString);
+      for (let sIndex = 0; sIndex < states.length; ++sIndex) {
+        let currState = states[sIndex];
+
+        arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
       }
     }
 
-    return this.acceptanceStates.includes(this.currentState.stateName);
+
+    return arrayOfPasses.includes(true);
   }
+
+  evaluate(evaluationString){
+    return this.evalAutomata(evaluationString, this.startState);
+  }
+
 }
