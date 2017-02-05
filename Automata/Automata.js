@@ -123,7 +123,6 @@ class Automata {
 
       states = initialState.getNextStates(currChar);
 
-
       if(states.length < 1){
         return false;
       }
@@ -131,7 +130,8 @@ class Automata {
       if(evalString.length === 1){
         for(let index = 0; index < states.length; ++index){
           let aState = states[index];
-          return this.acceptanceStates.includes(aState.stateName);
+          if(this.acceptanceStates.includes(aState.stateName))
+            return true;
         }
       }
 
@@ -145,6 +145,8 @@ class Automata {
       }
     }
 
+    console.log("Arr of passes: ");
+    console.log(arrayOfPasses);
 
     return arrayOfPasses.includes(true);
   }
