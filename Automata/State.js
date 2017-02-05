@@ -10,38 +10,6 @@ class State{
     this.transitions.push(newTransition);
   }
 
-  findTransitionByName(transitionID){
-    for(let index = 0; index < this.transitions.length; ++index){
-      if(this.transitions[index].transitionID === transitionID){
-        return index;
-      }
-    }
-
-    return -1;
-  }
-
-  //DEPRECATED: DFA ONLY
-  findTransitionWithSymbol(symbol){
-    for(let index = 0; index < this.transitions.length; ++index){
-      let transi = this.transitions[index]
-      if(transi.symbol === symbol){
-        return transi
-      }
-    }
-
-    return 'undefined';
-  }
-
-  //DEPRECATED: DFA ONLY
-  getNextState(symbol){
-    let transitionToFind = this.findTransitionWithSymbol(symbol);
-    if(transitionToFind != 'undefined'){
-      return transitionToFind.destinyState;
-    }
-
-    return 'undefined';
-  }
-
   getNextStates(symbol){
     let transitions = this.getTransitionsWithSymbol(symbol, this.stateName);
     return this.getNextStatesArray(transitions);
