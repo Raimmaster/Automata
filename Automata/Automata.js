@@ -130,21 +130,23 @@ class Automata {
       if(evalString.length === 1){
         for(let index = 0; index < states.length; ++index){
           let aState = states[index];
+          console.log("Evaluating: ");
+          console.log(aState);
           if(this.acceptanceStates.includes(aState.stateName))
             return true;
         }
-      }
-
+      }else{
       evalString.splice(ORIGIN_OF_SPLICE, AMOUNT_TO_SPLICE);
-      let newEvalString = evalString;
-      console.log("Initial state " + initialState.stateName + " with " +  newEvalString);
-      for (let sIndex = 0; sIndex < states.length; ++sIndex) {
-        let currState = states[sIndex];
+        let newEvalString = evalString;
+        for (let sIndex = 0; sIndex < states.length; ++sIndex) {
+          let currState = states[sIndex];
 
-        arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
+          arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
+        }
+
+        console.log("Initial state " + initialState.stateName + " with " +  newEvalString);
       }
     }
-
     console.log("Arr of passes: ");
     console.log(arrayOfPasses);
 
