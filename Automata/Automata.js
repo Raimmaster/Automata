@@ -1,4 +1,4 @@
-class DFA {
+class Automata {
   constructor(states = [], alphabet = [], transitionFunction = [], startState, acceptanceStates = []){
     this.states = states;
     this.alphabet = alphabet;
@@ -136,7 +136,7 @@ class DFA {
       }
 
       evalString.splice(ORIGIN_OF_SPLICE, AMOUNT_TO_SPLICE);
-      let newEvalString = evalString; 
+      let newEvalString = evalString;
       console.log("Initial state " + initialState.stateName + " with " +  newEvalString);
       for (let sIndex = 0; sIndex < states.length; ++sIndex) {
         let currState = states[sIndex];

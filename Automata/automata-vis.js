@@ -1,6 +1,6 @@
 let alphabet, states, transitions, network;
 /**Automaton logic**/
-let automata = new DFA([], [], [], 'undefined', []);
+let automata = new Automata([], [], [], 'undefined', []);
 
 function addNode() {
     try {
