@@ -157,4 +157,91 @@ class Automata {
     return this.evalAutomata(evaluationString, this.startState);
   }
 
+  transformNfaToDfa(){
+    let dfaAutomaton = new Automata([], [], [], [], []);
+    //Copy alphabet
+    this.alphabet.forEach(function(item, index, array){
+      dfaAutomaton.addSymbol(item);
+    });
+
+    let currentState = this.startState;
+
+    let dfaStates = [];
+    let statesToCheck = [];
+    dfaStates.push(this.startState);
+
+    //Get states from start state
+    for(const currChar of this.alphabet){
+      let statesFromSymbol = currentState.nextStates(currChar);
+      statesFromSymbol.sort(compareStatesByName);
+
+      let dfaStateName = this.joinStateNames(statesFromSymbol);
+      dfaAutomaton.addState(dfaStateName);
+
+      let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
+      let newState = dfaAutomaton.states[indexOfNewState];
+      newState.setOfNfaStates = statesFromSymbol;
+      currentState = newState;
+
+      statesToCheck.push(currentState);
+      dfaStates.push(currentState);
+    }
+
+    //create dfa table from the past states
+    while(statesToCheck.length > 0){
+      let currentStatesTransSet = new Set();
+
+      for(const currChar of this.alphabet){
+        for(let nfaStateIndex = 0; nfaStateIndex < currentState.setOfNfaStates.length; ++nfaStateIndex){
+          let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].nextStates(currChar);
+          statesFromSymbol.sort(compareStatesByName);
+          statesFromSymbol.forEach(function(item, index, array){
+            currentStatesTransSet.add(item)
+          });
+        }
+        let statesFromSet = Array.from(currentStatesTransSet);
+        let dfaStateName = this.joinStateNames(statesFromSymbol);
+        let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
+        if(indexOfNewState < 0){
+          dfaAutomaton.addState(dfaStateName);
+          indexOfNewState = dfaAutomaton.states.length - 1;
+
+          let newState = dfaAutomaton.states[indexOfNewState];
+          newState.setOfNfaStates = statesFromSymbol;
+          statesToCheck.push(newState);
+          dfaStates.push(newState);
+        }
+      }
+
+      statesToCheck.shift();
+    }
+
+    console.log(dfaAutomaton);
+  }
+
+  joinStateNames(statesArray){
+    let stateConcat = "";
+    let stateLimit = statesArray.length - 1;
+    for(let index = 0; i < stateLimit; ++i){
+      stateConcat += statesArray[i].stateName + "-";
+    }
+    stateConcat += statesArray[stateLimit].stateName;
+
+    return stateConcat;
+  }
+
+  compareStatesByName (firstState, secondState) {
+    let firstStateName = firstState.stateName.toUpperCase();
+    let secondStateName = secondState.stateName.toUpperCase();
+
+    if(firstStateName < secondStateName){
+      return -1;
+    }
+
+    if(firstStateName > secondStateName){
+      return 1;
+    }
+
+    return 0;
+  });
 }

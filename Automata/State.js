@@ -3,6 +3,7 @@ class State{
     this.stateId = stateId;
     this.stateName = stateName;
     this.transitions = transitions;
+    this.setOfNfaStates = [];
   }
 
   addTransition(newTransitionId, symbol,originState, destinyState){

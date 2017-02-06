@@ -2,6 +2,29 @@ let alphabet, states, transitions, network;
 /**Automaton logic**/
 let automata = new Automata([], [], [], 'undefined', []);
 
+/**
+Automata seed
+**/
+automata.addSymbolToAlphabet(0);
+automata.addSymbolToAlphabet(1);
+
+automata.addState("q0", false, true);
+automata.addState("q1", false, false);
+automata.addState("q2", true, false);
+automata.addState("q3", false, false);
+
+automata.addTransition("q0", "q1", 0);
+automata.addTransition("q1", "q2", 0);
+
+automata.addTransition("q0", "q0", 0);
+automata.addTransition("q0", "q0", 1);
+
+automata.addTransition("q0", "q3", 1);
+automata.addTransition("q3", "q2", 1);
+
+automata.addTransition("q2", "q2", 0);
+automata.addTransition("q2", "q2", 1);
+
 function addNode() {
     try {
       let stateName = document.getElementById('node-id').value;
@@ -23,9 +46,9 @@ function addNode() {
             id: automata.currentStateId,
             label: stateName,
             color: {
-            border: borderColor,
-            background: stateColor
-          }
+              border: borderColor,
+              background: stateColor
+            }
       });
       automata.addState(stateName, isAcceptanceState, isInitialState);
     }
