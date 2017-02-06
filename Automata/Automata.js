@@ -161,7 +161,7 @@ class Automata {
     let dfaAutomaton = new Automata([], [], [], [], []);
     //Copy alphabet
     this.alphabet.forEach(function(item, index, array){
-      dfaAutomaton.addSymbol(item);
+      dfaAutomaton.addSymbolToAlphabet(item);
     });
 
     let currentState = this.startState;
@@ -172,8 +172,8 @@ class Automata {
 
     //Get states from start state
     for(const currChar of this.alphabet){
-      let statesFromSymbol = currentState.nextStates(currChar);
-      statesFromSymbol.sort(compareStatesByName);
+      let statesFromSymbol = currentState.getNextStates(currChar);
+      statesFromSymbol.sort(this.compareStatesByName);
 
       let dfaStateName = this.joinStateNames(statesFromSymbol);
       dfaAutomaton.addState(dfaStateName);
@@ -193,8 +193,8 @@ class Automata {
 
       for(const currChar of this.alphabet){
         for(let nfaStateIndex = 0; nfaStateIndex < currentState.setOfNfaStates.length; ++nfaStateIndex){
-          let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].nextStates(currChar);
-          statesFromSymbol.sort(compareStatesByName);
+          let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].getNextStates(currChar);
+          statesFromSymbol.sort(this.compareStatesByName);
           statesFromSymbol.forEach(function(item, index, array){
             currentStatesTransSet.add(item)
           });
@@ -227,8 +227,8 @@ class Automata {
   joinStateNames(statesArray){
     let stateConcat = "";
     let stateLimit = statesArray.length - 1;
-    for(let index = 0; i < stateLimit; ++i){
-      stateConcat += statesArray[i].stateName + "-";
+    for(let index = 0; index < stateLimit; ++index){
+      stateConcat += statesArray[index].stateName + "-";
     }
     stateConcat += statesArray[stateLimit].stateName;
 
