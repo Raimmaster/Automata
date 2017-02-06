@@ -248,5 +248,5 @@ class Automata {
     }
 
     return 0;
-  });
+  }
 }
