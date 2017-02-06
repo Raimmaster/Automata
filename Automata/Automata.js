@@ -187,6 +187,7 @@ class Automata {
       dfaStates.push(newState);
     }
 
+    currentState = statesToCheck[0];
     //create dfa table from the past states
     while(statesToCheck.length > 0){
       let currentStatesTransSet = new Set();
@@ -201,7 +202,7 @@ class Automata {
         }
         let statesFromSet = Array.from(currentStatesTransSet);
         console.log(statesFromSet);
-        let dfaStateName = this.joinStateNames(statesFromSymbol);
+        let dfaStateName = this.joinStateNames(statesFromSet);
         console.log("error here: " + dfaStateName);
         let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
         if(indexOfNewState < 0){
@@ -209,7 +210,7 @@ class Automata {
           indexOfNewState = dfaAutomaton.states.length - 1;
 
           let newState = dfaAutomaton.states[indexOfNewState];
-          newState.setOfNfaStates = statesFromSymbol;
+          newState.setOfNfaStates = statesFromSet;
           statesToCheck.push(newState);
           dfaStates.push(newState);
         }
