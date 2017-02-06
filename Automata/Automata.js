@@ -211,9 +211,14 @@ class Automata {
           statesToCheck.push(newState);
           dfaStates.push(newState);
         }
+
+        dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
       }
 
       statesToCheck.shift();
+      if(statesToCheck.length > 0){
+        currentState = statesToCheck[0];
+      }
     }
 
     console.log(dfaAutomaton);
