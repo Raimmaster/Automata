@@ -166,53 +166,70 @@ class Automata {
 
     let currentState = this.startState;
 
-    let dfaStates = [];
     let statesToCheck = [];
-    dfaStates.push(this.startState);
-
+    dfaAutomaton.addState(currentState.stateName, this.acceptanceStates.includes(this.startState.stateName), true);
     //Get states from start state
     for(const currChar of this.alphabet){
       let statesFromSymbol = currentState.getNextStates(currChar);
       statesFromSymbol.sort(this.compareStatesByName);
 
+      let containsAnAcceptanceState = false;
+      let pastAcceptanceStates = this.acceptanceStates;
+      statesFromSymbol.forEach(function(item){
+        containsAnAcceptanceState = pastAcceptanceStates.includes(item.stateName);
+      });
+
       console.log(statesFromSymbol);
       let dfaStateName = this.joinStateNames(statesFromSymbol);
-      dfaAutomaton.addState(dfaStateName);
-      console.log("Error not here: " + dfaStateName);
+      dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
+      console.log("State name from origin: " + dfaStateName);
       let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
       let newState = dfaAutomaton.states[indexOfNewState];
       newState.setOfNfaStates = statesFromSymbol;
 
       statesToCheck.push(newState);
-      dfaStates.push(newState);
     }
 
     currentState = statesToCheck[0];
     //create dfa table from the past states
     while(statesToCheck.length > 0){
-      let currentStatesTransSet = new Set();
 
       for(const currChar of this.alphabet){
+        let currentStatesTransSet = new Set();
+        console.log("Current state states:");
+        console.log(currentState.setOfNfaStates);
+
         for(let nfaStateIndex = 0; nfaStateIndex < currentState.setOfNfaStates.length; ++nfaStateIndex){
           let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].getNextStates(currChar);
+          console.log("States from symbol: ");
+          console.log(statesFromSymbol);
           statesFromSymbol.sort(this.compareStatesByName);
-          statesFromSymbol.forEach(function(item, index, array){
+          statesFromSymbol.forEach(function(item){
             currentStatesTransSet.add(item)
           });
         }
+
         let statesFromSet = Array.from(currentStatesTransSet);
+        console.log("States from set: ");
         console.log(statesFromSet);
         let dfaStateName = this.joinStateNames(statesFromSet);
-        console.log("error here: " + dfaStateName);
+        console.log("State name from current state: " + currentState.stateName + " and new: " + dfaStateName);
         let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
         if(indexOfNewState < 0){
-          dfaAutomaton.addState(dfaStateName);
+          let containsAnAcceptanceState = false;
+          let pastAcceptanceStates = this.acceptanceStates;
+          statesFromSet.forEach(function(item){
+            containsAnAcceptanceState = pastAcceptanceStates.includes(item.stateName);
+            if(containsAnAcceptanceState)
+              return;
+          });
+
+          dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, false);
           indexOfNewState = dfaAutomaton.states.length - 1;
 
           let newState = dfaAutomaton.states[indexOfNewState];
           newState.setOfNfaStates = statesFromSet;
           statesToCheck.push(newState);
-          dfaStates.push(newState);
         }
 
         dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
@@ -225,6 +242,8 @@ class Automata {
     }
 
     console.log(dfaAutomaton);
+    console.log(dfaAutomaton.startState);
+    console.log(dfaAutomaton.evaluate(Array.from('100')));
   }
 
   joinStateNames(statesArray){
@@ -239,8 +258,8 @@ class Automata {
   }
 
   compareStatesByName (firstState, secondState) {
-    let firstStateName = firstState.stateName.toUpperCase();
-    let secondStateName = secondState.stateName.toUpperCase();
+    let firstStateName = firstState.stateId
+    let secondStateName = secondState.stateId;
 
     if(firstStateName < secondStateName){
       return -1;
