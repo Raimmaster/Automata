@@ -212,6 +212,9 @@ class Automata {
     //Get states from start state
     for(const currChar of this.alphabet){
       let statesFromSymbol = currentState.getNextStates(currChar);
+      if(statesFromSymbol.length < 1) {
+        continue;
+      }
       statesFromSymbol.sort(this.compareStatesByName);
 
       let containsAnAcceptanceState = false;
@@ -242,6 +245,9 @@ class Automata {
 
         for(let nfaStateIndex = 0; nfaStateIndex < currentState.setOfNfaStates.length; ++nfaStateIndex){
           let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].getNextStates(currChar);
+          if(statesFromSymbol.length < 1) {
+            continue;
+          }
           statesFromSymbol.sort(this.compareStatesByName);
           statesFromSymbol.forEach(function(item){
             currentStatesTransSet.add(item)
@@ -249,6 +255,9 @@ class Automata {
         }
 
         let statesFromSet = Array.from(currentStatesTransSet);
+        if(statesFromSet.length < 1){
+          continue;
+        }
         let dfaStateName = this.joinStateNames(statesFromSet);
         let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
         if(indexOfNewState < 0){
