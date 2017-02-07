@@ -179,14 +179,14 @@ class Automata {
         containsAnAcceptanceState = pastAcceptanceStates.includes(item.stateName);
       });
 
-      console.log(statesFromSymbol);
       let dfaStateName = this.joinStateNames(statesFromSymbol);
       dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
-      console.log("State name from origin: " + dfaStateName);
       let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
       let newState = dfaAutomaton.states[indexOfNewState];
       newState.setOfNfaStates = statesFromSymbol;
 
+
+      dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
       statesToCheck.push(newState);
     }
 
@@ -196,13 +196,9 @@ class Automata {
 
       for(const currChar of this.alphabet){
         let currentStatesTransSet = new Set();
-        console.log("Current state states:");
-        console.log(currentState.setOfNfaStates);
 
         for(let nfaStateIndex = 0; nfaStateIndex < currentState.setOfNfaStates.length; ++nfaStateIndex){
           let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].getNextStates(currChar);
-          console.log("States from symbol: ");
-          console.log(statesFromSymbol);
           statesFromSymbol.sort(this.compareStatesByName);
           statesFromSymbol.forEach(function(item){
             currentStatesTransSet.add(item)
@@ -210,10 +206,7 @@ class Automata {
         }
 
         let statesFromSet = Array.from(currentStatesTransSet);
-        console.log("States from set: ");
-        console.log(statesFromSet);
         let dfaStateName = this.joinStateNames(statesFromSet);
-        console.log("State name from current state: " + currentState.stateName + " and new: " + dfaStateName);
         let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
         if(indexOfNewState < 0){
           let containsAnAcceptanceState = false;
@@ -241,9 +234,7 @@ class Automata {
       }
     }
 
-    console.log(dfaAutomaton);
-    console.log(dfaAutomaton.startState);
-    console.log(dfaAutomaton.evaluate(Array.from('100')));
+    return dfaAutomaton;
   }
 
   joinStateNames(statesArray){
