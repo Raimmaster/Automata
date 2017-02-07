@@ -157,17 +157,58 @@ class Automata {
     return this.evalAutomata(evaluationString, this.startState);
   }
 
+  addToStateDataSet(automaton, stateName, isInitialState, isAcceptanceState){
+    let borderColor = '';
+    let stateColor = '';
+
+    if(isInitialState){
+      stateColor = '#58FA82';
+      borderColor = '#FE2E2E';
+    }
+
+    if(isAcceptanceState){
+      stateColor = '#FFBF00';
+    }
+
+    let currentStateId = automaton.currentStateId;
+    console.log("State:");
+    console.log(currentStateId);
+    states.add({
+          id: currentStateId,
+          label: stateName,
+          color: {
+            border: borderColor,
+            background: stateColor
+          }
+    });
+  }
+
   transformNfaToDfa(){
+    //Reset Data Sets
+    states.clear();
+    transitions.clear();
+    alphabet.clear();
+
     let dfaAutomaton = new Automata([], [], [], [], []);
+    dfaAutomaton.currentStateId = this.currentStateId;
+    dfaAutomaton.currentTransitionId = this.currentTransitionId;
     //Copy alphabet
     this.alphabet.forEach(function(item, index, array){
       dfaAutomaton.addSymbolToAlphabet(item);
+      alphabet.add({
+        id: item,
+        symbol: item
+      });
     });
 
     let currentState = this.startState;
 
     let statesToCheck = [];
-    dfaAutomaton.addState(currentState.stateName, this.acceptanceStates.includes(this.startState.stateName), true);
+    let isAcceptanceState = this.acceptanceStates.includes(this.startState.stateName);
+
+    this.addToStateDataSet(dfaAutomaton, this.startState.stateName, true, isAcceptanceState);
+    dfaAutomaton.addState(currentState.stateName, isAcceptanceState, true);
+
     //Get states from start state
     for(const currChar of this.alphabet){
       let statesFromSymbol = currentState.getNextStates(currChar);
@@ -180,12 +221,14 @@ class Automata {
       });
 
       let dfaStateName = this.joinStateNames(statesFromSymbol);
+      this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState);
       dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
+
       let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
       let newState = dfaAutomaton.states[indexOfNewState];
       newState.setOfNfaStates = statesFromSymbol;
 
-
+      this.addToTransitionDataSet(dfaAutomaton, currentState.stateName, dfaStateName, currChar);
       dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
       statesToCheck.push(newState);
     }
@@ -217,6 +260,9 @@ class Automata {
               return;
           });
 
+          console.log("S-for ID: ");
+          console.log(dfaAutomaton.currentStateId);
+          this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState);
           dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, false);
           indexOfNewState = dfaAutomaton.states.length - 1;
 
@@ -225,6 +271,7 @@ class Automata {
           statesToCheck.push(newState);
         }
 
+        this.addToTransitionDataSet(dfaAutomaton, currentState.stateName, dfaStateName, currChar);
         dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
       }
 
@@ -235,6 +282,28 @@ class Automata {
     }
 
     return dfaAutomaton;
+  }
+
+  addToTransitionDataSet(automaton, originState, destinyState, symbol){
+    //Finding originStateId
+    let indexOfOriginState = automaton.findStateByName(originState);
+    let originStateId = automaton.states[indexOfOriginState].stateId;
+
+    //Finding destinyStateId
+    let destinyStateIndex = automaton.findStateByName(destinyState);
+    let destinyStateId = automaton.states[destinyStateIndex].stateId;
+
+    let transitionID = automaton.currentTransitionId;
+    console.log("Trans: ");
+    console.log(transitionID);
+    transitions.add({
+          id: transitionID,
+          from: originStateId,
+          to: destinyStateId,
+          label: symbol,
+          font: {align: 'top'}
+    });
+    console.log("Same id: " + transitionID);
   }
 
   joinStateNames(statesArray){
