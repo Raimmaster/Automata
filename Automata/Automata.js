@@ -111,12 +111,12 @@ class Automata {
   }
 
   evalAutomata(evalString, initialState){
+    console.log("Curr: " + initialState.stateName + " " + evalString);
     let states = [];
     let arrayOfPasses = [];
-    const ORIGIN_OF_SPLICE = 0;
-    const AMOUNT_TO_SPLICE = 1;
 
-    for(const currChar of evalString){
+    for(let stringIndex = 0; stringIndex < evalString.length; ++stringIndex){
+      let currChar = evalString[stringIndex];
       if(!this.alphabet.includes(currChar)){
         return false;
       }
@@ -130,21 +130,21 @@ class Automata {
       if(evalString.length === 1){
         for(let index = 0; index < states.length; ++index){
           let aState = states[index];
-          console.log("Evaluating: ");
+          console.log("Evaluating in last string: ");
           console.log(aState);
           if(this.acceptanceStates.includes(aState.stateName))
+          {
+            console.log("Is acceptance!");
             return true;
+          }
         }
       }else{
-      evalString.splice(ORIGIN_OF_SPLICE, AMOUNT_TO_SPLICE);
-        let newEvalString = evalString;
-        for (let sIndex = 0; sIndex < states.length; ++sIndex) {
+        let newEvalString = evalString.slice(stringIndex + 1, evalString.length);
+        for(let sIndex = 0; sIndex < states.length; ++sIndex) {
           let currState = states[sIndex];
-
+          console.log("Sending state: " + currState.stateName);
           arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
         }
-
-        console.log("Initial state " + initialState.stateName + " with " +  newEvalString);
       }
     }
     console.log("Arr of passes: ");
