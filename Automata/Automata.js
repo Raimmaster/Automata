@@ -115,8 +115,8 @@ class Automata {
     let states = [];
     let arrayOfPasses = [];
 
-    for(let stringIndex = 0; stringIndex < evalString.length; ++stringIndex){
-      let currChar = evalString[stringIndex];
+    // for(let stringIndex = 0; stringIndex < evalString.length; ++stringIndex){
+      let currChar = evalString[0];
       if(!this.alphabet.includes(currChar)){
         return false;
       }
@@ -139,14 +139,14 @@ class Automata {
           }
         }
       }else{
-        let newEvalString = evalString.slice(stringIndex + 1, evalString.length);
+        let newEvalString = evalString.slice(1, evalString.length);
         for(let sIndex = 0; sIndex < states.length; ++sIndex) {
           let currState = states[sIndex];
           console.log("Sending state: " + currState.stateName);
           arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
         }
       }
-    }
+    // }
     console.log("Arr of passes: ");
     console.log(arrayOfPasses);
 

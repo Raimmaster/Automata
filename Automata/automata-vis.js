@@ -28,7 +28,7 @@ Automata seed
 
 }
 
-autoSeed();
+// autoSeed();
 
 function addNode() {
     try {
