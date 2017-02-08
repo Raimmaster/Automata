@@ -111,11 +111,9 @@ class Automata {
   }
 
   evalAutomata(evalString, initialState){
-    console.log("Curr: " + initialState.stateName + " " + evalString);
     let states = [];
     let arrayOfPasses = [];
 
-    // for(let stringIndex = 0; stringIndex < evalString.length; ++stringIndex){
       let currChar = evalString[0];
       if(!this.alphabet.includes(currChar)){
         return false;
@@ -130,11 +128,8 @@ class Automata {
       if(evalString.length === 1){
         for(let index = 0; index < states.length; ++index){
           let aState = states[index];
-          console.log("Evaluating in last string: ");
-          console.log(aState);
           if(this.acceptanceStates.includes(aState.stateName))
           {
-            console.log("Is acceptance!");
             return true;
           }
         }
@@ -142,14 +137,10 @@ class Automata {
         let newEvalString = evalString.slice(1, evalString.length);
         for(let sIndex = 0; sIndex < states.length; ++sIndex) {
           let currState = states[sIndex];
-          console.log("Sending state: " + currState.stateName);
           arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
         }
       }
-    // }
-    console.log("Arr of passes: ");
-    console.log(arrayOfPasses);
-
+  
     return arrayOfPasses.includes(true);
   }
 
