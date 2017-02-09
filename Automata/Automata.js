@@ -203,17 +203,19 @@ class Automata {
       console.log("In final loop: ");
       console.log(states);
       for(let aState of states){
-        console.log("Got here with " + aState.stateName);
+        console.log("Got here with the states" + aState.stateName);
         if(this.acceptanceStates.includes(aState.stateName)){
           return true;
         }
-      }
-      for(let aState of closureStates){
-        console.log("Got here with " + aState.stateName);
-        if(this.acceptanceStates.includes(aState.stateName)){
-          return true;
+        closureStates = aState.getClosure(new Set());
+        for(let aState of closureStates){
+          console.log("Got here with closures" + aState.stateName);
+          if(this.acceptanceStates.includes(aState.stateName)){
+            return true;
+          }
         }
       }
+
     }
     else{
       let newEvalString = evalString.slice(1, evalString.length);
