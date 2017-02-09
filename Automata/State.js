@@ -40,8 +40,8 @@ class State{
       }
     }
 
-    console.log("Closure for " + this.stateName);
-    console.log(epsTransSet);
+    // console.log("Closure for " + this.stateName);
+    //console.log(epsTransSet);
     return epsTransSet;
   }
 
@@ -50,7 +50,6 @@ class State{
     for(let i = 0; i < transitions.length; ++i){
       states.push(transitions[i].destinyState);
     }
-
     return states;
   }
 }

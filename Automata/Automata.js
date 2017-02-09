@@ -165,8 +165,8 @@ class Automata {
 
     let closureStates = new Set();
     closureStates = initialState.getClosure(closureStates);
-    // console.log("Closures 1: ");
-    // console.log(closureStates);
+    console.log("Closures 1: ");
+    console.log(closureStates);
     statesArr = initialState.getNextStates(currChar);
     let states = new Set();
     statesArr.forEach(function (item){
@@ -183,7 +183,6 @@ class Automata {
       statesArr.forEach(function (item){
         states.add(item);
       });
-
       // console.log("State arr after closures: ");
       // console.log(statesArr);
     }
@@ -196,17 +195,24 @@ class Automata {
     }
 
     if(evalString.length === 1){
-      for(let stateOf of states){
-        let aState = stateOf;
+      console.log("In final loop: ");
+      console.log(states);
+      for(let aState of states){
         console.log("Got here with " + aState.stateName);
         if(this.acceptanceStates.includes(aState.stateName)){
           return true;
         }
       }
-    }else{
+      for(let aState of closureStates){
+        console.log("Got here with " + aState.stateName);
+        if(this.acceptanceStates.includes(aState.stateName)){
+          return true;
+        }
+      }
+    }
+    else{
       let newEvalString = evalString.slice(1, evalString.length);
-      for(let stateOf of states) {
-        let currState = stateOf;
+      for(let currState of states) {
         console.log("Curr state: ");
         console.log(currState);
         arrayOfPasses.push(this.evalEpsilon(newEvalString, currState));
