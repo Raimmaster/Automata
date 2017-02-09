@@ -158,13 +158,22 @@ class Automata {
     let statesArr = [];
     let arrayOfPasses = [];
 
+    let closureStates = new Set();
+    closureStates = initialState.getClosure(closureStates);
+
+    if(evalString.length === 0){
+      for(let aState of closureStates){
+        console.log("Got here with " + aState.stateName);
+        if(this.acceptanceStates.includes(aState.stateName)){
+          return true;
+        }
+      }
+    }
+
     let currChar = evalString[0];
     if(!this.alphabet.includes(currChar)){
       return false;
     }
-
-    let closureStates = new Set();
-    closureStates = initialState.getClosure(closureStates);
     console.log("Closures 1: ");
     console.log(closureStates);
     statesArr = initialState.getNextStates(currChar);
@@ -175,16 +184,12 @@ class Automata {
 
     console.log("State arr 1: ");
     console.log(statesArr);
-    // console.log("Eval....");
-    // console.log(states);
 
     for(let stateOfClosure of closureStates){
       statesArr = stateOfClosure.getNextStates(currChar);
       statesArr.forEach(function (item){
         states.add(item);
       });
-      // console.log("State arr after closures: ");
-      // console.log(statesArr);
     }
 
     console.log("Eval with closure state....");
@@ -194,7 +199,7 @@ class Automata {
       return false;
     }
 
-    if(evalString.length === 1){
+    if(evalString.length === 1 ){
       console.log("In final loop: ");
       console.log(states);
       for(let aState of states){
