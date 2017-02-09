@@ -100,16 +100,16 @@
              <table>
               <tr>
                 <hr>
-                <form onsubmit="return setType()" class="form-inline col-md-12">
+                <form class="form-inline col-md-12">
                   <div class="form-group">
-                    <select id="automataType" class="form-control" data-toggle="select">
-                      <option value="dfa" selected>DFA</option>
-                      <option value="nfa">NFA</option>
-                      <option value="nfa-epsilon">NFA-epsilon</option>
+                    <select id="automata-type" class="form-control" data-toggle="select">
+                      <option value="dfa" selected onclick="setAutomatonType()">DFA</option>
+                      <option value="nfa" onclick="setAutomatonType()">NFA</option>
+                      <option value="nfa-epsilon" onclick="setAutomatonType()">NFA-epsilon</option>
                     </select>
                   </div>
-                  <button type="submit" class="btn btn-primary">Set Type</button>
                 </form>
+                <button type="submit" class="btn btn-primary" onclick="setAutomatonType()">Set Type</button>
               </tr>
             </table>
           </div>

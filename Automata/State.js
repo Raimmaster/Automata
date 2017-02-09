@@ -22,6 +22,26 @@ class State{
       trans.originState.stateName == originStateName);
   }
 
+  getClosure(revisedStates){
+    let epsilonTransitionStates = this.getNextStates('#');
+    let epsTransSet = new Set();
+    epsilonTransitionStates.forEach(function (item) {
+      epsTransSet.add(item);
+    });
+
+    for(let i = 0; i < epsilonTransitionStates.length; ++i){
+      let epsState = epsilonTransitionStates[i];
+      if(!revisedStates.has(epsState)){
+        let newClosureStates = epsState.getClosure(epsTransSet);
+        newClosureStates.forEach(function (item) {
+          epsTransSet.add(item);
+        });
+      }
+    }
+
+    return epsTransSet;
+  }
+
   getNextStatesArray(transitions){
     let states = [];
     for(let i = 0; i < transitions.length; ++i){

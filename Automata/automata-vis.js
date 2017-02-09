@@ -5,7 +5,7 @@ let automata = new Automata([], [], [], 'undefined', []);
 /**
 Automata seed
 **/
- function autoSeed(){
+function autoSeed(){
   automata.addSymbolToAlphabet('0');
   automata.addSymbolToAlphabet('1');
 
@@ -188,4 +188,10 @@ function transformNtoD(){
   let dfaAutomaton = automata.transformNfaToDfa();
   automata = dfaAutomaton;
 
+}
+
+function setAutomatonType(){
+  let type = document.getElementById('automata-type').value;
+  console.log(type);
+  automata.setType(type);
 }

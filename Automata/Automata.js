@@ -8,10 +8,18 @@ class Automata {
     this.currentState = 'undefined';
     this.currentTransitionId = 0;
     this.currentStateId = 0;
+    this.type = 'DFA';
   }
 
   addSymbolToAlphabet(symbol){
     this.alphabet.push(symbol);
+  }
+
+  setType(type){
+    this.type = type;
+    if(type == "NFA-epsilon"){
+      this.alphabet.push('#'); //used for epsilon for now
+    }
   }
 
   addState(state, isAcceptance, isInitial){
@@ -145,7 +153,7 @@ class Automata {
   }
 
   evalEpsilon(evalString, initialState){
-    
+
   }
 
   evaluate(evaluationString){
