@@ -140,8 +140,12 @@ class Automata {
           arrayOfPasses.push(this.evalAutomata(newEvalString, currState));
         }
       }
-  
+
     return arrayOfPasses.includes(true);
+  }
+
+  evalEpsilon(evalString, initialState){
+    
   }
 
   evaluate(evaluationString){
