@@ -52,6 +52,8 @@ class Automata {
     let indexOfOriginState = this.findStateByName(fromState);
     let destinyStateIndex = this.findStateByName(toState);
     let originState = this.states[indexOfOriginState];
+    if(symbol == "epsilon")
+      symbol = '#';
     originState.addTransition(this.currentTransitionId++, symbol, originState, this.states[destinyStateIndex]);
   }
 
@@ -153,11 +155,73 @@ class Automata {
   }
 
   evalEpsilon(evalString, initialState){
+    let statesArr = [];
+    let arrayOfPasses = [];
 
+    let currChar = evalString[0];
+    if(!this.alphabet.includes(currChar)){
+      return false;
+    }
+
+    let closureStates = new Set();
+    closureStates = initialState.getClosure(closureStates);
+    // console.log("Closures 1: ");
+    // console.log(closureStates);
+    statesArr = initialState.getNextStates(currChar);
+    let states = new Set();
+    statesArr.forEach(function (item){
+      states.add(item);
+    });
+
+    console.log("State arr 1: ");
+    console.log(statesArr);
+    // console.log("Eval....");
+    // console.log(states);
+
+    for(let stateOfClosure of closureStates){
+      statesArr = stateOfClosure.getNextStates(currChar);
+      statesArr.forEach(function (item){
+        states.add(item);
+      });
+
+      // console.log("State arr after closures: ");
+      // console.log(statesArr);
+    }
+
+    console.log("Eval with closure state....");
+    console.log(states);
+
+    if(states.size < 1){
+      return false;
+    }
+
+    if(evalString.length === 1){
+      for(let stateOf of states){
+        let aState = stateOf;
+        console.log("Got here with " + aState.stateName);
+        if(this.acceptanceStates.includes(aState.stateName)){
+          return true;
+        }
+      }
+    }else{
+      let newEvalString = evalString.slice(1, evalString.length);
+      for(let stateOf of states) {
+        let currState = stateOf;
+        console.log("Curr state: ");
+        console.log(currState);
+        arrayOfPasses.push(this.evalEpsilon(newEvalString, currState));
+      }
+    }
+
+    return arrayOfPasses.includes(true);
   }
 
   evaluate(evaluationString){
-    return this.evalAutomata(evaluationString, this.startState);
+    if(this.type != "nfa-epsilon")
+      return this.evalAutomata(evaluationString, this.startState);
+    else {
+      return this.evalEpsilon(evaluationString, this.startState);
+    }
   }
 
   addToStateDataSet(automaton, stateName, isInitialState, isAcceptanceState){
@@ -258,7 +322,7 @@ class Automata {
         }
 
         let statesFromSet = Array.from(currentStatesTransSet);
-        if(statesFromSet.length < 1){
+        if(statesFromSet.size < 1){
           continue;
         }
         let dfaStateName = this.joinStateNames(statesFromSet);

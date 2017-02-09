@@ -25,6 +25,7 @@ class State{
   getClosure(revisedStates){
     let epsilonTransitionStates = this.getNextStates('#');
     let epsTransSet = new Set();
+    epsTransSet.add(this);
     epsilonTransitionStates.forEach(function (item) {
       epsTransSet.add(item);
     });
@@ -39,6 +40,8 @@ class State{
       }
     }
 
+    console.log("Closure for " + this.stateName);
+    console.log(epsTransSet);
     return epsTransSet;
   }
 
