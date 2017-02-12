@@ -437,7 +437,7 @@ class Automata {
       statesToCheck.shift();
     }
 
-    return dfaAutomaton();
+    return dfaAutomaton;
   }
 
   hasAcceptance(statesArray){
