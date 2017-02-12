@@ -187,11 +187,15 @@ function evaluateString(){
 function transformNtoD(){
   let dfaAutomaton = automata.transformNfaToDfa();
   automata = dfaAutomaton;
+}
 
+function transformEpsilon(){
+  let dfaAutomaton = automata.transformEpsilonToDfa();
+  automata = dfaAutomaton;
 }
 
 function setAutomatonType(){
   let type = document.getElementById('automata-type').value;
-  console.log(type);
+  alert("Type: " + type);
   automata.setType(type);
 }

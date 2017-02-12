@@ -40,8 +40,6 @@ class State{
       }
     }
 
-    // console.log("Closure for " + this.stateName);
-    //console.log(epsTransSet);
     return epsTransSet;
   }
 

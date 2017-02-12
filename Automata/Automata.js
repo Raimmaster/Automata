@@ -174,16 +174,11 @@ class Automata {
     if(!this.alphabet.includes(currChar)){
       return false;
     }
-    console.log("Closures 1: ");
-    console.log(closureStates);
     statesArr = initialState.getNextStates(currChar);
     let states = new Set();
     statesArr.forEach(function (item){
       states.add(item);
     });
-
-    console.log("State arr 1: ");
-    console.log(statesArr);
 
     for(let stateOfClosure of closureStates){
       statesArr = stateOfClosure.getNextStates(currChar);
@@ -192,24 +187,17 @@ class Automata {
       });
     }
 
-    console.log("Eval with closure state....");
-    console.log(states);
-
     if(states.size < 1){
       return false;
     }
 
     if(evalString.length === 1 ){
-      console.log("In final loop: ");
-      console.log(states);
       for(let aState of states){
-        console.log("Got here with the states" + aState.stateName);
         if(this.acceptanceStates.includes(aState.stateName)){
           return true;
         }
         closureStates = aState.getClosure(new Set());
         for(let aState of closureStates){
-          console.log("Got here with closures" + aState.stateName);
           if(this.acceptanceStates.includes(aState.stateName)){
             return true;
           }
@@ -220,8 +208,6 @@ class Automata {
     else{
       let newEvalString = evalString.slice(1, evalString.length);
       for(let currState of states) {
-        console.log("Curr state: ");
-        console.log(currState);
         arrayOfPasses.push(this.evalEpsilon(newEvalString, currState));
       }
     }
@@ -263,12 +249,14 @@ class Automata {
     });
   }
 
-  transformNfaToDfa(){
-    //Reset Data Sets
+  resetDataStates(){
     states.clear();
     transitions.clear();
     alphabet.clear();
+  }
 
+  transformNfaToDfa(){
+    this.resetDataStates();
     let dfaAutomaton = new Automata([], [], [], [], []);
     dfaAutomaton.currentStateId = this.currentStateId;
     dfaAutomaton.currentTransitionId = this.currentTransitionId;
@@ -335,7 +323,7 @@ class Automata {
         }
 
         let statesFromSet = Array.from(currentStatesTransSet);
-        if(statesFromSet.size < 1){
+        if(statesFromSet.length < 1){
           continue;
         }
         let dfaStateName = this.joinStateNames(statesFromSet);
@@ -349,8 +337,192 @@ class Automata {
               return;
           });
 
-          console.log("S-for ID: ");
-          console.log(dfaAutomaton.currentStateId);
+          this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState);
+          dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, false);
+          indexOfNewState = dfaAutomaton.states.length - 1;
+
+          let newState = dfaAutomaton.states[indexOfNewState];
+          newState.setOfNfaStates = statesFromSet;
+          statesToCheck.push(newState);
+        }
+
+        this.addToTransitionDataSet(dfaAutomaton, currentState.stateName, dfaStateName, currChar);
+        dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
+      }
+
+      statesToCheck.shift();
+      if(statesToCheck.length > 0){
+        currentState = statesToCheck[0];
+      }
+    }
+
+    return dfaAutomaton;
+  }
+
+  transformEpsilonToDfa(){
+    let dfaAutomaton = new Automata([], [], [], [], []);
+    this.resetDataStates();
+    dfaAutomaton.currentStateId = this.currentStateId;
+    dfaAutomaton.currentTransitionId = this.currentTransitionId;
+    this.alphabet.forEach(function(item){
+      dfaAutomaton.addSymbolToAlphabet(item);
+      alphabet.add({
+        id: item,
+        symbol: item
+      });
+    });
+
+    //Start state section, setup
+    let startStateClosure = this.startState.getClosure(new Set());
+    let closureArray = Array.from(startStateClosure);
+    let dfaStateName = this.joinStateNames(closureArray);
+
+    let containsAcceptance = this.hasAcceptance(closureArray);
+    let isInitial = true;
+    this.addToStateDataSet(dfaAutomaton, dfaStateName, isInitial, containsAcceptance);
+    dfaAutomaton.addState(dfaStateName, containsAcceptance, isInitial);
+    let currentState = dfaAutomaton.states[0];
+    currentState.setOfNfaStates = closureArray;
+    let statesToCheck = [];
+    statesToCheck.push(currentState);
+
+    //checking the rest of the stations section
+    while(statesToCheck.length > 0){
+      currentState = statesToCheck[0];
+      for(const currChar of this.alphabet){
+        let currentStatesSet = new Set();
+
+        //check NFA states from current State
+        for(let i = 0; i < currentState.setOfNfaStates.length; ++i){
+          let statesFromSymbol = currentState.setOfNfaStates[i].getNextStates(currChar);
+          if(statesFromSymbol.length < 1){
+            continue;
+          }
+          statesFromSymbol.sort(this.compareStatesByName);
+          for(let stateInd = 0; stateInd < statesFromSymbol.length; ++stateInd){
+            let item = statesFromSymbol[stateInd];
+            currentStatesSet.add(item);
+            let closureStatesFromSet = Array.from(item.getClosure(new Set()));
+            closureStatesFromSet.sort(this.compareStatesByName);
+            for(let closureState of closureStatesFromSet){
+              console.log("adding: " + closureState.stateName);
+              currentStatesSet.add(closureState);
+            }
+          }
+          // statesFromSymbol.forEach(function(item){
+          // });
+          // statesFromSymbol.forEach((item) => currentStatesSet.add(item));
+        }
+        let statesFromSet = Array.from(currentStatesSet);
+        if(statesFromSet.length < 1){
+          continue;
+        }
+        let dfaStateName = this.joinStateNames(statesFromSet);
+        let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
+        let containsAnAcceptanceState = false;
+        if(indexOfNewState < 0){
+          let pastAcceptanceStates = this.acceptanceStates;
+          containsAnAcceptanceState = this.hasAcceptance(statesFromSet);
+          this.addToStateDataSet(dfaAutomaton, dfaStateName, !isInitial, containsAnAcceptanceState);
+          dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, !isInitial);
+          indexOfNewState = dfaAutomaton.states.length - 1;
+
+          let newState = dfaAutomaton.states[indexOfNewState];
+          newState.setOfNfaStates = statesFromSet;
+          statesToCheck.push(newState);
+        }
+        this.addToTransitionDataSet(dfaAutomaton, currentState.stateName, dfaStateName, currChar);
+        dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
+      }
+      statesToCheck.shift();
+    }
+
+    return dfaAutomaton();
+  }
+
+  hasAcceptance(statesArray){
+    for (let i = 0; i < statesArray.length; ++i) {
+      let state = statesArray[i];
+      if(this.acceptanceStates.includes(state.stateName)){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  transformEpsilonToDfaOld(){
+    this.resetDataStates();
+    let dfaAutomaton = new Automata([], [], [], [], []);
+    dfaAutomaton.currentStateId = this.currentStateId;
+    dfaAutomaton.currentTransitionId = this.currentTransitionId;
+    //Copy alphabet
+    this.alphabet.forEach(function(item){
+      dfaAutomaton.addSymbolToAlphabet(item);
+      alphabet.add({
+        id: item,
+        symbol: item
+      });
+    });
+
+    //GETTING START STATE FROM Closure
+    let startClosure = this.startState.getClosure(new Set());
+    let closureStatesArray = Array.from(startClosure);
+    closureStatesArray.sort(this.compareStatesByName);
+    let startStateName = this.joinStateNames(closureStatesArray);
+    let containsAcceptance = false;
+    let pastAcceptances = this.acceptanceStates;
+    closureStatesArray.forEach(function(item) {
+      let hasAcceptance = pastAcceptances.includes(item.stateName);
+      containsAcceptance = hasAcceptance;
+      if(containsAcceptance){
+        return;
+      }
+    });
+    this.addToStateDataSet(dfaAutomaton, startStateName, true, containsAcceptance);
+    dfaAutomaton.addState(startStateName, containsAcceptance, true);
+    //FINISHED GETTING IT
+
+    let statesToCheck = [];
+    statesToCheck.push(dfaAutomaton.states[0])
+    let currentState = statesToCheck[0];
+    currentState.setOfNfaStates = closureStatesArray;
+    //create dfa table from the past states
+    while(statesToCheck.length > 0){
+
+      for(const currChar of this.alphabet){
+        let currentStatesTransSet = new Set();
+
+        for(let nfaStateIndex = 0; nfaStateIndex < currentState.setOfNfaStates.length; ++nfaStateIndex){
+          let statesFromSymbol = currentState.setOfNfaStates[nfaStateIndex].getNextStates(currChar);
+          if(statesFromSymbol.length < 1) {
+            continue;
+          }
+          statesFromSymbol.sort(this.compareStatesByName);
+          statesFromSymbol.forEach(function(item){
+            currentStatesTransSet.add(item);
+            let stateClosure = item.getClosure(new Set());
+            for(let closeureItem of stateClosure){
+              currentStatesTransSet.add(stateClosure);
+            }
+          });
+        }
+
+        let statesFromSet = Array.from(currentStatesTransSet);
+        if(statesFromSet.length < 1){
+          continue;
+        }
+        let dfaStateName = this.joinStateNames(statesFromSet);
+        let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
+        if(indexOfNewState < 0){
+          let containsAnAcceptanceState = false;
+          let pastAcceptanceStates = this.acceptanceStates;
+          statesFromSet.forEach(function(item){
+            containsAnAcceptanceState = pastAcceptanceStates.includes(item.stateName);
+            if(containsAnAcceptanceState)
+              return;
+          });
+
           this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState);
           dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, false);
           indexOfNewState = dfaAutomaton.states.length - 1;
