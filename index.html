@@ -71,6 +71,7 @@
           <li role="presentation"><a href="#state-tab" aria-controls="profile" role="tab" data-toggle="tab">State</a></li>
           <li role="presentation"><a href="#transition-tab" aria-controls="messages" role="tab" data-toggle="tab">Transition</a></li>
           <li role="presentation"><a href="#evaluation-tab" aria-controls="settings" role="tab" data-toggle="tab">Evaluation</a></li>
+          <li role="presentation"><a href="#regexnfae-tab" role="tab" data-toggle="tab">Regex2NFAe</a></li>
         </ul>
 
         <div class="tab-content">
@@ -204,12 +205,27 @@
           </table>
         </div>
       </div>
+      <div role="tabpanel" class="tab-pane fade1" id="regexnfae-tab">
+        <div class="col-md-6">
+          <table>
+            <tr>
+              <td><label for="regex">Regex</label></td>
+              <td><input id="regex" type="text"></td>
+            </tr>
+            <tr>
+              <td>Action</td>
+              <td>
+                <button class="btn btn-success" id="convert-regex">Convert</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-md-12" style="float: left; margin-top: 40px">
     <h2>View Automata</h2>
     <hr>
-
     <div id="network"></div>
   </div>
 </div>
