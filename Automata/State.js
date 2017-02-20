@@ -4,6 +4,8 @@ class State{
     this.stateName = stateName;
     this.transitions = transitions;
     this.setOfNfaStates = [];
+    this.isInitial = initial;
+    this.isAcceptance = acceptance;
   }
 
   addTransition(newTransitionId, symbol,originState, destinyState){

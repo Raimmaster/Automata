@@ -23,7 +23,7 @@ class Automata {
   }
 
   addState(state, isAcceptance, isInitial){
-    let newState = new State(this.currentStateId++, state, []);
+    let newState = new State(this.currentStateId++, state, [], isInitial, isAcceptance);
     if(this.currentState === 'undefined'){
       this.currentState = newState;
     }
@@ -409,9 +409,6 @@ class Automata {
               currentStatesSet.add(closureState);
             }
           }
-          // statesFromSymbol.forEach(function(item){
-          // });
-          // statesFromSymbol.forEach((item) => currentStatesSet.add(item));
         }
         let statesFromSet = Array.from(currentStatesSet);
         if(statesFromSet.length < 1){
@@ -497,5 +494,38 @@ class Automata {
     }
 
     return 0;
+  }
+
+  transformDfaToRegEx(){
+    let DfaClones = this.getAutomatonCopies();
+  }
+
+  getAutomatonCopies(){
+    let dfaClones = new Array();
+    let newAcceptance = new Array();
+    for(let i = 0; i < this.acceptanceStates.length; ++i){
+      let newAutomaton = new Automata([], [], [], 'undefined', []);
+      let hasAcceptance = false;
+      for(let state of this.states){
+        let isAcceptance = !hasAcceptance ? state.isAcceptance : false;
+        newAutomaton.addState(state.stateName, isAcceptance, state.isInitial);
+        if(state.isAcceptance && !hasAcceptance){
+          newAcceptance.push(state.stateName);
+          state.isAcceptance = false;
+          hasAcceptance = true;
+        }
+        for(let transition of state.transitions){
+          newAutomaton.addTransition(transition.originState, transition.destinyState, transition.symbol);
+        }
+      }
+      dfaClones.push(newAutomaton);
+    }
+
+    for(let i = 0; i < newAcceptance.length; ++i){
+      let stateIndex = this.findStateByName(newAcceptance[i]);
+      this.states[stateIndex].isAcceptance = true;
+    }
+
+    return dfaClones;
   }
 }
