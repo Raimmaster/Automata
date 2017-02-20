@@ -468,8 +468,6 @@ class Automata {
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
 
     let transitionID = automaton.currentTransitionId;
-    console.log("Trans: ");
-    console.log(transitionID);
     transitions.add({
           id: transitionID,
           from: originStateId,
@@ -477,7 +475,6 @@ class Automata {
           label: symbol,
           font: {align: 'top'}
     });
-    console.log("Same id: " + transitionID);
   }
 
   joinStateNames(statesArray){
