@@ -9,6 +9,7 @@ class Automata {
     this.currentTransitionId = 0;
     this.currentStateId = 0;
     this.type = 'DFA';
+    this.epsilon = 'epsilon';
   }
 
   addSymbolToAlphabet(symbol){
@@ -532,7 +533,7 @@ class Automata {
           let transitionsFromSelfToSelf = this.getTransitionsFromSelfToSelf(state);
 
           let stringToSelf = this.getStringOfLoopToSelf(transitionsFromSelfToSelf);
-          
+
         }
       }
     }
@@ -580,6 +581,120 @@ class Automata {
     }
 
     return transitions;
+  }
+
+  transformRegexToNfaEpsilon(regex){
+    let nfaEpsilonTree = peg$parse(regex);
+    let automaton = this.transformRegFromTree(nfaEpsilonTree);
+
+    return automaton;
+  }
+
+  transformRegFromTree(regexTree){
+    switch(regexTree.name){
+      case 'kleene':
+        return kleeneAutomaton(regexTree);
+      case 'concat':
+        return concatAutomaton(regexTree);
+      case 'pipe':
+        return pipeAutomaton(regexTree);
+      case 'character':
+        return characterAutomaton(regexTree);
+    }
+  }
+
+  characterAutomaton(regexTree){
+    let automaton = new Automata([], [], [], 'undefined', []);
+    automaton.currentStateId = this.currentStateId;
+    automaton.currentTransitionId = this.currentTransitionId;
+
+    let newStateName = 'q' + this.currentStateId++;
+    let isAcceptance = false;
+    let isInitial = true;
+
+    automaton.addState(newStateName, isAcceptance, isInitial);
+
+    let newFinalState = 'q' + this.currentStateId++;
+    automaton.addState(newFinalState, !isAcceptance, !isInitial);
+    automaton.addTransition(newStateName, newFinalState, regexTree.value);
+
+    return automaton;
+  }
+
+  concatAutomaton(regexTree){
+    let firstAutomaton = this.transformRegFromTree(regexTree.left);
+    let secondAutomaton = this.transformRegFromTree(regexTree.right);
+
+    let firstFinal = firstAutomaton.getFinalState();
+    let secondStart = secondAutomaton.startState;
+
+    firstAutomaton.states.forEach(x => x.isAcceptance = false);
+    secondAutomaton.states.forEach( x => x.isInitial = false);
+
+    let newStates = firstAutomaton.states.concat(secondAutomaton.states);
+    let concatAutomaton = new Automata(newStates, [], [], firstAutomaton.startState, secondAutomaton.acceptanceStates);
+    let concatAutomaton.currentStateId = this.currentStateId;
+    let concatAutomaton.currentTransitionId = this.currentTransitionId;
+
+    return concatAutomaton;
+  }
+
+  pipeAutomaton(regexTree){
+    let firstAutomaton = this.transformRegFromTree(regexTree.left);
+    let secondAutomaton = this.transformRegFromTree(regexTree.right);
+
+    let firstFinal = firstAutomaton.states.find(x => x.isAcceptance === true);
+    let firstInitial = firstAutomaton.states.find(x => x.isInitial === true);
+    let secondInitial = secondAutomaton.states.find(x => x.isInitial === true);
+    let secondFinal = secondAutomaton.states.find(x => x.isAcceptance === true);
+
+    let newStates = firstAutomaton.states.concat(secondAutomaton.states);
+    let pipeAutomaton = new Automata(newStates, [], [], firstAutomaton, [], []);
+    pipeAutomaton.states.forEach( x => {x.isInitial = false; x.isAcceptance = false});
+    let pipeAutomaton.currentStateId = this.currentStateId;
+    let pipeAutomaton.currentTransitionId = this.currentTransitionId;
+
+    let newInitialName = 'q' + this.currentStateId++;
+    let newFinalName = 'q' + this.currentStateId++;
+    let isInitial = true;
+    let isAcceptance = true;
+    pipeAutomaton.addState(newInitialName, !isAcceptance, isInitial);
+    pipeAutomaton.addState(newFinalName, isAcceptance, !isInitial);
+
+    pipeAutomaton.addTransition(newInitialName, firstInitial.stateName, this.epsilon);
+    pipeAutomaton.addTransition(newInitialName, secondInitial.stateName, this.epsilon);
+    pipeAutomaton.addTransition(firstFinal.stateName, newFinalName, this.epsilon);
+    pipeAutomaton.addTransition(secondFinal.stateName, newFinalName, this.epsilon);
+
+    return pipeAutomaton;
+  }
+
+  kleeneAutomaton(regexTree){
+    let kleeneAutomaton = this.transformRegFromTree(regexTree.expression);
+
+    let kleeneFinal = kleeneAutomaton.states.find(x => x.isAcceptance === true);
+    let kleeneInitial = kleeneAutomaton.states.find(x => x.isInitial === true);
+
+    kleeneAutomaton.states.forEach( x => { x.isInitial = false; x.isAcceptance = false});
+
+    let newInitialName = 'q' + this.currentStateId++;
+    let newFinalName = 'q' + this.currentStateId++;
+    let isInitial = true;
+    let isAcceptance = true;
+    kleeneAutomaton.addState(newInitialName, !isAcceptance, isInitial);
+    kleeneAutomaton.addState(newFinalName, isAcceptance, !isInitial);
+
+    kleeneAutomaton.addTransition(newInitialName, newFinalName, this.epsilon);
+    kleeneAutomaton.addTransition(newInitialName, kleeneInitial.stateName, this.epsilon);
+    kleeneAutomaton.addTransition(kleeneFinal.stateName, newFinalName, this.epsilon);
+    kleeneAutomaton.addTransition(kleeneFinal.stateName, kleeneInitial.stateName, this.epsilon);
+
+    return kleeneAutomaton;
+  }
+
+  getFinalState(){
+    let acceptanceName = this.acceptanceStates[0];
+    return getStateByName(acceptanceName);
   }
 
   getAutomatonCopies(){

@@ -1,5 +1,5 @@
 class State{
-  constructor(stateId, stateName, transitions = []){
+  constructor(stateId, stateName, transitions = [], initial, acceptance){
     this.stateId = stateId;
     this.stateName = stateName;
     this.transitions = transitions;
