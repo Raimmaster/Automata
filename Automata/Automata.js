@@ -37,7 +37,7 @@ class Automata {
       this.acceptanceStates.push(newState.stateName);
     }
   }
-
+  //returns index
   findStateByName(stateName){
     for(let index = 0; index < this.states.length; ++index){
       if(this.states[index].stateName === stateName){
@@ -46,6 +46,16 @@ class Automata {
     }
 
     return -1;
+  }
+  //returns object
+  getStateByName(stateName){
+    for(let state of this.stattes){
+      if(state.stateName === stateName){
+        return state;
+      }
+    }
+
+    return 'undefined';
   }
 
   addTransition(fromState, toState, symbol){
@@ -497,7 +507,36 @@ class Automata {
   }
 
   transformDfaToRegEx(){
-    let DfaClones = this.getAutomatonCopies();
+    let dfaClones = this.getAutomatonCopies();
+    let regexArr = new Array();
+
+    for(let automaton of dfaClones){
+      regexArr.push(getRegexFromDfa(automaton));
+    }
+
+    let regexString = joinRegExs(regexArr);
+
+    return regexString;
+  }
+
+  getRegexFromDfa(automaton){
+    //Setup
+    let initial = automaton.startState;
+    let finStateIndex = automaton.findStateByName(automaton.acceptanceStates[0]);
+    let finalState = automaton.states[finStateIndex];
+    let regexString = "";
+    let statesCount = automaton.states.length;
+
+    while(true){
+      for(let state of automaton.states){
+        if(!state.isInitial && !state.isAcceptance){
+          let transitionsFromOthersToMyself = getTransitionsFromOthersToSelf(state, automaton);
+          let transitionsToOtherStates = getTransitionsToOthers(state);
+          let transitionsFromSelfToSelf = getTransitionsFromSelfToSelf(state);
+          
+        }
+      }
+    }
   }
 
   getAutomatonCopies(){
