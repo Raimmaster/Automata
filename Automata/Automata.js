@@ -468,8 +468,6 @@ class Automata {
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
 
     let transitionID = automaton.currentTransitionId;
-    console.log("Trans: ");
-    console.log(transitionID);
     transitions.add({
           id: transitionID,
           from: originStateId,
@@ -477,7 +475,6 @@ class Automata {
           label: symbol,
           font: {align: 'top'}
     });
-    console.log("Same id: " + transitionID);
   }
 
   joinStateNames(statesArray){
@@ -530,13 +527,59 @@ class Automata {
     while(true){
       for(let state of automaton.states){
         if(!state.isInitial && !state.isAcceptance){
-          let transitionsFromOthersToMyself = getTransitionsFromOthersToSelf(state, automaton);
-          let transitionsToOtherStates = getTransitionsToOthers(state);
-          let transitionsFromSelfToSelf = getTransitionsFromSelfToSelf(state);
+          let transitionsFromOthersToMyself = this.getTransitionsFromOthersToSelf(state, automaton);
+          let transitionsToOtherStates = this.getTransitionsToOthers(state);
+          let transitionsFromSelfToSelf = this.getTransitionsFromSelfToSelf(state);
+
+          let stringToSelf = this.getStringOfLoopToSelf(transitionsFromSelfToSelf);
           
         }
       }
     }
+
+    return regexString;
+  }
+
+  getTransitionsFromOthersToSelf(state, automaton){
+    let stateName = state.stateName;
+    let transitions = [];
+    for(let state of automaton.states){
+      if(state.stateName === stateName){
+        continue;
+      }
+
+      for(let transition of state.transitions){
+        if(transition.destinyState.stateName === stateName){
+          transitions.push(transition);
+        }
+      }
+    }
+
+    return transitions;
+  }
+
+  getTransitionsToOthers(state){
+    let transitions = [];
+
+    for(let trans of state.transitions){
+      if(trans.destinyState.stateName !== state.stateName){
+        transitions.push(trans);
+      }
+    }
+
+    return transitions;
+  }
+
+  getTransitionsFromSelfToSelf(state){
+    let transitions = [];
+
+    for(let trans of state.transitions){
+      if(trans.destinyState.stateName === state.stateName){
+        transitions.push(trans);
+      }
+    }
+
+    return transitions;
   }
 
   getAutomatonCopies(){
