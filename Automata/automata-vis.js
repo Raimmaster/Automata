@@ -8,7 +8,7 @@ Automata seed
 function autoSeed(){
   automata.addSymbolToAlphabet('0');
   automata.addSymbolToAlphabet('1');
-
+  //pipe: |, concat.; kleene = *
   automata.addState("q0", false, true);
   automata.addState("q1", false, false);
   automata.addState("q2", true, false);
