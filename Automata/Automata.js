@@ -18,7 +18,7 @@ class Automata {
 
   setType(type){
     this.type = type;
-    if(type == "NFA-epsilon"){
+    if(type == "nfa-epsilon"){
       this.alphabet.push('#'); //used for epsilon for now
     }
   }
@@ -171,6 +171,7 @@ class Automata {
   }
 
   evalEpsilon(evalString, initialState){
+    console.log("The epsilon eval: " + evalString);
     let statesArr = [];
     let arrayOfPasses = [];
 
@@ -227,7 +228,7 @@ class Automata {
         arrayOfPasses.push(this.evalEpsilon(newEvalString, currState));
       }
     }
-
+    console.log(arrayOfPasses);
     return arrayOfPasses.includes(true);
   }
 
@@ -387,7 +388,7 @@ class Automata {
         symbol: item
       });
     });
-
+    console.log(dfaAutomaton);
     //Start state section, setup
     let startStateClosure = this.startState.getClosure(new Set());
     let closureArray = Array.from(startStateClosure);
@@ -417,6 +418,8 @@ class Automata {
           statesFromSymbol.sort(this.compareStatesByName);
           for(let stateInd = 0; stateInd < statesFromSymbol.length; ++stateInd){
             let item = statesFromSymbol[stateInd];
+            console.log("STATE: ");
+            console.log(item);
             currentStatesSet.add(item);
             let closureStatesFromSet = Array.from(item.getClosure(new Set()));
             closureStatesFromSet.sort(this.compareStatesByName);
@@ -472,10 +475,7 @@ class Automata {
     //Finding destinyStateId
     let destinyStateIndex = automaton.findStateByName(destinyState);
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
-    console.log("T ID: " + transId);
     let transitionID = setIdManual ? transId : automaton.currentTransitionId;
-    console.log(setIdManual);
-    console.log(transitionID);
     transitions.add({
           id: transitionID,
           from: originStateId,
@@ -596,23 +596,15 @@ class Automata {
 
     this.resetDataStates();
     this.transformAutomatonToVisual(automaton);
-
+    automaton.setType('nfa-epsilon');
     return automaton;
   }
 
   transformAutomatonToVisual(automaton){
     console.log(automaton);
     for(let state of automaton.states){
-      console.log(state);
-      for(let trans of state.transitions){
-        console.log(trans.transitionID + " Origin: " + trans.originState.stateName + " Destiny: " + trans.destinyState.stateName);
-      }
-    }
-    for(let state of automaton.states){
-      console.log("Adding state to vis: " + state.stateName);
       this.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance, state.stateId, true);
       for(let transition of state.transitions){
-        console.log("Adding trans: " + transition.symbol);
         this.addToTransitionDataSet(automaton, transition.originState.stateName,
           transition.destinyState.stateName, transition.symbol, transition.transitionID, true);
       }
@@ -646,6 +638,7 @@ class Automata {
     let newFinalState = 'q' + this.currentStateId++;
     automaton.addState(newFinalState, !isAcceptance, !isInitial);
     automaton.addTransition(newStateName, newFinalState, regexTree.value);
+    automaton.addSymbolToAlphabet(regexTree.value);
     ++this.currentTransitionId;
     return automaton;
   }
@@ -661,7 +654,8 @@ class Automata {
     secondAutomaton.states.forEach( x => x.isInitial = false);
 
     let newStates = firstAutomaton.states.concat(secondAutomaton.states);
-    let concatAutomaton = new Automata(newStates, [], [], firstAutomaton.startState, secondAutomaton.acceptanceStates);
+    let newAlphabet = firstAutomaton.alphabet.concat(secondAutomaton.alphabet);
+    let concatAutomaton = new Automata(newStates, newAlphabet, [], firstAutomaton.startState, secondAutomaton.acceptanceStates);
     concatAutomaton.currentStateId = this.currentStateId;
     concatAutomaton.currentTransitionId = this.currentTransitionId;
 
@@ -681,7 +675,8 @@ class Automata {
     let secondFinal = secondAutomaton.states.find(x => x.isAcceptance === true);
 
     let newStates = firstAutomaton.states.concat(secondAutomaton.states);
-    let pipeAutomaton = new Automata(newStates, [], [], firstAutomaton, [], []);
+    let newAlphabet = firstAutomaton.alphabet.concat(secondAutomaton.alphabet);
+    let pipeAutomaton = new Automata(newStates, newAlphabet, [], firstAutomaton, [], []);
     pipeAutomaton.states.forEach( x => {x.isInitial = false; x.isAcceptance = false});
     pipeAutomaton.currentStateId = this.currentStateId;
     pipeAutomaton.currentTransitionId = this.currentTransitionId;
