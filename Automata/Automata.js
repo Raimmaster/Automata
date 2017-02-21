@@ -210,6 +210,7 @@ class Automata {
 
     if(evalString.length === 1 ){
       for(let aState of states){
+        console.log("Now in a:State:" + aState.stateName);
         if(this.acceptanceStates.includes(aState.stateName)){
           return true;
         }
@@ -254,8 +255,8 @@ class Automata {
     }
 
     let currentStateId = setIdManual ? stateId : automaton.currentStateId;
-    console.log("State:");
-    console.log(currentStateId);
+    // console.log("State:");
+    // console.log(currentStateId);
     states.add({
           id: currentStateId,
           label: stateName,
@@ -655,11 +656,12 @@ class Automata {
 
     let newStates = firstAutomaton.states.concat(secondAutomaton.states);
     let newAlphabet = firstAutomaton.alphabet.concat(secondAutomaton.alphabet);
+    console.log("Acc s: " + secondAutomaton.acceptanceStates[0]);
     let concatAutomaton = new Automata(newStates, newAlphabet, [], firstAutomaton.startState, secondAutomaton.acceptanceStates);
     concatAutomaton.currentStateId = this.currentStateId;
     concatAutomaton.currentTransitionId = this.currentTransitionId;
 
-    concatAutomaton.addTransition(firstFinal.stateName, secondStart.stateName, regexTree.value);
+    concatAutomaton.addTransition(firstFinal.stateName, secondStart.stateName, this.epsilon);
     ++this.currentTransitionId;
 
     return concatAutomaton;
@@ -729,6 +731,8 @@ class Automata {
 
   getFinalState(){
     let acceptanceName = this.acceptanceStates[0];
+    console.log("Accept");
+    console.log(this.states.filter(x => x.isAcceptance));
     return this.getStateByName(acceptanceName);
   }
 
