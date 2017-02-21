@@ -199,3 +199,10 @@ function setAutomatonType(){
   alert("Type: " + type);
   automata.setType(type);
 }
+
+function regexToEpsilon(){
+  let regEx = document.getElementById('regex').value;
+  let nfaEpsilon = automata.transformRegexToNfaEpsilon(regEx);
+
+  automata = nfaEpsilon;
+}

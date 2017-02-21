@@ -50,7 +50,7 @@ class Automata {
   }
   //returns object
   getStateByName(stateName){
-    for(let state of this.stattes){
+    for(let state of this.states){
       if(state.stateName === stateName){
         return state;
       }
@@ -587,19 +587,40 @@ class Automata {
     let nfaEpsilonTree = peg$parse(regex);
     let automaton = this.transformRegFromTree(nfaEpsilonTree);
 
+    this.resetDataStates();
+    this.transformAutomatonToVisual(automaton);
+
     return automaton;
+  }
+
+  transformAutomatonToVisual(automaton){
+    console.log(automaton);
+    for(let state of automaton.states){
+      console.log(state);
+      for(let trans of state.transitions){
+        console.log(trans.transitionID + " Origin: " + trans.originState.stateName + " Destiny: " + trans.destinyState.stateName);
+      }
+    }
+    for(let state of automaton.states){
+      console.log("Adding state to vis: " + state.stateName);
+      this.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance);
+      for(let transition of state.transitions){
+        console.log("Adding trans: " + transition.symbol);
+        this.addToTransitionDataSet(automaton, transition.originState, transition.destinyState, transition.symbol);
+      }
+    }
   }
 
   transformRegFromTree(regexTree){
     switch(regexTree.name){
       case 'kleene':
-        return kleeneAutomaton(regexTree);
+        return this.kleeneAutomaton(regexTree);
       case 'concat':
-        return concatAutomaton(regexTree);
+        return this.concatAutomaton(regexTree);
       case 'pipe':
-        return pipeAutomaton(regexTree);
+        return this.pipeAutomaton(regexTree);
       case 'character':
-        return characterAutomaton(regexTree);
+        return this.characterAutomaton(regexTree);
     }
   }
 
@@ -633,8 +654,10 @@ class Automata {
 
     let newStates = firstAutomaton.states.concat(secondAutomaton.states);
     let concatAutomaton = new Automata(newStates, [], [], firstAutomaton.startState, secondAutomaton.acceptanceStates);
-    let concatAutomaton.currentStateId = this.currentStateId;
-    let concatAutomaton.currentTransitionId = this.currentTransitionId;
+    concatAutomaton.currentStateId = this.currentStateId;
+    concatAutomaton.currentTransitionId = this.currentTransitionId;
+
+    concatAutomaton.addTransition(firstFinal.stateName, secondStart.stateName, regexTree.value);
 
     return concatAutomaton;
   }
@@ -651,8 +674,8 @@ class Automata {
     let newStates = firstAutomaton.states.concat(secondAutomaton.states);
     let pipeAutomaton = new Automata(newStates, [], [], firstAutomaton, [], []);
     pipeAutomaton.states.forEach( x => {x.isInitial = false; x.isAcceptance = false});
-    let pipeAutomaton.currentStateId = this.currentStateId;
-    let pipeAutomaton.currentTransitionId = this.currentTransitionId;
+    pipeAutomaton.currentStateId = this.currentStateId;
+    pipeAutomaton.currentTransitionId = this.currentTransitionId;
 
     let newInitialName = 'q' + this.currentStateId++;
     let newFinalName = 'q' + this.currentStateId++;
@@ -694,7 +717,7 @@ class Automata {
 
   getFinalState(){
     let acceptanceName = this.acceptanceStates[0];
-    return getStateByName(acceptanceName);
+    return this.getStateByName(acceptanceName);
   }
 
   getAutomatonCopies(){
