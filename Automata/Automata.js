@@ -234,7 +234,7 @@ class Automata {
     }
   }
 
-  addToStateDataSet(automaton, stateName, isInitialState, isAcceptanceState){
+  addToStateDataSet(automaton, stateName, isInitialState, isAcceptanceState, stateId, setIdManual){
     let borderColor = '';
     let stateColor = '';
 
@@ -247,7 +247,7 @@ class Automata {
       stateColor = '#FFBF00';
     }
 
-    let currentStateId = automaton.currentStateId;
+    let currentStateId = setIdManual ? stateId : automaton.currentStateId;
     console.log("State:");
     console.log(currentStateId);
     states.add({
@@ -459,7 +459,7 @@ class Automata {
     return false;
   }
 
-  addToTransitionDataSet(automaton, originState, destinyState, symbol){
+  addToTransitionDataSet(automaton, originState, destinyState, symbol, transId, setIdManual){
     //Finding originStateId
     let indexOfOriginState = automaton.findStateByName(originState);
     let originStateId = automaton.states[indexOfOriginState].stateId;
@@ -467,8 +467,10 @@ class Automata {
     //Finding destinyStateId
     let destinyStateIndex = automaton.findStateByName(destinyState);
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
-
-    let transitionID = automaton.currentTransitionId;
+    console.log("T ID: " + transId);
+    let transitionID = setIdManual ? transId : automaton.currentTransitionId;
+    console.log(setIdManual);
+    console.log(transitionID);
     transitions.add({
           id: transitionID,
           from: originStateId,
@@ -603,10 +605,11 @@ class Automata {
     }
     for(let state of automaton.states){
       console.log("Adding state to vis: " + state.stateName);
-      this.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance);
+      this.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance, state.stateId, true);
       for(let transition of state.transitions){
         console.log("Adding trans: " + transition.symbol);
-        this.addToTransitionDataSet(automaton, transition.originState, transition.destinyState, transition.symbol);
+        this.addToTransitionDataSet(automaton, transition.originState.stateName,
+          transition.destinyState.stateName, transition.symbol, transition.transitionID, true);
       }
     }
   }
@@ -638,7 +641,7 @@ class Automata {
     let newFinalState = 'q' + this.currentStateId++;
     automaton.addState(newFinalState, !isAcceptance, !isInitial);
     automaton.addTransition(newStateName, newFinalState, regexTree.value);
-
+    ++this.currentTransitionId;
     return automaton;
   }
 
@@ -658,6 +661,7 @@ class Automata {
     concatAutomaton.currentTransitionId = this.currentTransitionId;
 
     concatAutomaton.addTransition(firstFinal.stateName, secondStart.stateName, regexTree.value);
+    ++this.currentTransitionId;
 
     return concatAutomaton;
   }
@@ -685,9 +689,13 @@ class Automata {
     pipeAutomaton.addState(newFinalName, isAcceptance, !isInitial);
 
     pipeAutomaton.addTransition(newInitialName, firstInitial.stateName, this.epsilon);
+    ++this.currentTransitionId;
     pipeAutomaton.addTransition(newInitialName, secondInitial.stateName, this.epsilon);
+    ++this.currentTransitionId;
     pipeAutomaton.addTransition(firstFinal.stateName, newFinalName, this.epsilon);
+    ++this.currentTransitionId;
     pipeAutomaton.addTransition(secondFinal.stateName, newFinalName, this.epsilon);
+    ++this.currentTransitionId;
 
     return pipeAutomaton;
   }
@@ -708,9 +716,13 @@ class Automata {
     kleeneAutomaton.addState(newFinalName, isAcceptance, !isInitial);
 
     kleeneAutomaton.addTransition(newInitialName, newFinalName, this.epsilon);
+    ++this.currentTransitionId;
     kleeneAutomaton.addTransition(newInitialName, kleeneInitial.stateName, this.epsilon);
+    ++this.currentTransitionId;
     kleeneAutomaton.addTransition(kleeneFinal.stateName, newFinalName, this.epsilon);
+    ++this.currentTransitionId;
     kleeneAutomaton.addTransition(kleeneFinal.stateName, kleeneInitial.stateName, this.epsilon);
+    ++this.currentTransitionId;
 
     return kleeneAutomaton;
   }
