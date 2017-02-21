@@ -1,0 +1,3 @@
+[submodule "Automata/regular-expression-parser"]
+	path = Automata/regular-expression-parser
+	url = https://github.com/Raimmaster/regular-expression-parser
