@@ -136,6 +136,11 @@ class Automata {
     let arrayOfPasses = [];
 
       let currChar = evalString[0];
+
+      if(evalString.length === 0){
+        return this.acceptanceStates.includes(initialState.stateName);
+      }
+
       if(!this.alphabet.includes(currChar)){
         return false;
       }
