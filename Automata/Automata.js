@@ -383,6 +383,8 @@ class Automata {
     dfaAutomaton.currentStateId = this.currentStateId;
     dfaAutomaton.currentTransitionId = this.currentTransitionId;
     this.alphabet.forEach(function(item){
+      if(dfaAutomaton.alphabet.includes(item))
+        return;
       dfaAutomaton.addSymbolToAlphabet(item);
       alphabet.add({
         id: item,
