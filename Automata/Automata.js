@@ -18,9 +18,6 @@ class Automata {
 
   setType(type){
     this.type = type;
-    if(type == "nfa-epsilon"){
-      this.alphabet.push('#'); //used for epsilon for now
-    }
   }
 
   addState(state, isAcceptance, isInitial){
