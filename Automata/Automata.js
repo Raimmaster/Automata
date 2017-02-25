@@ -388,7 +388,6 @@ class Automata {
         symbol: item
       });
     });
-    console.log(dfaAutomaton);
     //Start state section, setup
     let startStateClosure = this.startState.getClosure(new Set());
     let closureArray = Array.from(startStateClosure);
@@ -418,13 +417,10 @@ class Automata {
           statesFromSymbol.sort(this.compareStatesByName);
           for(let stateInd = 0; stateInd < statesFromSymbol.length; ++stateInd){
             let item = statesFromSymbol[stateInd];
-            console.log("STATE: ");
-            console.log(item);
             currentStatesSet.add(item);
             let closureStatesFromSet = Array.from(item.getClosure(new Set()));
             closureStatesFromSet.sort(this.compareStatesByName);
             for(let closureState of closureStatesFromSet){
-              console.log("adding: " + closureState.stateName);
               currentStatesSet.add(closureState);
             }
           }
