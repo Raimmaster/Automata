@@ -896,7 +896,9 @@ class Automata {
         x.firstState.stateName === rowTuple.firstState.stateName);
       
       for(let currentTuple of allRowStateElements){
-        this.checkEquivalence(currentTuple, table);
+        if(currentTuple.equivalenceVerified){
+          this.checkEquivalence(currentTuple, table);
+        }
       }
 
       checkedStates.push(rowTuple.firstState.stateName);
@@ -941,9 +943,44 @@ class Automata {
   }
 
   checkTransitionEquivalence(tuple, table){    
+    const hasBeenDiscovered = true;
+    const equivalenceConfirmed = true;
+    const hasBeenVerified = true;
+
     if(!discovered){
       let arrayOfTuples = this.getArrayOfTuples(tuple, table);
-      
+      for(let tupleElement of arrayOfTuples){
+        let isEquivalent = this.checkTuplesStateEquivalence(tuple, table);
+        if(!isEquivalent){
+          //Set that they're not equivalent?
+          tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
+          return;
+        }
+      }
+
+      tuple.setCheckedStatus(hasBeenDiscovered, equivalenceConfirmed, hasBeenVerified);
+    }
+  }
+
+  checkTuplesStateEquivalence(tuple, table){
+    let firstState = tuple.firstState;
+    let secondState = tuple.secondState;
+    let discovered = tuple.discovered;
+
+    if(firstState === secondState){
+      return true;
+    }
+
+    let comparisonTuple = this.getTupleFromNextStates(firstState, secondState, table);
+
+    if(comparisonTuple.discovered){
+      if(comparisonTuple.equivalenceVerified){
+        return comparisonTuple.equivalent;
+      }else{
+        //verify the equivalence of the tuple
+      }
+    }else {
+
     }
   }
 
@@ -970,6 +1007,14 @@ class Automata {
       }else if(secondNextState === 'undefined'){
         tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
         return;
+      }else {
+        if(firstNextState === secondNextState){
+          //In case that they go to the same place, add that tuple to Array of tuples
+          //and skip one iteration of loop
+          let sameStateTuple = new EqTuple(firstNextState, secondNextState, true, true);
+          arrayOfTuples.push(sameStateTuple);
+          continue;
+        }
       }
 
       let transitionTuple = this.getTupleFromNextStates(firstNextState, secondNextState, table);
@@ -983,8 +1028,14 @@ class Automata {
   }
 
   getTupleFromNextStates(firstNextState, secondNextState, table){
-    return table.find(x => x.firstState === firstNextState
-          && x.secondState === secondNextState)
+    let tuple = table.find(x => x.firstState === firstNextState
+          && x.secondState === secondNextState);
+
+    if(tuple === 'undefined'){
+      tuple = table.find(x => x.firstState === secondNextState
+          && x.secondState === firstState);
+    }
+    return tuple;
   }
 
   createEquivalenceTable(){
