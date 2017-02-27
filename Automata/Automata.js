@@ -761,7 +761,7 @@ class Automata {
     return dfaClones;
   }
 
-  union(automataList){
+  unionIntersect(automataList, checkAcceptanceInArrayFunc){
     if(automataList.length < 2)
       return;
 
@@ -780,7 +780,7 @@ class Automata {
     let initialB = initials[1];
 
     let initialStateName = this.joinUnionStateName(initials);
-    let containsAcceptance = initialA.isAcceptance || initialB.isAcceptance;
+    let containsAcceptance = checkAcceptanceInArrayFunc(initials);
     
     unionAutomaton.addToStateDataSet(unionAutomaton, initialStateName, 
       isInitial, containsAcceptance, '', false);
@@ -810,7 +810,7 @@ class Automata {
       //console.log("New state from initial: " + newStateName);
       let isManualIDSetting = false; 
 
-      containsAcceptance = this.statesArrayHasAcceptance(statesFromSymbol);
+      containsAcceptance = checkAcceptanceInArrayFunc(statesFromSymbol);
       unionAutomaton.addToStateDataSet(unionAutomaton, newStateName, 
         !isInitial, containsAcceptance, '', isManualIDSetting);
       
@@ -851,7 +851,7 @@ class Automata {
         let stateExists = unionAutomaton.getStateByName(newStateName);
 
         if(stateExists === 'undefined'){
-          containsAcceptance = this.statesArrayHasAcceptance(statesFromSymbol);
+          containsAcceptance = checkAcceptanceInArrayFunc(statesFromSymbol);
           this.addToStateDataSet(unionAutomaton, newStateName, !isInitial, containsAcceptance, '', false);
           let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
           newState.setOfNfaStates = statesFromSymbol;
@@ -869,114 +869,6 @@ class Automata {
     }
 
     return unionAutomaton;
-  }
-
-  intersection(automataList){
-    if(automataList.length < 2)
-      return;
-
-    let initials = [];
-
-    for(let automaton of automataList){
-      initials.push(automaton.states.find(state => state.isInitial));
-    }
-    let newAlphabet = automataList[0].alphabet.concat(automataList.alphabet);
-    let newSetAlpha = new Set(newAlphabet);
-    let unionAutomaton = new Automata([], Array.from(newSetAlpha), [], 'undefined', []);
-    let isInitial = true;
-
-    let initialA = initials[0];
-    let initialB = initials[1];
-
-    let initialStateName = this.joinUnionStateName(initials);
-    let containsAcceptance = initialA.isAcceptance && initialB.isAcceptance;
-    
-    unionAutomaton.addToStateDataSet(unionAutomaton, initialStateName, 
-      isInitial, containsAcceptance, '', false);
-    
-    let initialState = unionAutomaton.addState(initialStateName, containsAcceptance, isInitial);
-    initialState.setOfNfaStates = initials;
-    let statesToCheck = [];
-    for(const currChar of this.alphabet){
-      let statesFromSymbol = [];
-      for(let currState of initialState.setOfNfaStates){
-        let nextState = currState.getNextState(currChar);
-         
-        if(nextState != 'undefined'){
-          statesFromSymbol.push(nextState);
-        }
-      }
-      if(statesFromSymbol.length < 1){
-        continue;
-      }
-      let newStateName = this.joinUnionStateName(statesFromSymbol);
-
-      let isManualIDSetting = false; 
-
-      containsAcceptance = this.statesArrayHasBothAcceptance(statesFromSymbol);
-      unionAutomaton.addToStateDataSet(unionAutomaton, newStateName, 
-        !isInitial, containsAcceptance, '', isManualIDSetting);
-      
-      let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
-      
-      newState.setOfNfaStates = statesFromSymbol;
-      statesToCheck.push(newState);
-      
-      unionAutomaton.addToTransitionDataSet(unionAutomaton, initialState.stateName, 
-        newStateName, currChar, '', isManualIDSetting);
-      unionAutomaton.addTransition(initialState.stateName, newStateName, currChar);
-    }
-
-    let currState = statesToCheck[0];
-    while(statesToCheck.length > 0){
-      for(const currChar of unionAutomaton.alphabet){
-        let statesFromSymbol = [];
-        for(let stateOfCurrState of currState.setOfNfaStates){
-          let stateFound = stateOfCurrState.getNextState(currChar); 
-
-          if(stateFound === 'undefined'){
-            continue;
-          }
-          statesFromSymbol.push(stateFound);
-        }
-
-        if(statesFromSymbol.length < 1){
-          continue;
-        }
-
-        let newStateName = this.joinUnionStateName(statesFromSymbol);
-        let stateExists = unionAutomaton.getStateByName(newStateName);
-
-        if(stateExists === 'undefined'){
-          containsAcceptance = this.statesArrayHasBothAcceptance(statesFromSymbol);
-          this.addToStateDataSet(unionAutomaton, newStateName, !isInitial, containsAcceptance, '', false);
-          let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
-          newState.setOfNfaStates = statesFromSymbol;
-          statesToCheck.push(newState);
-        }
-
-        this.addToTransitionDataSet(unionAutomaton, currState.stateName, newStateName, currChar, '', false);
-        unionAutomaton.addTransition(currState.stateName, newStateName, currChar, '', false);
-      }
-      statesToCheck.shift();
-      if(statesToCheck.length > 0){
-        currState = statesToCheck[0];
-      }
-    }
-
-    return unionAutomaton;
-  }
-
-  statesArrayHasAcceptance(statesArray){
-    let acceptances = statesArray.filter(state => state.isAcceptance);
-    //console.log("Acceptances length: " + acceptances.length);
-    return acceptances.length > 0;
-  }
-
-  statesArrayHasBothAcceptance(statesArray){
-    let acceptances = statesArray.filter(state => state.isAcceptance);
-
-    return acceptances.length === 2;
   }
 
   joinUnionStateName(statesArray){

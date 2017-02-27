@@ -220,12 +220,15 @@ function regexToEpsilon(){
 }
 
 function automataUnion(){
-  let dfaAutomaton = automata.union(automataList);
+  draw();
+  let dfaAutomaton = automata.unionIntersect(automataList, statesArrayHasAcceptance);
   automata = dfaAutomaton;
+
 }
 
 function automataIntersection(){
-  let dfaAutomaton = automata.intersection(automataList);
+  draw();
+  let dfaAutomaton = automata.unionIntersect(automataList, statesArrayHasBothAcceptance);
   automata = dfaAutomaton;
 }
 
@@ -242,4 +245,16 @@ function saveAutomaton(){
   automata.resetDataStates();
   automata = new Automata([], [], [], 'undefined', []);
   draw();
+}
+
+function statesArrayHasAcceptance(statesArray){
+  let acceptances = statesArray.filter(state => state.isAcceptance);
+  //console.log("Acceptances length: " + acceptances.length);
+  return acceptances.length > 0;
+}
+
+function statesArrayHasBothAcceptance(statesArray){
+  let acceptances = statesArray.filter(state => state.isAcceptance);
+
+  return acceptances.length === 2;
 }
