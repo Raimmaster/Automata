@@ -919,10 +919,32 @@ class Automata {
     }
 
     //Add transitions 
-    //for(let state of minimizedAutomaton.states){
-
+    //for(const currChar of minimizedAutomaton.alphabet){
+      for(let state of minimizedAutomaton.states){
+        for(let arrState of state.setOfNfaStates){
+          for(let transition of arrState.transitions){
+            let destinyState = minimizedAutomaton.findStateIfContained(transition.destinyState);
+            minimizedAutomaton.addTransition(state.stateName, destinyState.stateName, transition.symbol);
+          }
+        }
+      }
     //}
+
     return minimizedAutomaton;
+  }
+
+  findStateIfContained(state){
+    for(let currState of this.states){
+      if(currState.setOfNfaStates.includes(state)){
+        return currState;
+      }
+
+      if(currState === state){
+        return currState;
+      }
+    }
+
+    return 'undefined';
   }
 
   stateHasBeenMinimized(state){
