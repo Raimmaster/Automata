@@ -877,10 +877,10 @@ class Automata {
   }
 
   minimize(){
-    let equivalenceTable = getEquivalenceTable();
-    equivalenceTable = markNotAcceptance(equivalenceTable);
-    let minimizedAutomaton = minimizeFromTable(equivalenceTable);
-    transformAutomatonToVisual(minimizedAutomaton);
+    let equivalenceTable = this.getEquivalenceTable();
+    equivalenceTable = this.markNotAcceptance(equivalenceTable);
+    let minimizedAutomaton = this.minimizeFromTable(equivalenceTable);
+    this.transformAutomatonToVisual(minimizedAutomaton);
 
     return minimizedAutomaton;
   }
@@ -896,7 +896,7 @@ class Automata {
         x.firstState.stateName === rowTuple.firstState.stateName);
       
       for(let currentTuple of allRowStateElements){
-        checkEquivalence(currentTuple, table);
+        this.checkEquivalence(currentTuple, table);
       }
 
       checkedStates.push(rowTuple.firstState.stateName);
@@ -920,18 +920,71 @@ class Automata {
         if(firstState.isAcceptance){
           if(!secondState.isAcceptance){
             tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
-            return;
           }else {
-            checkTransitionEquivalence(tuple, table);
+            this.checkTransitionEquivalence(tuple, table);
           }
         }else if(secondState.isAcceptance){
           tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
-          return;
         }else {
-          checkTransitionEquivalence(tuple, table);
+          this.checkTransitionEquivalence(tuple, table);
+        }
+      }else {
+        if(firstState.isAcceptance){
+          tuple.setCheckedStatus(hasBeenDiscovered, secondState.isAcceptance, hasBeenVerified);
+        }else {
+          //TO-DO
+          //Check if the tuple's states have the SAME transitions
+          //And if not, check if their transitions are equivalent
         }
       }
     }
+  }
+
+  checkTransitionEquivalence(tuple, table){    
+    if(!discovered){
+      let arrayOfTuples = this.getArrayOfTuples(tuple, table);
+      
+    }
+  }
+
+  getArrayOfTuples(tuple, table){
+    let firstState = tuple.firstState;
+    let secondState = tuple.secondState;
+    let discovered = tuple.discovered;
+
+    const hasBeenDiscovered = true;
+    const isEquivalent = true;
+    const hasBeenVerified = true;
+
+    let arrayOfTuples = [];
+
+    for(const currChar of this.alphabet){
+      let firstNextState = firstState.getNextState(currChar);
+      let secondNextState = secondState.getNextState(currChar);
+
+      if(firstNextState === 'undefined'){
+        if(secondNextState !== 'undefined'){
+          tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
+          return;
+        }
+      }else if(secondNextState === 'undefined'){
+        tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
+        return;
+      }
+
+      let transitionTuple = this.getTupleFromNextStates(firstNextState, secondNextState, table);
+
+      arrayOfTuples.push(transitionTuple);
+    }
+    
+    tuple.discovered = true;
+
+    return arrayOfTuples;
+  }
+
+  getTupleFromNextStates(firstNextState, secondNextState, table){
+    return table.find(x => x.firstState === firstNextState
+          && x.secondState === secondNextState)
   }
 
   createEquivalenceTable(){

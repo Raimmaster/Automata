@@ -40,7 +40,7 @@ function autoSeed(){
   automataList.push(automata);
 }
 
-autoSeed();
+//autoSeed();
 
 function addNode() {
     try {
