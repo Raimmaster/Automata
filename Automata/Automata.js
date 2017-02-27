@@ -466,11 +466,8 @@ class Automata {
   }
 
   addToTransitionDataSet(automaton, originState, destinyState, symbol, transId, setIdManual){
-    //Finding originStateId
     let indexOfOriginState = automaton.findStateByName(originState);
     let originStateId = automaton.states[indexOfOriginState].stateId;
-    //console.log("Origin state: " + originState + " Destiny state: " + destinyState);
-    //Finding destinyStateId
     let destinyStateIndex = automaton.findStateByName(destinyState);
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
     let transitionID = setIdManual ? transId : automaton.currentTransitionId;
@@ -877,5 +874,77 @@ class Automata {
       stateConcat += statesArray[index].stateName;
     }
     return stateConcat;
+  }
+
+  minimize(){
+    let equivalenceTable = getEquivalenceTable();
+    equivalenceTable = markNotAcceptance(equivalenceTable);
+    let minimizedAutomaton = minimizeFromTable(equivalenceTable);
+    transformAutomatonToVisual(minimizedAutomaton);
+
+    return minimizedAutomaton;
+  }
+
+  markNotAcceptance(table){
+    let checkedStates = [];
+    for(let i = 0; i < table.length; ++i){
+      let rowTuple = table[i];
+      if(checkedStates.includes(rowTuple.firstState.stateName)){
+        continue;
+      }      
+      let allRowStateElements = table.filter(x => 
+        x.firstState.stateName === rowTuple.firstState.stateName);
+      
+      for(let currentTuple of allRowStateElements){
+        checkEquivalence(currentTuple, table);
+      }
+
+      checkedStates.push(rowTuple.firstState.stateName);
+    }
+
+    return table;
+  }
+
+  checkEquivalence(tuple, table){
+    let firstState = tuple.firstState;
+    let secondState = tuple.secondState;
+    let discovered = tuple.discovered;
+    let isVerified = tuple.equivalenceVerified;
+
+    const hasBeenDiscovered = true;
+    const isEquivalent = true;
+    const hasBeenVerified = true;
+
+    if(!isVerified){
+      if(!discovered){
+        if(firstState.isAcceptance){
+          if(!secondState.isAcceptance){
+            tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
+            return;
+          }else {
+            checkTransitionEquivalence(tuple, table);
+          }
+        }else if(secondState.isAcceptance){
+          tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
+          return;
+        }else {
+          checkTransitionEquivalence(tuple, table);
+        }
+      }
+    }
+  }
+
+  createEquivalenceTable(){
+    let table = [];
+    for (let i = 0; i < this.states.length - 1; ++i) {
+      let firstState = this.states[i];
+      for(let k = i + 1; k < this.states.length; ++k){
+        let secondState = this.states[k];
+        let newTuple = new EqTuple(firstState, secondState, false, false);
+        table.push(newTuple);  
+      }
+    }
+
+    return table;
   }
 }

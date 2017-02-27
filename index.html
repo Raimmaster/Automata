@@ -9,6 +9,7 @@
   <script type="text/javascript" src="./Automata/regular-expression-parser/regular-expression.js"></script>
   <script type="text/javascript" src="./Automata/Transition.js"></script>
   <script type="text/javascript" src="./Automata/State.js"></script>
+  <script type="text/javascript" src="./Automata/EqTuple.js"></script>
   <script type="text/javascript" src="./Automata/Automata.js"></script>
   <script type="text/javascript" src="./Automata/automata-vis.js"></script>
   <script type="text/javascript" src="./Automata/render-automata.js"></script>
@@ -200,6 +201,7 @@
                 <hr>
                 <button class="btn btn-success" id="transform-nfa-epsilon" onclick="transformEpsilon();">Transform NFA-Epsilon to DFA</button>
                 <button class="btn btn-primary" id="transform-dfa-regex" onclick="transformToRegEx();">Transform DFA to RegEx</button>
+                 <button class="btn btn-warning" id="minimize-dfa" onclick="minimizeDFA();">Minimize DFA</button>
               </td>
               <td>
               </td>

@@ -258,3 +258,9 @@ function statesArrayHasBothAcceptance(statesArray){
 
   return acceptances.length === 2;
 }
+
+function minimizeDFA(){
+  let dfaAutomaton = automata.minimize();
+
+  automata = dfaAutomaton;
+}
