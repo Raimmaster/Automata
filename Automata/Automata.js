@@ -21,6 +21,10 @@ class Automata {
   }
 
   addState(state, isAcceptance, isInitial){
+    if(this.getStateByName(state) !== 'undefined'){
+      return 'undefined';
+    }
+
     let newState = new State(this.currentStateId++, state, [], isInitial, isAcceptance);
     if(this.currentState === 'undefined'){
       this.currentState = newState;
@@ -880,10 +884,93 @@ class Automata {
     let equivalenceTable = this.createEquivalenceTable();
     equivalenceTable = this.markNotAcceptance(equivalenceTable);
     console.log(equivalenceTable);
-    //let minimizedAutomaton = this.minimizeFromTable(equivalenceTable);
-    //this.transformAutomatonToVisual(minimizedAutomaton);
+    let minimizedAutomaton = this.minimizeFromTable(equivalenceTable);
+    this.transformAutomatonToVisual(minimizedAutomaton);
     console.log("Finished minimizing.");
-    //return minimizedAutomaton;
+    return minimizedAutomaton;
+  }
+
+  minimizeFromTable(table){
+    let minimizedStateArray = [];
+    let minimizedAutomaton = new Automata([], this.alphabet, [], 'undefined', []);
+    //Add states; new ones and not new ones
+    for(let tuple of table){
+      if(tuple.equivalent){
+        let tupleStates = tuple.getStateArray();
+        
+        tupleStates = minimizedAutomaton.oneOfTupleStatesHasBeenAdded(tupleStates);
+
+        let newStateName = this.joinStateNames(tupleStates);
+        let newMinimizedState = minimizedAutomaton.addState(newStateName, tuple.containsAcceptance(), tuple.containsInitial());
+        newMinimizedState.setOfNfaStates = tupleStates;        
+      }
+    }
+    
+    for(let tuple of table){
+      if(!tuple.equivalent){
+        let tupleStates = tuple.getStateArray();
+        for(let state of tupleStates){
+          if(!minimizedAutomaton.stateHasBeenMinimized(state)){
+            let newState = minimizedAutomaton.addState(state.stateName, state.isAcceptance, state.isInitial);
+            newState.setOfNfaStates = [state];
+          }
+        }
+      }
+    }
+
+    //Add transitions 
+    //for(let state of minimizedAutomaton.states){
+
+    //}
+    return minimizedAutomaton;
+  }
+
+  stateHasBeenMinimized(state){
+    for(let currState of this.states){
+      if(currState.setOfNfaStates.includes(state)){
+        console.log("Contains it.");
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  oneOfTupleStatesHasBeenAdded(tupleStates){
+    for(let tupState of tupleStates){
+      for(let i = 0; i < this.states.length; ++i){
+        let autState = this.states[i];
+        let tupStateInAutomatonStates = autState.setOfNfaStates.includes(tupState);
+        
+        if(tupStateInAutomatonStates){
+          
+          if(autState.isAcceptance && !tupState.isAcceptance){
+            return tupleStates;
+          }
+
+          let newTupleArray = this.constructTupleArray(autState.setOfNfaStates, tupleStates);
+          this.states.splice(i, 1);
+
+
+          return newTupleArray;
+        }
+      }
+    }
+
+    return tupleStates;
+  }
+
+  constructTupleArray(setOfStates, tupleStates){
+    let statesSet = new Set();
+    for(let state of tupleStates){
+      statesSet.add(state);
+    }
+
+    for(let state of setOfStates){
+      statesSet.add(state);
+    }
+
+    return Array.from(statesSet);
   }
 
   markNotAcceptance(table){
