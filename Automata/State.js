@@ -18,6 +18,27 @@ class State{
     return this.getNextStatesArray(transitions);
   }
 
+
+  findTransitionWithSymbol(symbol){
+    for(let transi of this.transitions){
+      if(transi.symbol == symbol){
+        return transi;
+      }
+    }
+
+    return 'undefined';
+  }
+
+  getNextState(symbol){
+    let transitionToFind = this.findTransitionWithSymbol(symbol);
+    if(transitionToFind != 'undefined'){
+      return transitionToFind.destinyState;
+    }
+
+    return 'undefined';
+  }
+  
+
   getTransitionsWithSymbol(symbol, originStateName){
     return this.transitions.filter(trans =>
       trans.symbol == symbol &&

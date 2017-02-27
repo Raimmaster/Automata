@@ -1,7 +1,7 @@
 let alphabet, states, transitions, network;
 /**Automaton logic**/
 let automata = new Automata([], [], [], 'undefined', []);
-
+let automataList = [];
 /**
 Automata seed
 **/
@@ -9,26 +9,38 @@ function autoSeed(){
   automata.addSymbolToAlphabet('0');
   automata.addSymbolToAlphabet('1');
   //pipe: |, concat.; kleene = *
+  let isInitial = true;
+  let isAcceptance = true;
+
+
   automata.addState("q0", false, true);
   automata.addState("q1", false, false);
   automata.addState("q2", true, false);
-  automata.addState("q3", false, false);
+  automata.addState("q3", true, false);
 
-  automata.addTransition("q0", "q1", 0);
+  automata.addTransition("q0", "q1", 1);
+  automata.addTransition("q1", "q1", 1);
   automata.addTransition("q1", "q2", 0);
+  automata.addTransition("q2", "q3", 1);
 
-  automata.addTransition("q0", "q0", 0);
-  automata.addTransition("q0", "q0", 1);
+  automataList.push(automata);
 
-  automata.addTransition("q0", "q3", 1);
-  automata.addTransition("q3", "q2", 1);
+  automata = new Automata([], automata.alphabet, [], 'undefined', []);
 
-  automata.addTransition("q2", "q2", 0);
-  automata.addTransition("q2", "q2", 1);
+  automata.addState("a", false, true);
+  automata.addState("b", false, false);
+  automata.addState("c", true, false);
+  automata.addState("d", true, false);
 
+  automata.addTransition("a", "a", 1);
+  automata.addTransition("a", "b", 0);
+  automata.addTransition("b", "c", 1)
+  automata.addTransition("c", "d", 0);
+
+  automataList.push(automata);
 }
 
-// autoSeed();
+autoSeed();
 
 function addNode() {
     try {
@@ -205,4 +217,29 @@ function regexToEpsilon(){
   let nfaEpsilon = automata.transformRegexToNfaEpsilon(regEx);
 
   automata = nfaEpsilon;
+}
+
+function automataUnion(){
+  let dfaAutomaton = automata.union(automataList);
+  automata = dfaAutomaton;
+}
+
+function automataIntersection(){
+  let dfaAutomaton = automata.intersection(automataList);
+  automata = dfaAutomaton;
+}
+
+function automataComplement(){
+
+}
+
+function saveAutomaton(){
+  if(automataList.length === 2){
+    automataList = [];
+  }
+  let newAutomaton = automata;
+  automataList.push(newAutomaton);
+  automata.resetDataStates();
+  automata = new Automata([], [], [], 'undefined', []);
+  draw();
 }

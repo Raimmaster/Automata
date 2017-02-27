@@ -72,6 +72,7 @@
           <li role="presentation"><a href="#transition-tab" aria-controls="messages" role="tab" data-toggle="tab">Transition</a></li>
           <li role="presentation"><a href="#evaluation-tab" aria-controls="settings" role="tab" data-toggle="tab">Evaluation</a></li>
           <li role="presentation"><a href="#regexnfae-tab" role="tab" data-toggle="tab">Regex2NFAe</a></li>
+          <li role="presentation"><a href="#set-operations-tab" role="tab" data-toggle="tab">Set Operations</a></li>
         </ul>
 
         <div class="tab-content">
@@ -195,6 +196,7 @@
               <td>
                 <button class="btn btn-primary" id="evaluate" onclick="evaluateString();">Evaluate</button>
                 <button class="btn btn-danger" id="transform-nfa-dfa" onclick="transformNtoD();">Transform NFA to DFA</button>
+                <button class="btn btn-warning" id="save-automaton" onclick="saveAutomaton();">Save Automaton</button>
                 <hr>
                 <button class="btn btn-success" id="transform-nfa-epsilon" onclick="transformEpsilon();">Transform NFA-Epsilon to DFA</button>
                 <button class="btn btn-primary" id="transform-dfa-regex" onclick="transformToRegEx();">Transform DFA to RegEx</button>
@@ -221,6 +223,25 @@
           </table>
         </div>
       </div>
+      <div role="tabpanel" class="tab-pane fade1" id="set-operations-tab">
+        <div class="col-md-6">
+          <table>
+            <tr>
+              <td>Action</td>
+              <td>
+                <button class="btn btn-success" id="automata-union" onclick="automataUnion();">Union</button>
+              </td>
+              <td>
+                <button class="btn btn-warning" id="automata-intersection" onclick="automataIntersection();">Intersection</button>
+              </td>
+              <td>
+                <button class="btn btn-danger" id="automata-complement" onclick="automataComplement();">Complement</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
     </div>
   </div>
   <div class="col-md-12" style="float: left; margin-top: 40px">

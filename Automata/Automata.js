@@ -34,6 +34,8 @@ class Automata {
     if(isAcceptance){
       this.acceptanceStates.push(newState.stateName);
     }
+
+    return newState;
   }
   //returns index
   findStateByName(stateName){
@@ -116,7 +118,7 @@ class Automata {
   }
 
   modifyTransition(transitionID, symbol){
-      for(let i = 0; i < this.states.length; i++) {
+    for(let i = 0; i < this.states.length; i++) {
       let state = this.states[i];
       for (let k = 0; k < state.transitions.length; k++) {
         let t = state.transitions[k];
@@ -252,8 +254,8 @@ class Automata {
     }
 
     let currentStateId = setIdManual ? stateId : automaton.currentStateId;
-    // console.log("State:");
-    // console.log(currentStateId);
+    
+    console.log("State: " + currentStateId);
     states.add({
           id: currentStateId,
           label: stateName,
@@ -307,7 +309,7 @@ class Automata {
       });
 
       let dfaStateName = this.joinStateNames(statesFromSymbol);
-      this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState);
+      this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState, '', false);
       dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
 
       let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
@@ -352,7 +354,7 @@ class Automata {
               return;
           });
 
-          this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState);
+          this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState, '', false);
           dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, false);
           indexOfNewState = dfaAutomaton.states.length - 1;
 
@@ -467,11 +469,12 @@ class Automata {
     //Finding originStateId
     let indexOfOriginState = automaton.findStateByName(originState);
     let originStateId = automaton.states[indexOfOriginState].stateId;
-
+    //console.log("Origin state: " + originState + " Destiny state: " + destinyState);
     //Finding destinyStateId
     let destinyStateIndex = automaton.findStateByName(destinyState);
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
     let transitionID = setIdManual ? transId : automaton.currentTransitionId;
+    console.log("Origin ID: " + originStateId + " and destiny ID: " + destinyStateId);
     transitions.add({
           id: transitionID,
           from: originStateId,
@@ -481,7 +484,7 @@ class Automata {
     });
   }
 
-  joinStateNames(statesArray){
+  joinStateNames(statesArray){    
     let stateConcat = "";
     let stateLimit = statesArray.length - 1;
     for(let index = 0; index < stateLimit; ++index){
@@ -726,8 +729,6 @@ class Automata {
 
   getFinalState(){
     let acceptanceName = this.acceptanceStates[0];
-    console.log("Accept");
-    console.log(this.states.filter(x => x.isAcceptance));
     return this.getStateByName(acceptanceName);
   }
 
@@ -758,5 +759,231 @@ class Automata {
     }
 
     return dfaClones;
+  }
+
+  union(automataList){
+    if(automataList.length < 2)
+      return;
+
+    let initials = [];
+
+    for(let automaton of automataList){
+      initials.push(automaton.states.find(state => state.isInitial));
+    }
+    let newAlphabet = automataList[0].alphabet.concat(automataList.alphabet);
+    let newSetAlpha = new Set(newAlphabet);
+    let unionAutomaton = new Automata([], Array.from(newSetAlpha), [], 'undefined', []);
+    console.log(unionAutomaton.alphabet);
+    let isInitial = true;
+
+    let initialA = initials[0];
+    let initialB = initials[1];
+
+    let initialStateName = this.joinUnionStateName(initials);
+    let containsAcceptance = initialA.isAcceptance || initialB.isAcceptance;
+    
+    unionAutomaton.addToStateDataSet(unionAutomaton, initialStateName, 
+      isInitial, containsAcceptance, '', false);
+    
+    let initialState = unionAutomaton.addState(initialStateName, containsAcceptance, isInitial);
+    initialState.setOfNfaStates = initials;
+    let statesToCheck = [];
+    for(const currChar of this.alphabet){
+      let statesFromSymbol = [];
+      for(let currState of initialState.setOfNfaStates){
+        //console.log("Checking this state: " + currState.stateName);
+        let nextState = currState.getNextState(currChar);
+         
+        if(nextState != 'undefined'){
+          //console.log("State name added to arr: " + nextState.stateName);
+          statesFromSymbol.push(nextState);
+        }
+      }
+      if(statesFromSymbol.length < 1){
+        //console.log("No states found.");
+        continue;
+      }
+      //console.log("States from symbol: ");
+      //console.log(statesFromSymbol);
+      let newStateName = this.joinUnionStateName(statesFromSymbol);
+
+      //console.log("New state from initial: " + newStateName);
+      let isManualIDSetting = false; 
+
+      containsAcceptance = this.statesArrayHasAcceptance(statesFromSymbol);
+      unionAutomaton.addToStateDataSet(unionAutomaton, newStateName, 
+        !isInitial, containsAcceptance, '', isManualIDSetting);
+      
+      let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
+      
+      console.log("New state added from initial: " + newState.stateName);
+      newState.setOfNfaStates = statesFromSymbol;
+      statesToCheck.push(newState);
+      
+      unionAutomaton.addToTransitionDataSet(unionAutomaton, initialState.stateName, 
+        newStateName, currChar, '', isManualIDSetting);
+      unionAutomaton.addTransition(initialState.stateName, newStateName, currChar);
+    }
+
+    let currState = statesToCheck[0];
+    //console.log("Before entering the while loop with current state:" + currState.stateName);
+    //console.log(statesToCheck);
+    while(statesToCheck.length > 0){
+      for(const currChar of unionAutomaton.alphabet){
+        let statesFromSymbol = [];
+        for(let stateOfCurrState of currState.setOfNfaStates){
+          //console.log(stateOfCurrState);
+          let stateFound = stateOfCurrState.getNextState(currChar); 
+
+          if(stateFound === 'undefined'){
+            //console.log("No states found in this loop.");
+            continue;
+          }
+          statesFromSymbol.push(stateFound);
+        }
+
+        if(statesFromSymbol.length < 1){
+          continue;
+        }
+
+        let newStateName = this.joinUnionStateName(statesFromSymbol);
+        console.log("New state name:" + newStateName);
+        let stateExists = unionAutomaton.getStateByName(newStateName);
+
+        if(stateExists === 'undefined'){
+          containsAcceptance = this.statesArrayHasAcceptance(statesFromSymbol);
+          this.addToStateDataSet(unionAutomaton, newStateName, !isInitial, containsAcceptance, '', false);
+          let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
+          newState.setOfNfaStates = statesFromSymbol;
+          statesToCheck.push(newState);
+        }
+
+        this.addToTransitionDataSet(unionAutomaton, currState.stateName, newStateName, currChar, '', false);
+        unionAutomaton.addTransition(currState.stateName, newStateName, currChar, '', false);
+      }
+      statesToCheck.shift();
+      if(statesToCheck.length > 0){
+        currState = statesToCheck[0];
+        console.log("New current state: " + currState.stateName);
+      }
+    }
+
+    return unionAutomaton;
+  }
+
+  intersection(automataList){
+    if(automataList.length < 2)
+      return;
+
+    let initials = [];
+
+    for(let automaton of automataList){
+      initials.push(automaton.states.find(state => state.isInitial));
+    }
+    let newAlphabet = automataList[0].alphabet.concat(automataList.alphabet);
+    let newSetAlpha = new Set(newAlphabet);
+    let unionAutomaton = new Automata([], Array.from(newSetAlpha), [], 'undefined', []);
+    let isInitial = true;
+
+    let initialA = initials[0];
+    let initialB = initials[1];
+
+    let initialStateName = this.joinUnionStateName(initials);
+    let containsAcceptance = initialA.isAcceptance && initialB.isAcceptance;
+    
+    unionAutomaton.addToStateDataSet(unionAutomaton, initialStateName, 
+      isInitial, containsAcceptance, '', false);
+    
+    let initialState = unionAutomaton.addState(initialStateName, containsAcceptance, isInitial);
+    initialState.setOfNfaStates = initials;
+    let statesToCheck = [];
+    for(const currChar of this.alphabet){
+      let statesFromSymbol = [];
+      for(let currState of initialState.setOfNfaStates){
+        let nextState = currState.getNextState(currChar);
+         
+        if(nextState != 'undefined'){
+          statesFromSymbol.push(nextState);
+        }
+      }
+      if(statesFromSymbol.length < 1){
+        continue;
+      }
+      let newStateName = this.joinUnionStateName(statesFromSymbol);
+
+      let isManualIDSetting = false; 
+
+      containsAcceptance = this.statesArrayHasBothAcceptance(statesFromSymbol);
+      unionAutomaton.addToStateDataSet(unionAutomaton, newStateName, 
+        !isInitial, containsAcceptance, '', isManualIDSetting);
+      
+      let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
+      
+      newState.setOfNfaStates = statesFromSymbol;
+      statesToCheck.push(newState);
+      
+      unionAutomaton.addToTransitionDataSet(unionAutomaton, initialState.stateName, 
+        newStateName, currChar, '', isManualIDSetting);
+      unionAutomaton.addTransition(initialState.stateName, newStateName, currChar);
+    }
+
+    let currState = statesToCheck[0];
+    while(statesToCheck.length > 0){
+      for(const currChar of unionAutomaton.alphabet){
+        let statesFromSymbol = [];
+        for(let stateOfCurrState of currState.setOfNfaStates){
+          let stateFound = stateOfCurrState.getNextState(currChar); 
+
+          if(stateFound === 'undefined'){
+            continue;
+          }
+          statesFromSymbol.push(stateFound);
+        }
+
+        if(statesFromSymbol.length < 1){
+          continue;
+        }
+
+        let newStateName = this.joinUnionStateName(statesFromSymbol);
+        let stateExists = unionAutomaton.getStateByName(newStateName);
+
+        if(stateExists === 'undefined'){
+          containsAcceptance = this.statesArrayHasBothAcceptance(statesFromSymbol);
+          this.addToStateDataSet(unionAutomaton, newStateName, !isInitial, containsAcceptance, '', false);
+          let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
+          newState.setOfNfaStates = statesFromSymbol;
+          statesToCheck.push(newState);
+        }
+
+        this.addToTransitionDataSet(unionAutomaton, currState.stateName, newStateName, currChar, '', false);
+        unionAutomaton.addTransition(currState.stateName, newStateName, currChar, '', false);
+      }
+      statesToCheck.shift();
+      if(statesToCheck.length > 0){
+        currState = statesToCheck[0];
+      }
+    }
+
+    return unionAutomaton;
+  }
+
+  statesArrayHasAcceptance(statesArray){
+    let acceptances = statesArray.filter(state => state.isAcceptance);
+    //console.log("Acceptances length: " + acceptances.length);
+    return acceptances.length > 0;
+  }
+
+  statesArrayHasBothAcceptance(statesArray){
+    let acceptances = statesArray.filter(state => state.isAcceptance);
+
+    return acceptances.length === 2;
+  }
+
+  joinUnionStateName(statesArray){
+    let stateConcat = "";
+    for(let index = 0; index < statesArray.length; ++index){
+      stateConcat += statesArray[index].stateName;
+    }
+    return stateConcat;
   }
 }

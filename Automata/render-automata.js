@@ -15,14 +15,14 @@ function draw() {
 
 
     // create a network
-    var container = document.getElementById('network');
-    var data = {
+    let container = document.getElementById('network');
+    let data = {
         nodes: states,
         edges: transitions,
         alphabet: alphabet
     };
 
-    var options = {
+    let options = {
       autoResize: true,
       height: '100%',
       width: '100%',
