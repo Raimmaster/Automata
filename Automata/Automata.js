@@ -886,22 +886,26 @@ class Automata {
   }
 
   markNotAcceptance(table){
-    let checkedStates = [];
-    for(let i = 0; i < table.length; ++i){
-      let rowTuple = table[i];
-      if(checkedStates.includes(rowTuple.firstState.stateName)){
-        continue;
-      }      
-      let allRowStateElements = table.filter(x => 
-        x.firstState.stateName === rowTuple.firstState.stateName);
-      
-      for(let currentTuple of allRowStateElements){
-        if(currentTuple.equivalenceVerified){
-          this.checkEquivalence(currentTuple, table);
+    let thereAreUnverifiedStates = table.filter(tupl => !tupl.equivalenceVerified);
+    while(thereAreUnverifiedStates.length > 0){
+      let checkedStates = [];
+      for(let rowTuple of table){
+        if(checkedStates.includes(rowTuple.firstState.stateName)){
+          continue;
+        }      
+        let allRowStateElements = table.filter(x => 
+          x.firstState.stateName === rowTuple.firstState.stateName);
+        
+        for(let currentTuple of allRowStateElements){
+          if(!currentTuple.equivalenceVerified){
+            this.checkEquivalence(currentTuple, table);
+          }
         }
+
+        checkedStates.push(rowTuple.firstState.stateName);
       }
 
-      checkedStates.push(rowTuple.firstState.stateName);
+      thereAreUnverifiedStates = table.filter(tupl => !tupl.equivalenceVerified);
     }
 
     return table;
@@ -959,6 +963,9 @@ class Automata {
       }
 
       tuple.setCheckedStatus(hasBeenDiscovered, equivalenceConfirmed, hasBeenVerified);
+    }else{
+      let willBeEquivalent = this.checkTuplesStateEquivalence(tuple, table);
+      tuple.setCheckedStatus(hasBeenDiscovered, willBeEquivalent, hasBeenVerified);
     }
   }
 
@@ -978,9 +985,12 @@ class Automata {
         return comparisonTuple.equivalent;
       }else{
         //verify the equivalence of the tuple
+        this.checkTransitionEquivalence(comparisonTuple, table);        
+        return comparisonTuple.equivalent;
       }
     }else {
-
+      this.checkTransitionEquivalence(comparisonTuple, table);
+      return comparisonTuple.equivalent;
     }
   }
 
