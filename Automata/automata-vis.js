@@ -40,6 +40,44 @@ function autoSeed(){
   automataList.push(automata);
 }
 
+function minSeed(){
+  automata.addSymbolToAlphabet('0');
+  automata.addSymbolToAlphabet('1');
+  //pipe: |, concat.; kleene = *
+  let isInitial = true;
+  let isAcceptance = true;
+
+
+  /*automata.addState("q0", false, true);
+  automata.addState("q1", true, false);
+  automata.addState("q2", true, false);
+  automata.addState("q3", true, false);
+  
+  automata.addTransition("q0", "q1", 0);
+  automata.addTransition("q0", "q3", 1);
+  automata.addTransition("q1", "q2", 0);
+  automata.addTransition("q1", "q2", 1);
+  automata.addTransition("q2", "q3", 0);
+  automata.addTransition("q2", "q3", 1);
+  automata.addTransition("q3", "q1", 0);
+  automata.addTransition("q3", "q1", 1);*/
+
+  automata.addState("q0", false, true);
+  automata.addState("q1", true, false);
+  automata.addState("q2", false, false);
+  
+  automata.addTransition("q0", "q1", 0);
+  automata.addTransition("q1", "q0", 0);
+  automata.addTransition("q0", "q0", 1);
+  automata.addTransition("q1", "q1", 1);
+
+
+  automata.addTransition("q2", "q0", 1);
+  automata.addTransition("q2", "q1", 0);
+  
+}
+
+minSeed();
 //autoSeed();
 
 function addNode() {
@@ -262,5 +300,5 @@ function statesArrayHasBothAcceptance(statesArray){
 function minimizeDFA(){
   let dfaAutomaton = automata.minimize();
 
-  automata = dfaAutomaton;
+  //automata = dfaAutomaton;
 }

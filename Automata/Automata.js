@@ -877,12 +877,13 @@ class Automata {
   }
 
   minimize(){
-    let equivalenceTable = this.getEquivalenceTable();
+    let equivalenceTable = this.createEquivalenceTable();
     equivalenceTable = this.markNotAcceptance(equivalenceTable);
-    let minimizedAutomaton = this.minimizeFromTable(equivalenceTable);
-    this.transformAutomatonToVisual(minimizedAutomaton);
-
-    return minimizedAutomaton;
+    console.log(equivalenceTable);
+    //let minimizedAutomaton = this.minimizeFromTable(equivalenceTable);
+    //this.transformAutomatonToVisual(minimizedAutomaton);
+    console.log("Finished minimizing.");
+    //return minimizedAutomaton;
   }
 
   markNotAcceptance(table){
@@ -899,6 +900,7 @@ class Automata {
         for(let currentTuple of allRowStateElements){
           if(!currentTuple.equivalenceVerified){
             this.checkEquivalence(currentTuple, table);
+            console.log("Tuple of checked: " + currentTuple.firstState.stateName);
           }
         }
 
@@ -937,10 +939,14 @@ class Automata {
       }else {
         if(firstState.isAcceptance){
           tuple.setCheckedStatus(hasBeenDiscovered, secondState.isAcceptance, hasBeenVerified);
-        }else {
+        }else if(secondState.isAcceptance){
+          tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
+        }
+        else {
           //TO-DO
           //Check if the tuple's states have the SAME transitions
           //And if not, check if their transitions are equivalent
+          this.checkTransitionEquivalence(tuple, table);
         }
       }
     }
@@ -951,7 +957,7 @@ class Automata {
     const equivalenceConfirmed = true;
     const hasBeenVerified = true;
 
-    if(!discovered){
+    if(!tuple.discovered){
       let arrayOfTuples = this.getArrayOfTuples(tuple, table);
       for(let tupleElement of arrayOfTuples){
         let isEquivalent = this.checkTuplesStateEquivalence(tuple, table);
@@ -985,20 +991,19 @@ class Automata {
         return comparisonTuple.equivalent;
       }else{
         //verify the equivalence of the tuple
-        this.checkTransitionEquivalence(comparisonTuple, table);        
-        return comparisonTuple.equivalent;
+        //this.checkTransitionEquivalence(comparisonTuple, table);        
+        //return comparisonTuple.equivalent;
       }
     }else {
-      this.checkTransitionEquivalence(comparisonTuple, table);
-      return comparisonTuple.equivalent;
+      //this.checkTransitionEquivalence(comparisonTuple, table);
+      //return comparisonTuple.equivalent;
     }
   }
 
   getArrayOfTuples(tuple, table){
     let firstState = tuple.firstState;
     let secondState = tuple.secondState;
-    let discovered = tuple.discovered;
-
+    
     const hasBeenDiscovered = true;
     const isEquivalent = true;
     const hasBeenVerified = true;
@@ -1022,6 +1027,7 @@ class Automata {
           //In case that they go to the same place, add that tuple to Array of tuples
           //and skip one iteration of loop
           let sameStateTuple = new EqTuple(firstNextState, secondNextState, true, true);
+          sameStateTuple.equivalenceVerified = true;
           arrayOfTuples.push(sameStateTuple);
           continue;
         }
