@@ -1130,11 +1130,11 @@ class Automata {
       if(firstNextState === 'undefined'){
         if(secondNextState !== 'undefined'){
           tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
-          return;
+          return arrayOfTuples;
         }
       }else if(secondNextState === 'undefined'){
         tuple.setCheckedStatus(hasBeenDiscovered, !isEquivalent, hasBeenVerified);
-        return;
+        return arrayOfTuples;
       }else {
         if(firstNextState === secondNextState){
           //In case that they go to the same place, add that tuple to Array of tuples
