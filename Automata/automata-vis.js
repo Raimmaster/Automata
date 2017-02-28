@@ -62,7 +62,40 @@ function minSeed(){
   automata.addTransition("q3", "q1", 0);
   automata.addTransition("q3", "q1", 1);*/
 
-  automata.addState("q0", false, true);
+  automata.addState("A", false, true);
+  automata.addState("B", true, false);
+  automata.addState("C", false, false);
+  automata.addState("D", false, false);
+  automata.addState("E", false, false);
+  automata.addState("F", false, false);
+  automata.addState("G", false, false);
+  automata.addState("H", false, false);
+    
+  automata.addTransition("A", "B", 0);
+  automata.addTransition("A", "F", 1);
+
+  automata.addTransition("B", "C", 1);
+  automata.addTransition("B", "G", 0);
+
+  automata.addTransition("C", "C", 1);
+  automata.addTransition("C", "A", 0);
+
+  automata.addTransition("D", "C", 0);
+  automata.addTransition("D", "G", 1);
+
+  automata.addTransition("E", "F", 1);
+  automata.addTransition("E", "H", 0);
+
+  automata.addTransition("F", "G", 1);
+  automata.addTransition("F", "C", 0);
+
+  automata.addTransition("G", "G", 0);
+  automata.addTransition("G", "E", 1);
+
+  automata.addTransition("H", "G", 0);
+  automata.addTransition("H", "C", 1);
+
+  /*automata.addState("q0", false, true);
   automata.addState("q1", true, false);
   automata.addState("q2", false, false);
   
@@ -73,11 +106,10 @@ function minSeed(){
 
 
   automata.addTransition("q2", "q0", 1);
-  automata.addTransition("q2", "q1", 0);
-  
+  automata.addTransition("q2", "q1", 0);*/
 }
 
-minSeed();
+//minSeed();
 //autoSeed();
 
 function addNode() {
@@ -298,7 +330,8 @@ function statesArrayHasBothAcceptance(statesArray){
 }
 
 function minimizeDFA(){
+  draw();
   let dfaAutomaton = automata.minimize();
 
-  //automata = dfaAutomaton;
+  automata = dfaAutomaton;
 }
