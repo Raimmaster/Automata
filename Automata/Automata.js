@@ -1068,9 +1068,7 @@ class Automata {
 
     if(!tuple.discovered){
       let arrayOfTuples = this.getArrayOfTuples(tuple, table);
-      if(arrayOfTuples === 'undefined'){
-        return;
-      }
+      
       console.log(arrayOfTuples);
       for(let tupleElement of arrayOfTuples){
         let isEquivalent = this.checkTuplesStateEquivalence(tuple, table);
