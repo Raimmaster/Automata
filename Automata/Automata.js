@@ -1068,6 +1068,10 @@ class Automata {
 
     if(!tuple.discovered){
       let arrayOfTuples = this.getArrayOfTuples(tuple, table);
+      if(arrayOfTuples === 'undefined'){
+        return;
+      }
+      console.log(arrayOfTuples);
       for(let tupleElement of arrayOfTuples){
         let isEquivalent = this.checkTuplesStateEquivalence(tuple, table);
         if(!isEquivalent){
@@ -1165,10 +1169,13 @@ class Automata {
 
   createEquivalenceTable(){
     let table = [];
-    for (let i = 0; i < this.states.length - 1; ++i) {
+    for (let i = 0; i < this.states.length; ++i) {
       let firstState = this.states[i];
+      //console.log("First state: " + firstState.stateName);
       for(let k = i + 1; k < this.states.length; ++k){
         let secondState = this.states[k];
+        console.log("State pair: " + firstState.stateName + ", " + secondState.stateName);
+        console.log("Current k: "+ k + " and i: " + i);
         let newTuple = new EqTuple(firstState, secondState, false, false);
         table.push(newTuple);  
       }

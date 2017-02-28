@@ -41,8 +41,55 @@ function autoSeed(){
 }
 
 function minSeed(){
-  automata.addSymbolToAlphabet('0');
-  automata.addSymbolToAlphabet('1');
+  /*automata.addSymbolToAlphabet('0');
+  automata.addSymbolToAlphabet('1');*/
+  automata.addSymbolToAlphabet('A');
+  automata.addSymbolToAlphabet('B');
+  automata.addSymbolToAlphabet('C');
+  
+  automata.addState("q0", true, true);
+  automata.addState("q1", true, false);
+  automata.addState("q2", true, false);
+  automata.addState("q3", true, false);
+  automata.addState("q4", true, false);
+  automata.addState("q5", true, false);
+  automata.addState("q6", true, false);
+  automata.addState("q7", true, false);
+  automata.addState("q8", true, false);
+  automata.addState("q9", true, false);
+
+  automata.addTransition("q0", "q1", 'A');
+  automata.addTransition("q0", "q4", 'B');
+  automata.addTransition("q0", "q8", 'C');
+
+
+  automata.addTransition("q1", "q1", 'B');
+  automata.addTransition("q1", "q2", 'A');
+  
+  automata.addTransition("q2", "q2", 'B');
+  automata.addTransition("q2", "q3", 'A');
+
+
+  automata.addTransition("q3", "q1", 'A');
+  automata.addTransition("q3", "q3", 'B');
+
+  automata.addTransition("q4", "q5", 'A');
+  automata.addTransition("q4", "q5", 'C');
+
+  automata.addTransition("q5", "q6", 'A');
+  automata.addTransition("q5", "q6", 'C');
+
+  automata.addTransition("q6", "q7", 'A');
+  automata.addTransition("q6", "q7", 'C');
+
+
+  automata.addTransition("q7", "q4", 'A');
+  automata.addTransition("q7", "q4", 'C');
+
+
+  automata.addTransition("q8", "q9", 'A');
+  automata.addTransition("q9", "q8", 'B');
+
   //pipe: |, concat.; kleene = *
   let isInitial = true;
   let isAcceptance = true;
@@ -62,7 +109,7 @@ function minSeed(){
   automata.addTransition("q3", "q1", 0);
   automata.addTransition("q3", "q1", 1);*/
 
-  automata.addState("A", false, true);
+  /*automata.addState("A", false, true);
   automata.addState("B", true, false);
   automata.addState("C", false, false);
   automata.addState("D", false, false);
@@ -93,7 +140,7 @@ function minSeed(){
   automata.addTransition("G", "E", 1);
 
   automata.addTransition("H", "G", 0);
-  automata.addTransition("H", "C", 1);
+  automata.addTransition("H", "C", 1);*/
 
   /*automata.addState("q0", false, true);
   automata.addState("q1", true, false);
@@ -109,7 +156,7 @@ function minSeed(){
   automata.addTransition("q2", "q1", 0);*/
 }
 
-//minSeed();
+minSeed();
 //autoSeed();
 
 function addNode() {
