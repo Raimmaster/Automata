@@ -7,6 +7,9 @@
 
   <script type="text/javascript" src="./Automata/vis.js"></script>
   <script type="text/javascript" src="./Automata/regular-expression-parser/regular-expression.js"></script>
+  <script type="text/javascript" src="./PDA/PDATransition.js"></script>
+  <script type="text/javascript" src="./PDA/PDAState.js"></script>
+  <script type="text/javascript" src="./PDA/PDA.js"></script>
   <script type="text/javascript" src="./Automata/Transition.js"></script>
   <script type="text/javascript" src="./Automata/State.js"></script>
   <script type="text/javascript" src="./Automata/EqTuple.js"></script>
@@ -109,7 +112,8 @@
                     <select id="automata-type" class="form-control" data-toggle="select">
                       <option value="dfa" selected onclick="setAutomatonType()">DFA</option>
                       <option value="nfa" onclick="setAutomatonType()">NFA</option>
-                      <option value="nfa-epsilon" onclick="setAutomatonType()">NFA-epsilon</option>
+                      <option value="nfa-epsilon" onclick="setAutomatonType()">NFA-ε</option>
+                      <option value="pda" onclick="setAutomatonType()">PDA</option>
                     </select>
                   </div>
                 </form>
@@ -118,7 +122,7 @@
             </table>
           </div>
           <div class="col-md-6">
-            <pre id="alphabet"></pre>
+            <pre id="pda-transitions"></pre>
           </div>
         </div>
          <div role="tabpanel" class="tab-pane fade" id="state-tab">

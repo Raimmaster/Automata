@@ -40,124 +40,7 @@ function autoSeed(){
   automataList.push(automata);
 }
 
-function minSeed(){
-  /*automata.addSymbolToAlphabet('0');
-  automata.addSymbolToAlphabet('1');*/
-  automata.addSymbolToAlphabet('A');
-  automata.addSymbolToAlphabet('B');
-  automata.addSymbolToAlphabet('C');
-  
-  automata.addState("q0", true, true);
-  automata.addState("q1", true, false);
-  automata.addState("q2", true, false);
-  automata.addState("q3", true, false);
-  automata.addState("q4", true, false);
-  automata.addState("q5", true, false);
-  automata.addState("q6", true, false);
-  automata.addState("q7", true, false);
-  automata.addState("q8", true, false);
-  automata.addState("q9", true, false);
-
-  automata.addTransition("q0", "q1", 'A');
-  automata.addTransition("q0", "q4", 'B');
-  automata.addTransition("q0", "q8", 'C');
-
-
-  automata.addTransition("q1", "q1", 'B');
-  automata.addTransition("q1", "q2", 'A');
-  
-  automata.addTransition("q2", "q2", 'B');
-  automata.addTransition("q2", "q3", 'A');
-
-
-  automata.addTransition("q3", "q1", 'A');
-  automata.addTransition("q3", "q3", 'B');
-
-  automata.addTransition("q4", "q5", 'A');
-  automata.addTransition("q4", "q5", 'C');
-
-  automata.addTransition("q5", "q6", 'A');
-  automata.addTransition("q5", "q6", 'C');
-
-  automata.addTransition("q6", "q7", 'A');
-  automata.addTransition("q6", "q7", 'C');
-
-
-  automata.addTransition("q7", "q4", 'A');
-  automata.addTransition("q7", "q4", 'C');
-
-
-  automata.addTransition("q8", "q9", 'A');
-  automata.addTransition("q9", "q8", 'B');
-
-  //pipe: |, concat.; kleene = *
-  let isInitial = true;
-  let isAcceptance = true;
-
-
-  /*automata.addState("q0", false, true);
-  automata.addState("q1", true, false);
-  automata.addState("q2", true, false);
-  automata.addState("q3", true, false);
-  
-  automata.addTransition("q0", "q1", 0);
-  automata.addTransition("q0", "q3", 1);
-  automata.addTransition("q1", "q2", 0);
-  automata.addTransition("q1", "q2", 1);
-  automata.addTransition("q2", "q3", 0);
-  automata.addTransition("q2", "q3", 1);
-  automata.addTransition("q3", "q1", 0);
-  automata.addTransition("q3", "q1", 1);*/
-
-  /*automata.addState("A", false, true);
-  automata.addState("B", true, false);
-  automata.addState("C", false, false);
-  automata.addState("D", false, false);
-  automata.addState("E", false, false);
-  automata.addState("F", false, false);
-  automata.addState("G", false, false);
-  automata.addState("H", false, false);
-    
-  automata.addTransition("A", "B", 0);
-  automata.addTransition("A", "F", 1);
-
-  automata.addTransition("B", "C", 1);
-  automata.addTransition("B", "G", 0);
-
-  automata.addTransition("C", "C", 1);
-  automata.addTransition("C", "A", 0);
-
-  automata.addTransition("D", "C", 0);
-  automata.addTransition("D", "G", 1);
-
-  automata.addTransition("E", "F", 1);
-  automata.addTransition("E", "H", 0);
-
-  automata.addTransition("F", "G", 1);
-  automata.addTransition("F", "C", 0);
-
-  automata.addTransition("G", "G", 0);
-  automata.addTransition("G", "E", 1);
-
-  automata.addTransition("H", "G", 0);
-  automata.addTransition("H", "C", 1);*/
-
-  /*automata.addState("q0", false, true);
-  automata.addState("q1", true, false);
-  automata.addState("q2", false, false);
-  
-  automata.addTransition("q0", "q1", 0);
-  automata.addTransition("q1", "q0", 0);
-  automata.addTransition("q0", "q0", 1);
-  automata.addTransition("q1", "q1", 1);
-
-
-  automata.addTransition("q2", "q0", 1);
-  automata.addTransition("q2", "q1", 0);*/
-}
-
-//minSeed();
-autoSeed();
+//autoSeed();
 
 function addNode() {
     try {
@@ -325,8 +208,8 @@ function transformEpsilon(){
 
 function setAutomatonType(){
   let type = document.getElementById('automata-type').value;
-  alert("Type: " + type);
-  automata.setType(type);
+  alert("Type: " + type.toLowerCase());
+  automata.setType(type.toLowerCase());
 }
 
 function regexToEpsilon(){
@@ -340,7 +223,6 @@ function automataUnion(){
   draw();
   let dfaAutomaton = automata.unionIntersect(automataList, statesArrayHasAcceptance);
   automata = dfaAutomaton;
-
 }
 
 function automataIntersection(){
