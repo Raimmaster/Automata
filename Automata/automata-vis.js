@@ -156,8 +156,8 @@ function minSeed(){
   automata.addTransition("q2", "q1", 0);*/
 }
 
-minSeed();
-//autoSeed();
+//minSeed();
+autoSeed();
 
 function addNode() {
     try {
@@ -348,9 +348,10 @@ function automataIntersection(){
   let dfaAutomaton = automata.unionIntersect(automataList, statesArrayHasBothAcceptance);
   automata = dfaAutomaton;
 }
-
+let increm = 0;
 function automataComplement(){
-
+  draw();
+  automata.transformAutomatonToVisual(automataList[increm++]);
 }
 
 function saveAutomaton(){
