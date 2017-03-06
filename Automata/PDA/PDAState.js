@@ -14,9 +14,10 @@ class PDAState {
     this.transitions.push(newTransition);
   }
 
-  getNextStates(symbol, symbolOnTop){
+  getNextStates(symbol, stack){
+    let symbolOnTop = this.getStackTopSymbol(stack);
     let transitions = this.getTransitionsWithSymbol(symbol, this.stateName, symbolOnTop);
-    return this.getNextStatesArray(transitions);
+    return this.getNextStatesArray(transitions, stack);
   }
 
   getTransitionsWithSymbol(symbol, originStateName, symbolOnTop){
@@ -26,31 +27,40 @@ class PDAState {
       trans.symbolOnTopOfStack == symbolOnTop);
   }
 
-  getClosure(revisedStates, symbolOnTop){
-    let epsilonTransitionStates = this.getNextStates('#', symbolOnTop);
+  getClosure(revisedStates, stack){
+    let epsilonTransitionStates = this.getNextStates('#', stack);
     let epsTransSet = new Set();
-    epsTransSet.add(this);
-    epsilonTransitionStates.forEach(function (item) {
-      epsTransSet.add(item);
-    });
+    epsTransSet.add(new TransitionTuple(this, stack));
+    epsilonTransitionStates.forEach(x => epsTransSet.add(x));
 
-    for(let epsState of epsilonTransitionStates){
-      if(!revisedStates.has(epsState)){
-        let newClosureStates = epsState.getClosure(epsTransSet, symbolOnTop);
-        newClosureStates.forEach(function (item) {
-          epsTransSet.add(item);
-        });
+    for(let epsStateTuple of epsilonTransitionStates){
+      if(!revisedStates.has(epsStateTuple)){
+        let newClosureStates = epsStateTuple.getClosure(epsTransSet, epsStateTuple.stack);
+        newClosureStates.forEach( x => epsTransSet.add(x) );
       }
     }
 
     return epsTransSet;
   }
 
-  getNextStatesArray(transitions){
-    let states = [];
+  getNextStatesArray(transitions, stack){
+    let stateTuples = [];
     for(let trans of transitions){
-      states.push(trans.destinyState);
+      let newStack = stack.slice();//copy of stack; snapshot
+      if(!trans.willPushBackTop){
+        newStack.pop();
+      }
+
+      if(trans.willPushSymbol){
+        newStack.push(trans.transitionSymbol);
+      }
+      let tuple = new TransitionTuple(trans.destinyState, newStack);
+      stateTuples.push(tuple);
     }
-    return states;
+    return stateTuples;
+  }
+
+  getStackTopSymbol(stack){
+    return stack[stack.length - 1];
   }
 }
