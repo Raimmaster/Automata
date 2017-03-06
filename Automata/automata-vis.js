@@ -6,40 +6,50 @@ let automataList = [];
 Automata seed
 **/
 function autoSeed(){
+  automata = new PDA([], [], [],
+    [], 'undefined', 'z0',
+    []);
+
   automata.addSymbolToAlphabet('0');
   automata.addSymbolToAlphabet('1');
   //pipe: |, concat.; kleene = *
   let isInitial = true;
   let isAcceptance = true;
+  let willPushSymbol = true;
+  let willPushBackTop = true;
 
   automata.addState("q0", false, true);
   automata.addState("q1", false, false);
   automata.addState("q2", true, false);
-  automata.addState("q3", true, false);
 
-  automata.addTransition("q0", "q1", 1);
-  automata.addTransition("q1", "q1", 1);
-  automata.addTransition("q1", "q2", 0);
-  automata.addTransition("q2", "q3", 1);
+  // automata.addTransition("q0", "q2", 'epsilon', 'z0', !willPushSymbol, willPushBackTop);
+  // automata.addTransition("q0", "q0", '0', 'z0', willPushSymbol, willPushBackTop);
+  // automata.addTransition("q0", "q0", '0', '0', willPushSymbol, willPushBackTop);
+  // automata.addTransition("q0", "q1", '1', '0', !willPushSymbol, !willPushBackTop);
+  // automata.addTransition("q1", "q1", '1', '0', !willPushSymbol, !willPushBackTop);
+  // automata.addTransition("q1", "q2", 'epsilon', 'z0', !willPushSymbol, willPushBackTop);
 
-  automataList.push(automata);
+  automata.addTransition("q0", "q0", '0', 'z0', willPushSymbol, willPushBackTop);
+  automata.addTransition("q0", "q0", '0', '0', willPushSymbol, willPushBackTop);
+  automata.addTransition("q0", "q0", '0', '1', willPushSymbol, willPushBackTop);
+  automata.addTransition("q0", "q0", '1', 'z0', willPushSymbol, willPushBackTop);
+  automata.addTransition("q0", "q0", '1', '0', willPushSymbol, willPushBackTop);
+  automata.addTransition("q0", "q0", '1', '1', willPushSymbol, willPushBackTop);
 
-  automata = new Automata([], automata.alphabet, [], 'undefined', []);
+  automata.addTransition("q0", "q1", 'epsilon', '0', !willPushSymbol, willPushBackTop);
+  automata.addTransition("q0", "q1", 'epsilon', '1', !willPushSymbol, willPushBackTop);
 
-  automata.addState("a", false, true);
-  automata.addState("b", false, false);
-  automata.addState("c", true, false);
-  automata.addState("d", true, false);
+  automata.addTransition("q1", "q1", '0', '0', !willPushSymbol, !willPushBackTop);
+  automata.addTransition("q1", "q1", '1', '1', !willPushSymbol, !willPushBackTop);
+  automata.addTransition("q1", "q2", 'epsilon', 'z0', !willPushSymbol, willPushBackTop);
 
-  automata.addTransition("a", "a", 1);
-  automata.addTransition("a", "b", 0);
-  automata.addTransition("b", "c", 1)
-  automata.addTransition("c", "d", 0);
+  let automataAlt = new Automata([], [], [], 'undefined', []);
+  //automataAlt.transformAutomatonToVisual(automata);
 
   automataList.push(automata);
 }
 
-//autoSeed();
+autoSeed();
 
 function addNode() {
     try {
