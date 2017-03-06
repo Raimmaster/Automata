@@ -12,7 +12,6 @@ function autoSeed(){
   let isInitial = true;
   let isAcceptance = true;
 
-
   automata.addState("q0", false, true);
   automata.addState("q1", false, false);
   automata.addState("q2", true, false);
@@ -145,6 +144,13 @@ function addEdge() {
             label: symbolToEval,
             font: {align: 'top'}
       });
+      if(automata.type == 'pda'){
+        let topSymbol = document.getElementById('top-symbol').value;
+        let willPushSymbol = document.getElementById('push-symbol').checked;
+        let willPushBackTop = document.getElementById('push-top').checked;
+        automata.addTransition(originState, destinyState, symbolToEval, topSymbol, willPushSymbol, willPushBackTop);
+        return;
+      }
       automata.addTransition(originState, destinyState, symbolToEval);
     }
     catch (err) {
@@ -207,7 +213,12 @@ function transformEpsilon(){
 }
 
 function setAutomatonType(){
-  let type = document.getElementById('automata-type').value;
+  let type = document.getElementById('automata-type').value.toLowerCase();
+  if(type == 'pda'){
+    automata = new PDA([], [], [],
+      [], 'undefined', 'z0',
+      []);
+  }
   alert("Type: " + type.toLowerCase());
   automata.setType(type.toLowerCase());
 }

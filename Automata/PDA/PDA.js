@@ -1,6 +1,7 @@
 class PDA {
   constructor(states = [], alphabet = [], stackSymbols = [],
-    transitionFunction = [], startState, initialPDSymbol, acceptanceStates = []){
+    transitionFunction = [], startState, initialPDSymbol,
+    acceptanceStates = []){
       this.states = states;
       this.alphabet = alphabet;
       this.stackSymbols = stackSymbols;
@@ -10,7 +11,7 @@ class PDA {
       this.acceptanceStates = acceptanceStates;
       this.currentTransitionId = 0;
       this.currentStateId = 0;
-      this.type = 'PDA';
+      this.type = 'pda';
       this.epsilon = 'epsilon';
   }
 
@@ -45,9 +46,10 @@ class PDA {
     return this.states.find(state => state.stateName == stateName);
   }
 
-  addTransition(fromState, toState, transitionSymbol, symbolOnTopOfStack, willPushSymbol, willPushBackTop){
+  addTransition(fromState, toState, transitionSymbol,
+    symbolOnTopOfStack, willPushSymbol, willPushBackTop){
     let originState = this.getStateByName(fromState);
-    let destinyStateIndex = this.getStateByName(toState);
+    let destinyState = this.getStateByName(toState);
 
     if(transitionSymbol == "epsilon")
       transitionSymbol = '#';
@@ -57,7 +59,7 @@ class PDA {
   }
 
   evaluate(evaluationString){
-    let stack = ['z0'];
+    let stack = [this.initialPDSymbol];
     return this.evalPDA(evaluationString, this.startState, stack);
   }
 
