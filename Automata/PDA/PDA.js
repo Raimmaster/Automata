@@ -84,7 +84,7 @@ class PDA {
     //check for necessary pops and pushes
     stateTuplesArr = initialState.getNextStates(currChar, stack);
     let stateTuplesSet = new Set();
-    stateTuplesArr.forEach( epsilonTuple => stateTuplesSet.add(epsilonTuple));
+    stateTuplesArr.forEach( transTuple => stateTuplesSet.add(transTuple));
 
     for(let tupleOfClosure of closureTuples){
       //again, for each closure state gotten above, when doing the transitions
@@ -101,21 +101,22 @@ class PDA {
       return this.checkFinalEpsilonChar(stateTuplesSet);
     }else{
       let newEvalString = evalString.slice(1, evalString.length);
-      for(let currState of stateTuplesSet){
-        arrayOfPasses.push(this.evalPDA(newEvalString, currState, stack));
+      for(let currTuple of stateTuplesSet){
+        arrayOfPasses.push(this.evalPDA(newEvalString,
+          currTuple.destinyState, currTuple.stack));
       }
     }
 
     return arrayOfPasses.includes(true);
   }
 
-  checkFinalEpsilonChar(states, stack){
-    for(let aState of states){
-      if(this.acceptanceStates.includes(aState)){
+  checkFinalEpsilonChar(states){
+    for(let tupleOf of states){
+      if(this.acceptanceStates.includes(tupleOf.destinyState)){
         return true;
       }
       //check for necessary pops and pushes
-      let closureTuples = aState.getClosure(new Set(), this.getStackTopSymbol(stack), stack);
+      let closureTuples = tupleOf.getClosure(new Set(), tupleOf.stack);
       for(let tuple of closureTuples){
         if(this.acceptanceStates.includes(tuple.destinyState)){
           return true;
