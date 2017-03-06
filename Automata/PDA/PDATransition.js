@@ -12,7 +12,11 @@ class PDATransition{
     }
 
     getStackString(){
-      let stackString = this.transitionSymbol + this.symbolOnTopOfStack;
+      let transSymbol = this.transitionSymbol;
+      if(transSymbol == '#'){
+        transSymbol = ' ';
+      }
+      let stackString =  transSymbol + this.symbolOnTopOfStack;
 
       if(!this.willPushSymbol && !this.willPushBackTop){
         stackString = 'ε';

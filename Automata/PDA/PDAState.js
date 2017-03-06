@@ -12,6 +12,8 @@ class PDAState {
     let newTransition = new PDATransition(newTransitionId, originState, destinyState,
       transitionSymbol, symbolOnTopOfStack, willPushSymbol, willPushBackTop);
     this.transitions.push(newTransition);
+
+    return newTransition;
   }
 
   getNextStates(symbol, stack){

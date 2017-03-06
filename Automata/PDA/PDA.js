@@ -65,7 +65,7 @@ class PDA {
     if(transitionSymbol == "epsilon")
       transitionSymbol = '#';
 
-    originState.addTransition(this.currentTransitionId++, originState, destinyState,
+    return originState.addTransition(this.currentTransitionId++, originState, destinyState,
       transitionSymbol, symbolOnTopOfStack, willPushSymbol, willPushBackTop);
   }
 

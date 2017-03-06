@@ -2,6 +2,7 @@ let alphabet, states, transitions, network;
 /**Automaton logic**/
 let automata = new Automata([], [], [], 'undefined', []);
 let automataList = [];
+let transitionsCollection = [];
 /**
 Automata seed
 **/
@@ -49,7 +50,7 @@ function autoSeed(){
   automataList.push(automata);
 }
 
-autoSeed();
+// autoSeed();
 
 function addNode() {
     try {
@@ -158,7 +159,10 @@ function addEdge() {
         let topSymbol = document.getElementById('top-symbol').value;
         let willPushSymbol = document.getElementById('push-symbol').checked;
         let willPushBackTop = document.getElementById('push-top').checked;
-        automata.addTransition(originState, destinyState, symbolToEval, topSymbol, willPushSymbol, willPushBackTop);
+        let newTransition = automata.addTransition(originState, destinyState, symbolToEval, topSymbol, willPushSymbol, willPushBackTop);
+        transitionsCollection.push(newTransition);
+        //in pda-transitions HTML id, add each one
+        document.getElementById('pda-transitions').innerHTML = getTransitionsString(transitionsCollection);
         return;
       }
       automata.addTransition(originState, destinyState, symbolToEval);
@@ -166,6 +170,25 @@ function addEdge() {
     catch (err) {
         alert(err);
     }
+}
+
+function getTransitionsString(transCollection){
+  let transitionString = [];
+
+  for(let transition of transCollection){
+    let transSymbol = transition.transitionSymbol;
+    if(transSymbol == '#'){
+      transSymbol = 'ε';
+    }
+    let currTransitionString = "Transition from " + transition.originState.stateName
+      + " to " + transition.destinyState.stateName
+      + " with " + transSymbol + "," + transition.symbolOnTopOfStack
+      + "/" + transition.getStackString() + "\n";
+
+    transitionString.push(currTransitionString);
+  }
+
+  return transitionString.join(' ');
 }
 
 function updateEdge() {
