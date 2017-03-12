@@ -35,4 +35,28 @@ class CfgCollection{
 
     return string;
   }
+
+  convertToPDA(automaton){
+    automaton.alphabet = this.terminals;
+    automaton.addState('q0', false, true);
+    automaton.type = 'empty-pda';
+    for(let cfg of this.cfgCollection){
+      let nonterminalSymbol = cfg.nonterminalSymbol;
+      for(let prod of cfg.productions){
+        // addTransition(fromState, toState, transitionSymbol,
+        //   symbolOnTopOfStack, willPushSymbol, willPushBackTop)
+        let transition = automaton.addTransition('q0', 'q0', 'epsilon', nonterminalSymbol, true, true);
+        transitionsCollection.push(transition);
+      }
+    }
+
+    for(let terminal of this.terminals){
+      let transition = automaton.addTransition('q0', 'q0', terminal, terminal, false, false);
+      transitionsCollection.push(transition);
+    }
+    transformAutomatonToVisual(automaton);
+
+    return automaton;
+  }
+
 }

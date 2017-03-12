@@ -170,7 +170,7 @@ function addEdge() {
             label: symbolToEval,
             font: {align: 'top'}
       });
-      if(automata.type == 'pda'){
+      if(automata.type == 'pda' || automata.type == 'empty-pda'){
         let topSymbol = document.getElementById('top-symbol').value;
         let willPushSymbol = document.getElementById('push-symbol').checked;
         let willPushBackTop = document.getElementById('push-top').checked;
@@ -266,7 +266,7 @@ function setAutomatonType(){
     automata = new PDA([], [], [],
       [], 'undefined', 'z0',
       []);
-  }else if (type == 'empty-pda'){
+  }else if (type == 'empty-pda' || type == 'cfg'){
     automata = new PDA([], [], [],
       [], 'undefined', 'z0-prime',
       []);
@@ -336,9 +336,11 @@ function saveCfgEntry(){
 }
 
 function updateCfgTab(){
-  document.getElementById('pda-transitions').innerHTML = cfgs.getCfgCollectionString();
+  document.getElementById('cfg-entries').innerHTML = cfgs.getCfgCollectionString();
 }
 
 function cfgToPDA(){
-
+  let pdaAutomaton = cfgs.convertToPDA(automata);
+  automata = pdaAutomaton;
+  document.getElementById('pda-transitions').innerHTML = getTransitionsString(transitionsCollection);
 }
