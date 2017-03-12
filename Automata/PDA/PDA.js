@@ -106,30 +106,19 @@ class PDA {
     stateTuplesArr = initialState.getNextStates(currChar, stack);
     let stateTuplesSet = new Set();
     stateTuplesArr.forEach( transTuple => stateTuplesSet.add(transTuple));
-    // stateTuplesSet = this.removeDuplicatesInTupleSet(stateTuplesSet);
     for(let tupleOfClosure of closureTuples){
       let tupleState = tupleOfClosure.destinyState;
-      // console.log("Current stack for closure: ");
-      // console.log(tupleOfClosure.stack);
       stateTuplesArr = tupleState.getNextStates(currChar, tupleOfClosure.stack);
       stateTuplesArr.forEach(x => stateTuplesSet.add(x));
     }
-    // console.log("The s tup set: ");
-    // console.log(stateTuplesSet);
     if(stateTuplesSet.size < 1){
       return false;
     }
-    // console.log("I got here, with length: " + evaluationString.length);
     if(evaluationString.length === 1){
       return this.checkFinalEpsilonChar(stateTuplesSet);
     }else{
       let newEvalString = evaluationString.slice(1, evaluationString.length);
-      // console.log("States tuple set: ");
-      // console.log(stateTuplesSet);
       for(let currTuple of stateTuplesSet){
-        // console.log("Before array of passes, the stack for state: " + currTuple.destinyState.stateName);
-        // console.log(currTuple.stack);
-        // console.log("That was the stack.");
         arrayOfPasses.push(this.evalPDA(newEvalString,
           currTuple.destinyState, currTuple.stack));
       }

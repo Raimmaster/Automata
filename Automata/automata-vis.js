@@ -3,6 +3,8 @@ let alphabet, states, transitions, network;
 let automata = new Automata([], [], [], 'undefined', []);
 let automataList = [];
 let transitionsCollection = [];
+let cfgs = new CfgCollection([]);
+
 /**
 Automata seed
 **/
@@ -87,6 +89,19 @@ function addNode() {
 function addSymbol() {
   try {
     let symbolToAdd = document.getElementById('symbol-id').value;
+
+    if(automata.type == 'cfg'){
+      let symbols = cfgs.addTerminals(symbolToAdd);
+      for(let symbol of symbols){
+        alphabet.add({
+          id: symbol,
+          symbol: symbol
+        });
+      }
+
+      return;
+    }
+
     alphabet.add({
       id: symbolToAdd,
       symbol: symbolToAdd
@@ -251,6 +266,10 @@ function setAutomatonType(){
     automata = new PDA([], [], [],
       [], 'undefined', 'z0',
       []);
+  }else if (type == 'empty-pda'){
+    automata = new PDA([], [], [],
+      [], 'undefined', 'z0-prime',
+      []);
   }
   alert("Type: " + type.toLowerCase());
   automata.setType(type.toLowerCase());
@@ -308,4 +327,18 @@ function minimizeDFA(){
   let dfaAutomaton = automata.minimize();
 
   automata = dfaAutomaton;
+}
+
+function saveCfgEntry(){
+  let cfgString = document.getElementById('cfg-string').value;
+  cfgs.addCfgProduction(cfgString);
+  updateCfgTab();
+}
+
+function updateCfgTab(){
+  document.getElementById('pda-transitions').innerHTML = cfgs.getCfgCollectionString();
+}
+
+function cfgToPDA(){
+
 }

@@ -7,6 +7,8 @@
 
   <script type="text/javascript" src="./Automata/vis.js"></script>
   <script type="text/javascript" src="./Automata/regular-expression-parser/regular-expression.js"></script>
+  <script type="text/javascript" src="./Automata/PDA/CfgTuple.js"></script>
+  <script type="text/javascript" src="./Automata/PDA/CfgCollection.js"></script>
   <script type="text/javascript" src="./Automata/PDA/PDATransition.js"></script>
   <script type="text/javascript" src="./Automata/PDA/TransitionTuple.js"></script>
   <script type="text/javascript" src="./Automata/PDA/PDAState.js"></script>
@@ -78,6 +80,7 @@
           <li role="presentation"><a href="#evaluation-tab" aria-controls="settings" role="tab" data-toggle="tab">Evaluation</a></li>
           <li role="presentation"><a href="#regexnfae-tab" role="tab" data-toggle="tab">Regex2NFAe</a></li>
           <li role="presentation"><a href="#set-operations-tab" role="tab" data-toggle="tab">Set Operations</a></li>
+          <li role="presentation"><a href="#cfg-tab" role="tab" data-toggle="tab">CFG Operations</a></li>
         </ul>
 
         <div class="tab-content">
@@ -115,6 +118,8 @@
                       <option value="nfa" onclick="setAutomatonType()">NFA</option>
                       <option value="nfa-epsilon" onclick="setAutomatonType()">NFA-ε</option>
                       <option value="pda" onclick="setAutomatonType()">PDA</option>
+                      <option value="empty-pda" onclick="setAutomatonType()">Empty-PDA</option>
+                      <option value="cfg" onclick="setAutomatonType()">CFG</option>
                     </select>
                   </div>
                 </form>
@@ -260,6 +265,36 @@
               </td>
             </tr>
           </table>
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane fade1" id="cfg-tab">
+        <div class="col-md-6">
+          <table>
+            <tr>
+              <td><label for="cfg-string">Grammar String</label></td>
+              <td><input id="cfg-string" type="cfg-string"></td>
+            </tr>
+            <tr>
+              <td><label for="lhs-value">Left hand value</label></td>
+              <td><input id="lhs-value" type="lhs-value"></td>
+            </tr>
+            <tr>
+              <td>Action</td>
+              <td>
+                <button class="btn btn-success" id="add-grammar" onclick="saveCfgEntry();">Add</button>
+                <button class="btn btn-warning" id="cfg-to-pda" onclick="cfgToPDA();">Convert to PDA</button>
+              </td>
+              <tr>
+                <td>
+                  <input type="checkbox" name="terminal-symbol" value="terminal-symbol" id="terminal-symbol">
+                  <label for="terminal-symbol">Terminal</label>
+                </td>
+              </tr>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <pre id="cfg-entries"></pre>
         </div>
       </div>
 
