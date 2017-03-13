@@ -206,12 +206,19 @@ class PDA {
     for(let state of this.states){
       let popTransitions = state.getPopTransitions();
       for(let trans of popTransitions){
+        let transSymbol = trans.transitionSymbol;
+        if(trans.transitionSymbol == '#'){
+          transSymbol = 'epsilon'
+        }
         let production = '[' + trans.originState.stateName +
           ' ' + trans.symbolOnTopOfStack + trans.destinyState.stateName +
-          ']->' + trans.transitionSymbol;
+          ']->' + transSymbol;
         cfgColl.addCfgProduction(production);
       }
     }
   }
 
+  createPushGrammarEntries(cfgColl){
+
+  }
 }
