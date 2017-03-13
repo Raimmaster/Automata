@@ -119,7 +119,7 @@ class PDA {
     }
 
     return arrayOfPasses.includes(true);
-  } 
+  }
 
   evalPDA(evaluationString, initialState, stack){
     let stateTuplesArr = [];
@@ -219,6 +219,29 @@ class PDA {
   }
 
   createPushGrammarEntries(cfgColl){
+    for(let state of this.states){
+      let nonEmptyTransitions = state.getNonEmptyTransitions();
+      for(let trans of nonEmptyTransitions){
+        let pushValueCount = trans.getStringLength();
+        let permutationTable = this.getPermutation(this.states, pushValueCount);
+        let m = permutationTable.length - 1;
+        for(let i = 0; i < permutationTable.length; ++i){
+          let production = '';
+          //LHS value: nonterminal
+          production = '[' + state.stateName + ' ' + trans.symbolOnTopOfStack +
+            trans.permutationTable[i][pushValueCount - 1] + '->' + trans.transitionSymbol;
 
+          production += '[' + state.stateName + ' ' + trans.transitionSymbol +
+            trans.permutationTable[i][0] + ']';
+
+
+          for(let k = 1; k <  pushValueCount; ++k){
+            let currPermutationState = '[' + trans.permutationTable[i][k];
+              ;
+          }
+          cfgColl.addCfgProduction(production);
+        }
+      }
+    }
   }
 }

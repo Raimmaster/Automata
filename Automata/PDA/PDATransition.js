@@ -30,4 +30,29 @@ class PDATransition{
 
       return stackString;
     }
+
+    getStringLength(){
+      if(this.production != undefined){
+        return this.production.length;
+      }
+
+      let pushValueCount = 0;
+      if(trans.willPushSymbol){
+        ++pushValueCount;
+      }
+
+      if(trans.willPushBackTop){
+        ++pushValueCount;
+      }
+
+      return pushValueCount;
+    }
+
+    getTransitionString(){
+      if(this.production != undefined){
+        return this.production;
+      }
+
+      let 
+    }
 }
