@@ -73,4 +73,8 @@ class PDAState {
   getStackTopSymbol(stack){
     return stack[stack.length - 1];
   }
+
+  getPopTransitions(){
+    return this.transitions.filter(trans => !trans.willPushBackTop && !trans.willPushSymbol);
+  }
 }

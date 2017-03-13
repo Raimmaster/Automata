@@ -186,7 +186,7 @@ class PDA {
   convertEmptyPdaToCFG(){
     let cfgColl = new CfgCollection(this.alphabet);
     this.createFirstGrammarEntry(cfgColl);
-    //this.createPopGrammarEntries(cfgColl);
+    this.createPopGrammarEntries(cfgColl);
     //this.createPushGrammarEntries(cfgColl);
 
     return cfgColl;
@@ -197,12 +197,21 @@ class PDA {
     let initialName = initialState.stateName;
     for(let state of this.states){
       let stateName = state.stateName;
-      let production = 'S->[' + initialName + this.initialPDSymbol + stateName + ']';
+      let production = 'S->[' + initialName + ' ' + this.initialPDSymbol + stateName + ']';
       cfgColl.addCfgProduction(production);
     }
-    console.log(cfgColl.getCfgCollectionString());
-    
-    return cfgColl;
+  }
+
+  createPopGrammarEntries(cfgColl){
+    for(let state of this.states){
+      let popTransitions = state.getPopTransitions();
+      for(let trans of popTransitions){
+        let production = '[' + trans.originState.stateName +
+          ' ' + trans.symbolOnTopOfStack + trans.destinyState.stateName +
+          ']->' + trans.transitionSymbol;
+        cfgColl.addCfgProduction(production);
+      }
+    }
   }
 
 }
