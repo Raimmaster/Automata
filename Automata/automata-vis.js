@@ -292,7 +292,7 @@ function setAutomatonType(){
       []);
   }else if (type == 'empty-pda' || type == 'cfg'){
     automata = new PDA([], [], [],
-      [], 'undefined', 'z0-prime',
+      [], 'undefined', 'z0-p',
       []);
   }
   alert("Type: " + type.toLowerCase());
@@ -369,4 +369,9 @@ function cfgToPDA(){
   let pdaAutomaton = cfgs.convertToPDA(automata);
   automata = pdaAutomaton;
   document.getElementById('pda-transitions').innerHTML = getTransitionsString(transitionsCollection);
+}
+
+function pdaToCFG(){
+  cfgs = automata.convertEmptyPdaToCFG();
+  updateCfgTab();
 }

@@ -13,7 +13,6 @@ function addToTransitionDataSet(automaton, originState, destinyState, symbol, tr
   let originStateId = automaton.getStateByName(originState).stateId;
   let destinyStateId = automaton.getStateByName(destinyState).stateId;
   let transitionID = setIdManual ? transId : automaton.currentTransitionId;
-  console.log("Origin ID: " + originStateId + " and destiny ID: " + destinyStateId);
   transitions.add({
         id: transitionID,
         from: originStateId,

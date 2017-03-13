@@ -53,7 +53,6 @@ class PDAState {
 
       if(!trans.willPushBackTop){
         let top = newStack.pop();
-        console.log("We're popping: " + top);
       }
 
       if(trans.willPushSymbol){
@@ -61,8 +60,6 @@ class PDAState {
           let prodArr = Array.from(trans.production);
           prodArr = prodArr.reverse();
           prodArr.forEach(x => newStack.push(x));
-          console.log("Current new stack from prod:");
-          console.log(newStack);
         }else {
           newStack.push(trans.transitionSymbol);
         }

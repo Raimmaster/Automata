@@ -76,14 +76,16 @@ class PDA {
       return this.evalPDA(evaluationString, this.startState, stack);
     }else {
       stack.pop();
-      stack.push(this.grammarCollection[0].nonterminalSymbol);
+      if(this.grammarCollection != null){
+        stack.push(this.grammarCollection[0].nonterminalSymbol);
+      }else {
+        stack.push('z0-p');
+      }
       return this.evalEmptyPDA(evaluationString, this.startState, stack);
     }
   }
 
   evalEmptyPDA(evaluationString, initialState, stack){
-    console.log("The eval string: " + evaluationString);
-    console.log("The stack: " + stack);
     let stateTuplesArr = [];
     let arrayOfPasses = [];
 
@@ -91,9 +93,7 @@ class PDA {
     closureTuples = initialState.getClosure(closureTuples, stack);
 
     if(evaluationString.length === 0){
-      console.log("Got here with the following: ");
-      console.log(stack);
-      return stack.length === 0 || (stack.length === 1 && stack[0] == 'z0-prime');
+      return stack.length === 0 || (stack.length === 1 && stack[0] == 'z0-p');
     }
 
     let currChar = evaluationString[0];
@@ -119,16 +119,9 @@ class PDA {
     }
 
     return arrayOfPasses.includes(true);
-  }
-
-  removeDuplicatesInTupleSet(stateTuplesSet){
-    for(let stateTuple of stateTuplesSet){
-
-    }
-  }
+  } 
 
   evalPDA(evaluationString, initialState, stack){
-    console.log("The eval string: " + evaluationString);
     let stateTuplesArr = [];
     let arrayOfPasses = [];
 
@@ -189,4 +182,27 @@ class PDA {
 
     return false;
   }
+
+  convertEmptyPdaToCFG(){
+    let cfgColl = new CfgCollection(this.alphabet);
+    this.createFirstGrammarEntry(cfgColl);
+    //this.createPopGrammarEntries(cfgColl);
+    //this.createPushGrammarEntries(cfgColl);
+
+    return cfgColl;
+  }
+
+  createFirstGrammarEntry(cfgColl){
+    let initialState = this.states.find(state => state.isInitial);
+    let initialName = initialState.stateName;
+    for(let state of this.states){
+      let stateName = state.stateName;
+      let production = 'S->[' + initialName + this.initialPDSymbol + stateName + ']';
+      cfgColl.addCfgProduction(production);
+    }
+    console.log(cfgColl.getCfgCollectionString());
+    
+    return cfgColl;
+  }
+
 }
