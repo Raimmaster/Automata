@@ -8,9 +8,9 @@ class PDAState {
   }
 
   addTransition(newTransitionId, originState, destinyState, transitionSymbol,
-    symbolOnTopOfStack, willPushSymbol, willPushBackTop){
+    symbolOnTopOfStack, production, willPushSymbol, willPushBackTop){
     let newTransition = new PDATransition(newTransitionId, originState, destinyState,
-      transitionSymbol, symbolOnTopOfStack, willPushSymbol, willPushBackTop);
+      transitionSymbol, symbolOnTopOfStack, production, willPushSymbol, willPushBackTop);
     this.transitions.push(newTransition);
 
     return newTransition;
@@ -18,11 +18,7 @@ class PDAState {
 
   getNextStates(symbol, stack){
     let symbolOnTop = this.getStackTopSymbol(stack);
-    // console.log("The top symbol on stack: " + symbolOnTop + " and the symbol to be eval'd: "
-    //   + symbol + " and state: " + this.stateName);
     let transitions = this.getTransitionsWithSymbol(symbol, this.stateName, symbolOnTop);
-    // console.log("Transitions found: ");
-    transitions.forEach( (item) => console.log(item));
     return this.getNextStatesArray(transitions, stack);
   }
 
@@ -53,20 +49,27 @@ class PDAState {
     let stateTuples = [];
     for(let trans of transitions){
       let newStack = stack.slice();//copy of stack; snapshot
+
+
       if(!trans.willPushBackTop){
         let top = newStack.pop();
         console.log("We're popping: " + top);
       }
 
       if(trans.willPushSymbol){
-        console.log("We're pushing: " + trans.transitionSymbol);
-        newStack.push(trans.transitionSymbol);
+        if(trans.production != undefined){
+          let prodArr = Array.from(trans.production);
+          prodArr = prodArr.reverse();
+          prodArr.forEach(x => newStack.push(x));
+          console.log("Current new stack from prod:");
+          console.log(newStack);
+        }else {
+          newStack.push(trans.transitionSymbol);
+        }
       }
       let tuple = new TransitionTuple(trans.destinyState, newStack);
       stateTuples.push(tuple);
     }
-    // console.log("Current state tuple arr:");
-    // console.log(stateTuples);
     return stateTuples;
   }
 

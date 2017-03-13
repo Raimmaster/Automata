@@ -52,6 +52,29 @@ function autoSeed(){
   automataList.push(automata);
 }
 
+function cfgSeed(){
+  cfgs.addCfgProduction('E->T+E');
+  cfgs.addCfgProduction('E->T-E');
+  cfgs.addCfgProduction('E->T');
+
+  cfgs.addCfgProduction('T->F*T');
+  cfgs.addCfgProduction('T->F/T');
+  cfgs.addCfgProduction('T->F');
+
+
+  cfgs.addCfgProduction('F->(E)');
+  cfgs.addCfgProduction('F->0');  
+  cfgs.addCfgProduction('F->1');
+  cfgs.addCfgProduction('F->2');
+  cfgs.addCfgProduction('F->3');
+  cfgs.addCfgProduction('F->4');
+  cfgs.addCfgProduction('F->5');
+  cfgs.addCfgProduction('F->6');
+  cfgs.addCfgProduction('F->7');
+  cfgs.addCfgProduction('F->8');
+  cfgs.addCfgProduction('F->9');
+}
+
 // autoSeed();
 
 function addNode() {
@@ -174,7 +197,8 @@ function addEdge() {
         let topSymbol = document.getElementById('top-symbol').value;
         let willPushSymbol = document.getElementById('push-symbol').checked;
         let willPushBackTop = document.getElementById('push-top').checked;
-        let newTransition = automata.addTransition(originState, destinyState, symbolToEval, topSymbol, willPushSymbol, willPushBackTop);
+        let newTransition = automata.addTransition(originState, destinyState, symbolToEval,
+          topSymbol, undefined, willPushSymbol, willPushBackTop);
         transitionsCollection.push(newTransition);
         //in pda-transitions HTML id, add each one
         document.getElementById('pda-transitions').innerHTML = getTransitionsString(transitionsCollection);
@@ -293,6 +317,7 @@ function automataIntersection(){
   let dfaAutomaton = automata.unionIntersect(automataList, statesArrayHasBothAcceptance);
   automata = dfaAutomaton;
 }
+
 let increm = 0;
 function automataComplement(){
   draw();
@@ -330,8 +355,9 @@ function minimizeDFA(){
 }
 
 function saveCfgEntry(){
-  let cfgString = document.getElementById('cfg-string').value;
-  cfgs.addCfgProduction(cfgString);
+  //let cfgString = document.getElementById('cfg-string').value;
+  //cfgs.addCfgProduction(cfgString);
+  cfgSeed();
   updateCfgTab();
 }
 

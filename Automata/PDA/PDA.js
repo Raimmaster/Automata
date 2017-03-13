@@ -13,6 +13,7 @@ class PDA {
       this.currentStateId = 0;
       this.type = 'pda';
       this.epsilon = 'epsilon';
+      this.grammarCollection = null;
   }
 
   addSymbolToAlphabet(symbol){
@@ -58,7 +59,7 @@ class PDA {
   }
 
   addTransition(fromState, toState, transitionSymbol,
-    symbolOnTopOfStack, willPushSymbol, willPushBackTop){
+    symbolOnTopOfStack, production, willPushSymbol, willPushBackTop){
     let originState = this.getStateByName(fromState);
     let destinyState = this.getStateByName(toState);
 
@@ -66,12 +67,58 @@ class PDA {
       transitionSymbol = '#';
 
     return originState.addTransition(this.currentTransitionId++, originState, destinyState,
-      transitionSymbol, symbolOnTopOfStack, willPushSymbol, willPushBackTop);
+      transitionSymbol, symbolOnTopOfStack, production, willPushSymbol, willPushBackTop);
   }
 
   evaluate(evaluationString){
     let stack = [this.initialPDSymbol];
-    return this.evalPDA(evaluationString, this.startState, stack);
+    if(this.type == 'pda'){
+      return this.evalPDA(evaluationString, this.startState, stack);
+    }else {
+      stack.pop();
+      stack.push(this.grammarCollection[0].nonterminalSymbol);
+      return this.evalEmptyPDA(evaluationString, this.startState, stack);
+    }
+  }
+
+  evalEmptyPDA(evaluationString, initialState, stack){
+    console.log("The eval string: " + evaluationString);
+    console.log("The stack: " + stack);
+    let stateTuplesArr = [];
+    let arrayOfPasses = [];
+
+    let closureTuples = new Set();
+    closureTuples = initialState.getClosure(closureTuples, stack);
+
+    if(evaluationString.length === 0){
+      console.log("Got here with the following: ");
+      console.log(stack);
+      return stack.length === 0 || (stack.length === 1 && stack[0] == 'z0-prime');
+    }
+
+    let currChar = evaluationString[0];
+    if(!this.alphabet.includes(currChar)){
+      return false;
+    }
+
+    stateTuplesArr = initialState.getNextStates(currChar, stack);
+    let stateTuplesSet = new Set();
+    stateTuplesArr.forEach(transTuple => stateTuplesSet.add(transTuple));
+    for(let tupleOfClosure of closureTuples){
+      let tupleState = tupleOfClosure.destinyState;
+      stateTuplesArr = tupleState.getNextStates(currChar, tupleOfClosure.stack);
+      stateTuplesArr.forEach(x => stateTuplesSet.add(x));
+    }
+    if(stateTuplesSet.size < 1){
+      return false;
+    }
+    let newEvalString = evaluationString.slice(1, evaluationString.length);
+    for(let currTuple of stateTuplesSet){
+      arrayOfPasses.push(this.evalEmptyPDA(newEvalString,
+        currTuple.destinyState, currTuple.stack));
+    }
+
+    return arrayOfPasses.includes(true);
   }
 
   removeDuplicatesInTupleSet(stateTuplesSet){
@@ -94,7 +141,6 @@ class PDA {
           return true;
         }
       }
-
       return false;
     }
 
