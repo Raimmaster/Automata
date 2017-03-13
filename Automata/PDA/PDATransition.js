@@ -53,6 +53,15 @@ class PDATransition{
         return this.production;
       }
 
-      let 
+      let transString = '';
+      if(trans.willPushSymbol){
+        transString = this.transitionSymbol;
+      }
+
+      if(trans.willPushBackTop){
+        transString += this.symbolOnTopOfStack;
+      }
+
+      return transString;
     }
 }

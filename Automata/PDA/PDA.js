@@ -193,9 +193,18 @@ class PDA {
   }
 
   createFirstGrammarEntry(cfgColl){
+    if(this.type == 'pda'){
+      this.grammarEntriesAddedFromStates(this.acceptanceStates);
+    }else {
+      this.grammarEntriesAddedFromStates(this.states);
+    }
+  }
+
+  grammarEntriesAddedFromStates(states){
     let initialState = this.states.find(state => state.isInitial);
     let initialName = initialState.stateName;
-    for(let state of this.states){
+
+    for(let state of states){
       let stateName = state.stateName;
       let production = 'S->[' + initialName + ' ' + this.initialPDSymbol + stateName + ']';
       cfgColl.addCfgProduction(production);
@@ -223,25 +232,60 @@ class PDA {
       let nonEmptyTransitions = state.getNonEmptyTransitions();
       for(let trans of nonEmptyTransitions){
         let pushValueCount = trans.getStringLength();
-        let permutationTable = this.getPermutation(this.states, pushValueCount);
+        let permutationTable = this.getPermutation(pushValueCount);
         let m = permutationTable.length - 1;
+        let transitionString = trans.getTransitionString();
         for(let i = 0; i < permutationTable.length; ++i){
           let production = '';
           //LHS value: nonterminal
           production = '[' + state.stateName + ' ' + trans.symbolOnTopOfStack +
             trans.permutationTable[i][pushValueCount - 1] + '->' + trans.transitionSymbol;
 
-          production += '[' + state.stateName + ' ' + trans.transitionSymbol +
+          //first production concat
+          production += '[' + state.stateName + ' ' + transitionString[0] +
             trans.permutationTable[i][0] + ']';
 
-
-          for(let k = 1; k <  pushValueCount; ++k){
-            let currPermutationState = '[' + trans.permutationTable[i][k];
-              ;
+          //subsequent production concats
+          for(let k = 1; k <  pushValueCount - 1; ++k){
+            production += '[' + trans.permutationTable[i][k] + ' ' +
+              transitionString[k] + trans.permutationTable[i][k+1] + ']';
           }
           cfgColl.addCfgProduction(production);
         }
       }
     }
+  }
+
+  getPermutation(pushValueCount){
+    let amountOfStates = this.states.length;
+    let rowsCount = Math.pow(amountOfStates, pushValueCount);
+    let stateNames = this.states.map(state => state.stateName);
+
+    let table = [];
+    for(let i = 0; i < rowsCount; ++i){
+      table.push([]);
+      for(let k = 0; k < pushValueCount; ++k){
+        ret[i].push("");
+      }
+    }
+
+    for(let i = 0; i < pushValueCount; ++i){
+      let incidences = Math.pow(amountOfStates, pushValueCount - (i+1));
+      let currentStateIndex = 0;
+      for(let k = 0; k < rowsCount; ++k){
+        if(k > 0 && k % incidences == 0){
+          ++currentStateIndex;
+        }
+
+        if(currentStateIndex >= amountOfStates){
+          currentStateIndex = 0;
+        }
+
+        ret[k][i] = stateNames[currentStateIndex];
+      }
+    }
+    console.log("The table: ");
+    console.log(table);
+    return table;
   }
 }
