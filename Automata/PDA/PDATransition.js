@@ -37,11 +37,11 @@ class PDATransition{
       }
 
       let pushValueCount = 0;
-      if(trans.willPushSymbol){
+      if(this.willPushSymbol){
         ++pushValueCount;
       }
 
-      if(trans.willPushBackTop){
+      if(this.willPushBackTop){
         ++pushValueCount;
       }
 
@@ -54,11 +54,11 @@ class PDATransition{
       }
 
       let transString = '';
-      if(trans.willPushSymbol){
+      if(this.willPushSymbol){
         transString = this.transitionSymbol;
       }
 
-      if(trans.willPushBackTop){
+      if(this.willPushBackTop){
         transString += this.symbolOnTopOfStack;
       }
 

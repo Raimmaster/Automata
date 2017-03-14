@@ -187,20 +187,20 @@ class PDA {
     let cfgColl = new CfgCollection(this.alphabet);
     this.createFirstGrammarEntry(cfgColl);
     this.createPopGrammarEntries(cfgColl);
-    //this.createPushGrammarEntries(cfgColl);
+    this.createPushGrammarEntries(cfgColl);
 
     return cfgColl;
   }
 
   createFirstGrammarEntry(cfgColl){
     if(this.type == 'pda'){
-      this.grammarEntriesAddedFromStates(this.acceptanceStates);
+      this.grammarEntriesAddedFromStates(cfgColl, this.acceptanceStates);
     }else {
-      this.grammarEntriesAddedFromStates(this.states);
+      this.grammarEntriesAddedFromStates(cfgColl, this.states);
     }
   }
 
-  grammarEntriesAddedFromStates(states){
+  grammarEntriesAddedFromStates(cfgColl, states){
     let initialState = this.states.find(state => state.isInitial);
     let initialName = initialState.stateName;
 
@@ -238,19 +238,22 @@ class PDA {
         for(let i = 0; i < permutationTable.length; ++i){
           let production = '';
           //LHS value: nonterminal
+          let mIndex = permutationTable[i].length - 1;
           production = '[' + state.stateName + ' ' + trans.symbolOnTopOfStack +
-            trans.permutationTable[i][pushValueCount - 1] + '->' + trans.transitionSymbol;
+            permutationTable[i][mIndex] + ']->' + trans.transitionSymbol;
 
           //first production concat
           production += '[' + state.stateName + ' ' + transitionString[0] +
-            trans.permutationTable[i][0] + ']';
+            permutationTable[i][0] + ']';
 
           //subsequent production concats
-          for(let k = 1; k <  pushValueCount - 1; ++k){
-            production += '[' + trans.permutationTable[i][k] + ' ' +
-              transitionString[k] + trans.permutationTable[i][k+1] + ']';
+          for(let k = 0; k <  pushValueCount - 1; ++k){
+            console.log("Middle one.");
+            production += '[' + permutationTable[i][k] + ' ' +
+              transitionString[k] + permutationTable[i][k+1] + ']';
           }
           cfgColl.addCfgProduction(production);
+          console.log("Three step production: " + production);
         }
       }
     }
@@ -265,7 +268,7 @@ class PDA {
     for(let i = 0; i < rowsCount; ++i){
       table.push([]);
       for(let k = 0; k < pushValueCount; ++k){
-        ret[i].push("");
+        table[i].push("");
       }
     }
 
@@ -281,7 +284,7 @@ class PDA {
           currentStateIndex = 0;
         }
 
-        ret[k][i] = stateNames[currentStateIndex];
+        table[k][i] = stateNames[currentStateIndex];
       }
     }
     console.log("The table: ");

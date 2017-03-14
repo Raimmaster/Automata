@@ -63,7 +63,7 @@ function cfgSeed(){
 
 
   cfgs.addCfgProduction('F->(E)');
-  cfgs.addCfgProduction('F->0');  
+  cfgs.addCfgProduction('F->0');
   cfgs.addCfgProduction('F->1');
   cfgs.addCfgProduction('F->2');
   cfgs.addCfgProduction('F->3');
@@ -74,6 +74,40 @@ function cfgSeed(){
   cfgs.addCfgProduction('F->8');
   cfgs.addCfgProduction('F->9');
 }
+
+function emptyPdaSeed(){
+  automata = new PDA([], [], [],
+    [], 'undefined', 'z0-p',
+    []);
+  automata.type = 'empty-pda';
+  automata.addSymbolToAlphabet('0');
+  automata.addSymbolToAlphabet('1');
+
+  automata.addState('q0', false, true);
+  automata.addState('q1', false, false);
+
+  // addTransition(fromState, toState, transitionSymbol,
+  //   symbolOnTopOfStack, production, willPushSymbol, willPushBackTop)
+  automata.addTransition('q0', 'q0', '0', 'z0-p',
+    undefined, true, true);
+
+  automata.addTransition('q0', 'q0', '0', '0',
+      undefined, true, true);
+
+  automata.addTransition('q0', 'q1', '1', '0',
+      undefined, false, false);
+
+  automata.addTransition('q1', 'q1', '1', '0',
+      undefined, false, false);
+
+  automata.addTransition('q1', 'q1', 'epsilon', '0',
+        undefined, false, false);
+
+  automata.addTransition('q1', 'q1', 'epsilon', 'z0-p',
+      undefined, false, false);
+}
+
+emptyPdaSeed();
 
 // autoSeed();
 

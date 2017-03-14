@@ -77,4 +77,8 @@ class PDAState {
   getPopTransitions(){
     return this.transitions.filter(trans => !trans.willPushBackTop && !trans.willPushSymbol);
   }
+
+  getNonEmptyTransitions(){
+    return this.transitions.filter(trans => trans.willPushBackTop || trans.willPushSymbol);
+  }
 }
