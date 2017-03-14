@@ -107,7 +107,33 @@ function emptyPdaSeed(){
       undefined, false, false);
 }
 
-emptyPdaSeed();
+function nfaSeed(){
+  automata.type = 'nfa';
+  automata.addSymbolToAlphabet('0');
+  automata.addSymbolToAlphabet('1');
+
+  automata.addState('q0', false, true);
+  automata.addState('q1', false, false);
+  automata.addState('q2', false, false);
+  automata.addState('q3', true, false);
+
+  automata.addTransition('q0', 'q1', '1');
+  automata.addTransition('q0', 'q0', '1');
+  automata.addTransition('q0', 'q0', '0');
+
+
+  automata.addTransition('q1', 'q2', '0');
+  automata.addTransition('q1', 'q2', '1');
+
+  automata.addTransition('q2', 'q3', '0');
+  automata.addTransition('q2', 'q3', '1');
+
+  transformAutomatonToVisual(automata);
+}
+
+//nfaSeed();
+
+//emptyPdaSeed();
 
 // autoSeed();
 
@@ -382,10 +408,11 @@ function statesArrayHasBothAcceptance(statesArray){
 }
 
 function minimizeDFA(){
-  draw();
-  let dfaAutomaton = automata.minimize();
+  //draw();
+  //let dfaAutomaton = automata.minimize();
 
-  automata = dfaAutomaton;
+  //automata = dfaAutomaton;
+  nfaSeed();
 }
 
 function saveCfgEntry(){
@@ -408,4 +435,8 @@ function cfgToPDA(){
 function pdaToCFG(){
   cfgs = automata.convertEmptyPdaToCFG();
   updateCfgTab();
+}
+
+function transformToRegEx(){
+
 }

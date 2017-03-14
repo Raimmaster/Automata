@@ -278,28 +278,22 @@ class Automata {
 
   transformNfaToDfa(){
     this.resetDataStates();
-    let dfaAutomaton = new Automata([], [], [], [], []);
-    dfaAutomaton.currentStateId = this.currentStateId;
-    dfaAutomaton.currentTransitionId = this.currentTransitionId;
+    let dfaAutomaton = new Automata([], this.alphabet, [], [], []);
+    dfaAutomaton.currentStateId = ++this.currentStateId;
+    dfaAutomaton.currentTransitionId = ++this.currentTransitionId;
     //Copy alphabet
-    this.alphabet.forEach(function(item, index, array){
-      dfaAutomaton.addSymbolToAlphabet(item);
-      alphabet.add({
-        id: item,
-        symbol: item
-      });
-    });
-
+    
     let currentState = this.startState;
 
     let statesToCheck = [];
     let isAcceptanceState = this.acceptanceStates.includes(this.startState.stateName);
 
-    this.addToStateDataSet(dfaAutomaton, this.startState.stateName, true, isAcceptanceState);
+    addToStateDataSet(dfaAutomaton, this.startState.stateName, true, isAcceptanceState, '', false);
     dfaAutomaton.addState(currentState.stateName, isAcceptanceState, true);
 
     //Get states from start state
     for(const currChar of this.alphabet){
+      console.log("INSIDE!");
       let statesFromSymbol = currentState.getNextStates(currChar);
       if(statesFromSymbol.length < 1) {
         continue;
@@ -308,21 +302,26 @@ class Automata {
 
       let containsAnAcceptanceState = false;
       let pastAcceptanceStates = this.acceptanceStates;
-      statesFromSymbol.forEach(function(item){
+      for(let item of statesFromSymbol){
         containsAnAcceptanceState = pastAcceptanceStates.includes(item.stateName);
-      });
+        if(containsAnAcceptanceState){
+          break;
+        }
+      }
 
       let dfaStateName = this.joinStateNames(statesFromSymbol);
-      this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState, '', false);
-      dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
-
-      let indexOfNewState = dfaAutomaton.findStateByName(dfaStateName);
-      let newState = dfaAutomaton.states[indexOfNewState];
-      newState.setOfNfaStates = statesFromSymbol;
+      let newState = dfaAutomaton.getStateByName(dfaStateName);
+      if(newState === 'undefined'){
+        addToStateDataSet(dfaAutomaton, dfaStateName, false, 
+          containsAnAcceptanceState, '', false);
+        console.log("Adding state: " + dfaStateName + " with ID: " + dfaAutomaton.currentStateId);
+        newState = dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
+        newState.setOfNfaStates = statesFromSymbol;
+        statesToCheck.push(newState);
+      }
 
       this.addToTransitionDataSet(dfaAutomaton, currentState.stateName, dfaStateName, currChar);
       dfaAutomaton.addTransition(currentState.stateName, dfaStateName, currChar);
-      statesToCheck.push(newState);
     }
 
     currentState = statesToCheck[0];
@@ -352,11 +351,13 @@ class Automata {
         if(indexOfNewState < 0){
           let containsAnAcceptanceState = false;
           let pastAcceptanceStates = this.acceptanceStates;
-          statesFromSet.forEach(function(item){
-            containsAnAcceptanceState = pastAcceptanceStates.includes(item.stateName);
-            if(containsAnAcceptanceState)
-              return;
-          });
+          for(let stado of statesFromSet){
+            containsAnAcceptanceState = pastAcceptanceStates.includes(stado.stateName);
+            if(containsAnAcceptanceState){
+              break;
+            }
+          }
+          
 
           this.addToStateDataSet(dfaAutomaton, dfaStateName, false, containsAnAcceptanceState, '', false);
           dfaAutomaton.addState(dfaStateName, containsAnAcceptanceState, false);
@@ -516,10 +517,10 @@ class Automata {
     let regexArr = new Array();
 
     for(let automaton of dfaClones){
-      regexArr.push(getRegexFromDfa(automaton));
+      regexArr.push(this.getRegexFromDfa(automaton));
     }
 
-    let regexString = joinRegExs(regexArr);
+    let regexString = this.joinRegExs(regexArr);
 
     return regexString;
   }
@@ -527,8 +528,7 @@ class Automata {
   getRegexFromDfa(automaton){
     //Setup
     let initial = automaton.startState;
-    let finStateIndex = automaton.findStateByName(automaton.acceptanceStates[0]);
-    let finalState = automaton.states[finStateIndex];
+    let finalState = automaton.states.find( x => x.isAcceptance);
     let regexString = "";
     let statesCount = automaton.states.length;
 
@@ -536,10 +536,10 @@ class Automata {
       for(let state of automaton.states){
         if(!state.isInitial && !state.isAcceptance){
           let transitionsFromOthersToMyself = this.getTransitionsFromOthersToSelf(state, automaton);
-          let transitionsToOtherStates = this.getTransitionsToOthers(state);
-          let transitionsFromSelfToSelf = this.getTransitionsFromSelfToSelf(state);
+          let transitionsToOtherStates = automaton.getTransitionsToOthers(state);
+          let transitionsFromSelfToSelf = automaton.getTransitionsFromSelfToSelf(state);
 
-          let stringToSelf = this.getStringOfLoopToSelf(transitionsFromSelfToSelf);
+          let stringToSelf = automaton.getStringOfLoopToSelf(transitionsFromSelfToSelf);
 
         }
       }

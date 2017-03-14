@@ -1,9 +1,16 @@
+function resetDataStates(){
+    states.clear();
+    transitions.clear();
+    alphabet.clear();
+}
+
 function transformAutomatonToVisual(automaton){
+  resetDataStates();
   console.log(automaton);
   for(let state of automaton.states){
-    this.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance, state.stateId, true);
+    automaton.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance, state.stateId, true);
     for(let transition of state.transitions){
-      this.addToTransitionDataSet(automaton, transition.originState.stateName,
+      automaton.addToTransitionDataSet(automaton, transition.originState.stateName,
         transition.destinyState.stateName, transition.symbol, transition.transitionID, true);
     }
   }
@@ -36,7 +43,7 @@ function addToStateDataSet(automaton, stateName, isInitialState, isAcceptanceSta
   }
 
   let currentStateId = setIdManual ? stateId : automaton.currentStateId;
-
+  
   console.log("State: " + currentStateId);
   states.add({
         id: currentStateId,
