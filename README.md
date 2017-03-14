@@ -1,2 +1,2 @@
 # Automatas
-Theory of Computation Homeworks - Automatas and More
+Theory of Computation Homeworks - Automata and More
