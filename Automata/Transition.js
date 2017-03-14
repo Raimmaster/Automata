@@ -4,5 +4,6 @@ class Transition{
     this.symbol = symbol;
     this.originState = originState;
     this.destinyState = destinyState;
+    this.transitionString = "";
   }
 }

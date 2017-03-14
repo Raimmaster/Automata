@@ -522,20 +522,28 @@ class Automata {
 
     let regexString = this.joinRegExs(regexArr);
 
-    return regexString;
+    return regexArr;
+  }
+
+  joinRegExs(regexArr){
+    for(let i = 0; i < regexArr.length; ++i){
+      regexArr[i] = "(" + regexArr[i] + ")"; 
+    }
+
+    return regexArr.join("+");
   }
 
   getRegexFromDfa(automaton){
     //Setup
     let initial = automaton.startState;
-    let finalState = automaton.states.find( x => x.isAcceptance);
+    let finalState = automaton.states.find( state => state.isAcceptance);
     let regexString = "";
     let statesCount = automaton.states.length;
 
     while(true){
       for(let state of automaton.states){
         if(!state.isInitial && !state.isAcceptance){
-          let transitionsFromOthersToMyself = this.getTransitionsFromOthersToSelf(state, automaton);
+          let transitionsFromOthersToMyself = automaton.getTransitionsFromOthersToSelf(state);
           let transitionsToOtherStates = automaton.getTransitionsToOthers(state);
           let transitionsFromSelfToSelf = automaton.getTransitionsFromSelfToSelf(state);
 
@@ -548,10 +556,21 @@ class Automata {
     return regexString;
   }
 
-  getTransitionsFromOthersToSelf(state, automaton){
+  getStringOfLoopToSelf(transitions){
+    let stringArr = [];
+
+    for(let trans of transitions){
+      let string = "(" + trans.symbol + ")*";
+      stringArr.push(string);
+    }
+
+    return stringArr.join("+");
+  }
+
+  getTransitionsFromOthersToSelf(state){
     let stateName = state.stateName;
     let transitions = [];
-    for(let state of automaton.states){
+    for(let state of this.states){
       if(state.stateName === stateName){
         continue;
       }
