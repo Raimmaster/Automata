@@ -546,14 +546,48 @@ class Automata {
           let transitionsFromOthersToMyself = automaton.getTransitionsFromOthersToSelf(state);
           let transitionsToOtherStates = automaton.getTransitionsToOthers(state);
           let transitionsFromSelfToSelf = automaton.getTransitionsFromSelfToSelf(state);
-
           let stringToSelf = automaton.getStringOfLoopToSelf(transitionsFromSelfToSelf);
-
+          automaton.constructReducedAutomaton(transitionsFromOthersToMyself, 
+            transitionsToOtherStates, stringToSelf, state.stateName);
         }
       }
     }
 
     return regexString;
+  }
+
+  constructReducedAutomaton(transitionsFromOthersToMyself, //stateToDelete is name
+    transitionsToOtherStates, stringToSelf, stateToDelete){
+    let automaton = new Automata(states, this.alphabet, 
+      [], 'undefined', []);
+
+    for(let state of this.states){
+      if(state.stateName != stateToDelete){
+        automaton.addState(state.stateName, state.isAcceptance, state.isInitial);
+      }
+    }
+
+    //creating the new transition symbols
+    let statesToSkip = [];
+    for(let trans of transitionsFromOthersToMyself){
+      let originState = trans.originState.stateName;
+      statesToSkip.push(originState);
+      let transitionString = '(' + trans.symbol + stringToSelf;
+      for(let toOtherTrans of transitionsToOtherStates){
+        let destinyState = toOtherTrans.destinyState.stateName;
+        transitionString += toOtherTrans.symbol + ')';
+        automaton.addTransition(originState, destinyState, transitionString);
+      }
+    }
+
+    for(let state of this.states){
+      for(let trans of state.transitions){
+        if(trans.destinystate.stateName != stateToDelete){
+          automaton.addTransition(trans.originState.stateName,
+            trans.destinyState.stateName, trans.symbol);
+        }
+      }
+    }
   }
 
   getStringOfLoopToSelf(transitions){
