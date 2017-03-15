@@ -553,13 +553,14 @@ class Automata {
           automaton = automaton.constructReducedAutomaton(transitionsFromOthersToMyself,
             transitionsToOtherStates, stringToSelf, state.stateName);
 
-          let nonInitOrAccept = automaton.states.filter(x => !x.isInitial && !x.isAcceptance);
-
-          if(nonInitOrAccept.length === 0){
-            return automaton.getRegEx();
-          }
           break;
         }
+      }
+      
+      let nonInitOrAccept = automaton.states.filter(x => !x.isInitial && !x.isAcceptance);
+
+      if(nonInitOrAccept.length === 0){
+        return automaton.getRegEx();
       }
     }
 
