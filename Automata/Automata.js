@@ -65,17 +65,20 @@ class Automata {
   addTransition(fromState, toState, symbol){
     let indexOfOriginState = this.findStateByName(fromState);
     let destinyStateIndex = this.findStateByName(toState);
+    console.log("Looking " + fromState + " " + indexOfOriginState  + " and " + toState + " " + destinyStateIndex);
     let originState = this.states[indexOfOriginState];
     if(symbol == "epsilon")
       symbol = '#';
-    originState.addTransition(this.currentTransitionId++, symbol, originState, this.states[destinyStateIndex]);
+    let destinyState = this.states[destinyStateIndex];
+    originState.addTransition(this.currentTransitionId++, symbol, originState, destinyState);
+    console.log("I've added: " + originState.stateName + " and " + destinyState.stateName);
   }
 
   modifyState(state, newStateName){
     let indexOfState = this.findStateByName(state);
     if(indexOfState > -1){
       this.states[indexOfState].stateName = newStateName;
-      console.log("State modified");
+      // console.log("State modified");
     }
   }
 
@@ -86,7 +89,7 @@ class Automata {
         ++transitionIndex){
         if(this.states[stateIndex].transitions[transitionIndex].destinyState.stateName === stateName){
           this.states[stateIndex].transitions.splice(transitionIndex, 1);
-          console.log("Deleted transitions");
+          // console.log("Deleted transitions");
         }
       }
     }
@@ -95,11 +98,11 @@ class Automata {
   deleteState(state){
     let indexOfStateToDelete = this.findStateByName(state);
     if(indexOfStateToDelete > -1){
-      console.log("Deleting state");
+      // console.log("Deleting state");
       this.deleteTransitionsToState(state);
       let indexOfAcceptanceState = this.acceptanceStates.indexOf(this.states[indexOfStateToDelete].stateName);
       if(indexOfAcceptanceState > -1){
-        console.log("Deleting acceptance");
+        // console.log("Deleting acceptance");
         this.acceptanceStates.splice(indexOfAcceptanceState, 1);
       }
       this.states[indexOfStateToDelete].transitions = [];
@@ -174,7 +177,7 @@ class Automata {
   }
 
   evalEpsilon(evalString, initialState){
-    console.log("The epsilon eval: " + evalString);
+    // console.log("The epsilon eval: " + evalString);
     let statesArr = [];
     let arrayOfPasses = [];
 
@@ -183,7 +186,7 @@ class Automata {
 
     if(evalString.length === 0){
       for(let aState of closureStates){
-        console.log("Got here with " + aState.stateName);
+        // console.log("Got here with " + aState.stateName);
         if(this.acceptanceStates.includes(aState.stateName)){
           return true;
         }
@@ -213,7 +216,7 @@ class Automata {
 
     if(evalString.length === 1 ){
       for(let aState of states){
-        console.log("Now in a:State:" + aState.stateName);
+        // console.log("Now in a:State:" + aState.stateName);
         if(this.acceptanceStates.includes(aState.stateName)){
           return true;
         }
@@ -232,7 +235,7 @@ class Automata {
         arrayOfPasses.push(this.evalEpsilon(newEvalString, currState));
       }
     }
-    console.log(arrayOfPasses);
+    // console.log(arrayOfPasses);
     return arrayOfPasses.includes(true);
   }
 
@@ -259,7 +262,7 @@ class Automata {
 
     let currentStateId = setIdManual ? stateId : automaton.currentStateId;
 
-    console.log("State: " + currentStateId);
+    // console.log("State: " + currentStateId);
     states.add({
           id: currentStateId,
           label: stateName,
@@ -293,7 +296,7 @@ class Automata {
 
     //Get states from start state
     for(const currChar of this.alphabet){
-      console.log("INSIDE!");
+      // console.log("INSIDE!");
       let statesFromSymbol = currentState.getNextStates(currChar);
       if(statesFromSymbol.length < 1) {
         continue;
@@ -314,7 +317,7 @@ class Automata {
       if(newState === 'undefined'){
         addToStateDataSet(dfaAutomaton, dfaStateName, false,
           containsAnAcceptanceState, '', false);
-        console.log("Adding state: " + dfaStateName + " with ID: " + dfaAutomaton.currentStateId);
+        // console.log("Adding state: " + dfaStateName + " with ID: " + dfaAutomaton.currentStateId);
         newState = dfaAutomaton.addState(dfaStateName, false, containsAnAcceptanceState);
         newState.setOfNfaStates = statesFromSymbol;
         statesToCheck.push(newState);
@@ -476,7 +479,7 @@ class Automata {
     let destinyStateIndex = automaton.findStateByName(destinyState);
     let destinyStateId = automaton.states[destinyStateIndex].stateId;
     let transitionID = setIdManual ? transId : automaton.currentTransitionId;
-    console.log("Origin ID: " + originStateId + " and destiny ID: " + destinyStateId);
+    // console.log("Origin ID: " + originStateId + " and destiny ID: " + destinyStateId);
     transitions.add({
           id: transitionID,
           from: originStateId,
@@ -555,6 +558,7 @@ class Automata {
           if(nonInitOrAccept.length === 0){
             return automaton.getRegEx();
           }
+          break;
         }
       }
     }
@@ -572,7 +576,7 @@ class Automata {
       return stringToSelf;
     }
     //second step
-    let transitionsToOtherStates = automaton.getTransitionsToOthers(state);
+    let transitionsToOtherStates = this.getTransitionsToOthers(initialState);
     let stringToFinal = this.getTransitionArrayString(transitionsToOtherStates);
     let regex = stringToSelf + '(' + stringToFinal + ')';
 
@@ -607,6 +611,7 @@ class Automata {
     let automaton = new Automata([], this.alphabet, [], 'undefined', []);
 
     this.addStatesNotDeleted(automaton, stateToDelete);
+    console.log("State to delete: " + stateToDelete);
     this.constructNewTransitionSymbols(automaton, transitionsFromOthersToMyself, transitionsToOtherStates, stringToSelf);
     this.addNonCheckedTransitions(automaton, stateToDelete);
 
@@ -616,7 +621,7 @@ class Automata {
   addStatesNotDeleted(automaton, stateToDelete){
     for(let state of this.states){
       if(state.stateName != stateToDelete){
-        console.log(automaton.states);
+        // console.log(automaton.states);
         automaton.addState(state.stateName, state.isAcceptance, state.isInitial);
       }
     }
@@ -629,6 +634,7 @@ class Automata {
       for(let toOtherTrans of transitionsToOtherStates){
         let destinyState = toOtherTrans.destinyState.stateName;
         transitionString += toOtherTrans.symbol + ')';
+        console.log(automaton.states);
         automaton.addTransition(originState, destinyState, transitionString);
       }
     }
@@ -660,12 +666,15 @@ class Automata {
   getTransitionsFromOthersToSelf(state){
     let stateName = state.stateName;
     let transitions = [];
-    for(let state of this.states){
-      if(state.stateName === stateName){
+    for(let stado of this.states){
+      if(stado.stateName === stateName){
         continue;
       }
 
-      for(let transition of state.transitions){
+      for(let transition of stado.transitions){
+        // console.log(this.states);
+        // console.log("Transition from others to self of state " + stateName + ":");
+        // console.log(transition);
         if(transition.destinyState.stateName === stateName){
           transitions.push(transition);
         }
@@ -710,7 +719,7 @@ class Automata {
   }
 
   transformAutomatonToVisual(automaton){
-    console.log(automaton);
+    // console.log(automaton);
     for(let state of automaton.states){
       this.addToStateDataSet(automaton, state.stateName, state.isInitial, state.isAcceptance, state.stateId, true);
       for(let transition of state.transitions){
@@ -764,7 +773,7 @@ class Automata {
 
     let newStates = firstAutomaton.states.concat(secondAutomaton.states);
     let newAlphabet = firstAutomaton.alphabet.concat(secondAutomaton.alphabet);
-    console.log("Acc s: " + secondAutomaton.acceptanceStates[0]);
+    // console.log("Acc s: " + secondAutomaton.acceptanceStates[0]);
     let concatAutomaton = new Automata(newStates, newAlphabet, [], firstAutomaton.startState, secondAutomaton.acceptanceStates);
     concatAutomaton.currentStateId = this.currentStateId;
     concatAutomaton.currentTransitionId = this.currentTransitionId;
@@ -857,9 +866,12 @@ class Automata {
           hasAcceptance = true;
         }
       }
+
       for(let state of this.states){
         for(let transition of state.transitions){
-          newAutomaton.addTransition(transition.originState.stateName, transition.destinyState.stateName, transition.symbol);
+            // console.log("Adding new transition: ");
+            // console.log(transition);
+            newAutomaton.addTransition(transition.originState.stateName, transition.destinyState.stateName, transition.symbol);
         }
       }
 
@@ -886,7 +898,7 @@ class Automata {
     let newAlphabet = automataList[0].alphabet.concat(automataList.alphabet);
     let newSetAlpha = new Set(newAlphabet);
     let unionAutomaton = new Automata([], Array.from(newSetAlpha), [], 'undefined', []);
-    console.log(unionAutomaton.alphabet);
+    // console.log(unionAutomaton.alphabet);
     let isInitial = true;
 
     let initialA = initials[0];
@@ -929,7 +941,7 @@ class Automata {
 
       let newState = unionAutomaton.addState(newStateName, containsAcceptance, !isInitial);
 
-      console.log("New state added from initial: " + newState.stateName);
+      // console.log("New state added from initial: " + newState.stateName);
       newState.setOfNfaStates = statesFromSymbol;
       statesToCheck.push(newState);
 
@@ -977,7 +989,7 @@ class Automata {
       statesToCheck.shift();
       if(statesToCheck.length > 0){
         currState = statesToCheck[0];
-        console.log("New current state: " + currState.stateName);
+        // console.log("New current state: " + currState.stateName);
       }
     }
 
@@ -995,10 +1007,10 @@ class Automata {
   minimize(){
     let equivalenceTable = this.createEquivalenceTable();
     equivalenceTable = this.markNotAcceptance(equivalenceTable);
-    console.log(equivalenceTable);
+    // console.log(equivalenceTable);
     let minimizedAutomaton = this.minimizeFromTable(equivalenceTable);
     this.transformAutomatonToVisual(minimizedAutomaton);
-    console.log("Finished minimizing.");
+    // console.log("Finished minimizing.");
     return minimizedAutomaton;
   }
 
@@ -1284,8 +1296,8 @@ class Automata {
       //console.log("First state: " + firstState.stateName);
       for(let k = i + 1; k < this.states.length; ++k){
         let secondState = this.states[k];
-        console.log("State pair: " + firstState.stateName + ", " + secondState.stateName);
-        console.log("Current k: "+ k + " and i: " + i);
+        // console.log("State pair: " + firstState.stateName + ", " + secondState.stateName);
+        // console.log("Current k: "+ k + " and i: " + i);
         let newTuple = new EqTuple(firstState, secondState, false, false);
         table.push(newTuple);
       }

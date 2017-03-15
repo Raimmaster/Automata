@@ -440,5 +440,5 @@ function pdaToCFG(){
 function transformToRegEx(){
   let regex = automata.transformDfaToRegEx();
   console.log(regex);
-  document.getElementById('reg-ex-from-dfa').innerHTML = regex;
+  document.getElementById('reg-ex-from-dfa').value = regex;
 }
