@@ -131,6 +131,32 @@ function nfaSeed(){
   transformAutomatonToVisual(automata);
 }
 
+function turingSeed(){
+  automata = new Turing([], ['0', '1'], undefined, []);
+  automata.addState("q0", false, true);
+  automata.addState("q1", false, false);
+  automata.addState("q2", false, false);
+  automata.addState("q3", false, false);
+  automata.addState("q4", true, false);
+
+
+  //addTransition(originStateName, destinyStateName, symbol, newSymbol, direction)
+  transitionsCollection.push(automata.addTransition('q0', 'q1', '0', 'x', 'right'));
+  transitionsCollection.push(automata.addTransition('q1', 'q1', '0', '0', 'right'));
+  transitionsCollection.push(automata.addTransition('q1', 'q1', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q1', 'q2', '1', 'y', 'left'));
+  transitionsCollection.push(automata.addTransition('q2', 'q2', 'y', 'y', 'left'));
+  transitionsCollection.push(automata.addTransition('q2', 'q2', '0', '0', 'left'));
+  transitionsCollection.push(automata.addTransition('q2', 'q0', 'x', 'x', 'right'));
+  transitionsCollection.push(automata.addTransition('q0', 'q3', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q3', 'q3', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q3', 'q4', 
+      automata.emptyValue, automata.emptyValue, 'left'));
+  
+}
+
+turingSeed();
+
 //nfaSeed();
 
 //emptyPdaSeed();
@@ -266,7 +292,7 @@ function addEdge() {
         let pushSymbol = document.getElementById('top-symbol').value;
         let tapeDirection = document.getElementById('tape-direction').checked;
         let direction = tapeDirection ? 'right' : 'left';
-        let newTransition = automata.addTransition(originState, destinyState, symbol,
+        let newTransition = automata.addTransition(originState, destinyState, symbolToEval,
           pushSymbol, direction);
 
         transitionsCollection.push(newTransition);
@@ -283,14 +309,14 @@ function addEdge() {
 function getTuringTransitionStrings(transitionsCollection){
   let transitionString = [];
 
-  for(let transition of transCollection){
+  for(let transition of transitionsCollection){
     let transSymbol = transition.symbol;
     let direction = transition.direction == 'right' ? '→' : '←';
     let currTransitionString = "Transition from "
       + transition.originState.stateName
       + " to " + transition.destinyState.stateName
       + " with " + transSymbol + "/" + transition.newSymbol
-      + "/" + direction +"\n";
+      + direction +"\n";
 
     transitionString.push(currTransitionString);
   }
@@ -409,8 +435,11 @@ function automataIntersection(){
 
 let increm = 0;
 function automataComplement(){
-  draw();
-  automata.transformAutomatonToVisual(automataList[increm++]);
+  //draw();
+  //automata.transformAutomatonToVisual(automataList[increm++]);
+
+  document.getElementById('turing-transitions').innerHTML = 
+    getTuringTransitionStrings(transitionsCollection);
 }
 
 function saveAutomaton(){

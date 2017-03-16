@@ -5,7 +5,7 @@ class TuringTransition{
     this.originState = originState;
     this.destinyState = destinyState;
     this.symbol = symbol;
-    this.newSymbol = symbol;
+    this.newSymbol = newSymbol;
     this.direction = direction;
   }
 }
