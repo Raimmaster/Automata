@@ -262,13 +262,40 @@ function addEdge() {
         transitionsCollection.push(newTransition);
         //in pda-transitions HTML id, add each one
         document.getElementById('pda-transitions').innerHTML = getTransitionsString(transitionsCollection);
-        return;
+      }else if(automata.type == 'turing'){
+        let pushSymbol = document.getElementById('top-symbol').value;
+        let tapeDirection = document.getElementById('tape-direction').checked;
+        let direction = tapeDirection ? 'right' : 'left';
+        let newTransition = automata.addTransition(originState, destinyState, symbol,
+          pushSymbol, direction);
+
+        transitionsCollection.push(newTransition);
+        document.getElementById('turing-transitions').innerHTML = getTuringTransitionStrings(transitionsCollection);
+      }else{
+        automata.addTransition(originState, destinyState, symbolToEval);
       }
-      automata.addTransition(originState, destinyState, symbolToEval);
     }
     catch (err) {
         alert(err);
     }
+}
+
+function getTuringTransitionStrings(transitionsCollection){
+  let transitionString = [];
+
+  for(let transition of transCollection){
+    let transSymbol = transition.symbol;
+    let direction = transition.direction == 'right' ? '→' : '←';
+    let currTransitionString = "Transition from "
+      + transition.originState.stateName
+      + " to " + transition.destinyState.stateName
+      + " with " + transSymbol + "/" + transition.newSymbol
+      + "/" + direction +"\n";
+
+    transitionString.push(currTransitionString);
+  }
+
+  return transitionString.join(' ');
 }
 
 function getTransitionsString(transCollection){
@@ -354,6 +381,8 @@ function setAutomatonType(){
     automata = new PDA([], [], [],
       [], 'undefined', 'z0-p',
       []);
+  }else if (type == "turing"){
+    automata = new Turing([], [], undefined, []);
   }
   alert("Type: " + type.toLowerCase());
   automata.setType(type.toLowerCase());

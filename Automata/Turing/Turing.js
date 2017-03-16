@@ -8,9 +8,10 @@ class Turing {
     this.currentStateId = 0;
     this.epsilon = 'ε';
     this.emptyValue = 'β';
+    this.type = "turing";
   }
 
-  addState(stateName, isInitial, isAcceptance){
+  addState(stateName, isAcceptance, isInitial){
     if(this.getStateByName(stateName) !== undefined){
       return undefined;
     }
