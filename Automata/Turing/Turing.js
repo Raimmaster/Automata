@@ -52,10 +52,10 @@ class Turing {
     if(newSymbol == "epsilon"){
       newSymbol = '#';
     }else if(newSymbol == "empty"){
-      newSymbol = emptyValue;
+      newSymbol = this.emptyValue;
     }
 
-    return originState.addTransition(this.currentTransitionId++, destinyState, 
+    return originState.addTransition(this.currentTransitionId++, destinyState,
       symbol, newSymbol, direction);
   }
 
@@ -82,7 +82,7 @@ class Turing {
       console.log(currentState);
       console.log(stringTape.tape);
       currentState = currentState.getNextState(stringTape);
-      
+
       if(currentState == undefined){
         return false;
       }

@@ -137,11 +137,11 @@ function turingSeed(){
   automata.addState("q1", false, false);
   automata.addState("q2", false, false);
   automata.addState("q3", false, false);
-  automata.addState("q4", true, false);
-
+  automata.addState("q4", false, false);
+  automata.addState("q5", true, false);
 
   //addTransition(originStateName, destinyStateName, symbol, newSymbol, direction)
-  transitionsCollection.push(automata.addTransition('q0', 'q1', '0', 'x', 'right'));
+  /*transitionsCollection.push(automata.addTransition('q0', 'q1', '0', 'x', 'right'));
   transitionsCollection.push(automata.addTransition('q1', 'q1', '0', '0', 'right'));
   transitionsCollection.push(automata.addTransition('q1', 'q1', 'y', 'y', 'right'));
   transitionsCollection.push(automata.addTransition('q1', 'q2', '1', 'y', 'left'));
@@ -150,9 +150,26 @@ function turingSeed(){
   transitionsCollection.push(automata.addTransition('q2', 'q0', 'x', 'x', 'right'));
   transitionsCollection.push(automata.addTransition('q0', 'q3', 'y', 'y', 'right'));
   transitionsCollection.push(automata.addTransition('q3', 'q3', 'y', 'y', 'right'));
-  transitionsCollection.push(automata.addTransition('q3', 'q4', 
-      automata.emptyValue, automata.emptyValue, 'left'));
-  
+  transitionsCollection.push(automata.addTransition('q3', 'q4',
+      automata.emptyValue, automata.emptyValue, 'left'));*/
+  transitionsCollection.push(automata.addTransition('q0', 'q1', '0', 'x', 'right'));
+  transitionsCollection.push(automata.addTransition('q1', 'q1', '0', '0', 'right'));
+  transitionsCollection.push(automata.addTransition('q1', 'q1', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q1', 'q2', '1', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q2', 'q2', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q2', 'q2', '1', '1', 'right'));
+  transitionsCollection.push(automata.addTransition('q2', 'q2', 'z', 'z', 'right'));
+  transitionsCollection.push(automata.addTransition('q2', 'q3', '0', 'z', 'left'));
+  transitionsCollection.push(automata.addTransition('q3', 'q3', '0', '0', 'left'));
+  transitionsCollection.push(automata.addTransition('q3', 'q3', 'z', 'z', 'left'));
+  transitionsCollection.push(automata.addTransition('q3', 'q3', 'y', 'y', 'left'));
+  transitionsCollection.push(automata.addTransition('q3', 'q3', '1', '1', 'left'));
+  transitionsCollection.push(automata.addTransition('q3', 'q0', 'x', 'x', 'right'));
+  transitionsCollection.push(automata.addTransition('q0', 'q4', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q4', 'q4', 'y', 'y', 'right'));
+  transitionsCollection.push(automata.addTransition('q4', 'q4', 'z', 'z', 'right'));
+  transitionsCollection.push(automata.addTransition('q4', 'q5', automata.emptyValue, automata.emptyValue, 'left'));
+
 }
 
 turingSeed();
@@ -438,7 +455,7 @@ function automataComplement(){
   //draw();
   //automata.transformAutomatonToVisual(automataList[increm++]);
 
-  document.getElementById('turing-transitions').innerHTML = 
+  document.getElementById('turing-transitions').innerHTML =
     getTuringTransitionStrings(transitionsCollection);
 }
 
