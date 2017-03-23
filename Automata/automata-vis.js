@@ -487,7 +487,10 @@ function minimizeDFA(){
   //let dfaAutomaton = automata.minimize();
 
   //automata = dfaAutomaton;
-  nfaSeed();
+  //nfaSeed();
+  transformAutomatonToVisual(automata);
+
+  document.getElementById('turing-transitions').innerHTML = getTuringTransitionStrings(transitionsCollection);
 }
 
 function saveCfgEntry(){
